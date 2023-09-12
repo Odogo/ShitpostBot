@@ -1,0 +1,19 @@
+{
+  "name": "shitpostbot",
+  "version": "4.0.0",
+  "description": "The shitpost everyone is talking about",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "author": "Odogo",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@types/node": "^20.6.0",
+    "discord.js": "^14.13.0",
+    "sequelize": "^6.33.0",
+    "sqlite3": "^5.1.6",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
