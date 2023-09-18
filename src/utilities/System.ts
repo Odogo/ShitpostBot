@@ -10,8 +10,8 @@ export class LogLevel {
     }
 
     static readonly ERROR = new LogLevel("\x1b[31m", "ERROR", "⛔");
-    static readonly INFO  = new LogLevel("\x1b[32m", "INFO",  "ℹ");
-    static readonly WARN  = new LogLevel("\x1b[33m", "WARN",  "⚠");
+    static readonly INFO  = new LogLevel("\x1b[32m", "INFO",  "🔷");
+    static readonly WARN  = new LogLevel("\x1b[33m", "WARN",  "🔶");
     static readonly DEBUG = new LogLevel("\x1b[34m", "DEBUG", "🔧");
 }
 

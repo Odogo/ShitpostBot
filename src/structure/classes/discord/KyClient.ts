@@ -4,7 +4,7 @@ import { lstat, readdir } from "fs/promises";
 import { join } from "path";
 import { PathLike } from "fs";
 
-import { debug, error, info, warn } from "../../utilities/System";
+import { debug, error, info, warn } from "../../../utilities/System";
 
 import { KyEvent } from "./KyEvent";
 import { KyCommandOptions } from "./KyCommand";
@@ -19,12 +19,22 @@ type KyClientOptions = {
     eventsPath: PathLike,
 }
 
+/**
+ * Kyomi's Client class for Discord Bots..
+ * just to keep things standardized :P
+ *
+ * Every 'Ky' class is to keep things standardize actually..
+ */
 export class KyClient extends Client {
 
     public clientOptions: KyClientOptions;
 
     public commands: Collection<string, KyCommandOptions>;
 
+	/**
+	 * Creates a new discord bot
+	 * @param options Required parameters to start the bot, like the token, clientId, command and event paths.
+	 */
     constructor(options: KyClientOptions) {
         super({ intents: [GatewayIntentBits.MessageContent] });
 
@@ -41,6 +51,7 @@ export class KyClient extends Client {
     }
 
     public async shutdown() {
+		info("Shutting down...");
         this.destroy();
     }
 
@@ -51,14 +62,7 @@ export class KyClient extends Client {
 		debug("[Modules] Modules registered.");
     }
 
-    private async registerCommands() {
-		debug("[Commands] Gathering commands for registration...");
-        let cmds = await fetchCommandFiles(this.clientOptions.commandPath);
-		cmds.forEach((value, key) => this.commands.set(key, value));
-		debug("[Commands] Commands gathered, awaiting bot status of 'Ready'...");
-    }
-
-	private async pushCommandsToDiscord(commands: Array<ApplicationCommandDataResolvable>) {
+	public async pushCommandsToDiscord(commands: Array<ApplicationCommandDataResolvable>) {
 		debug("[Commands] Bot ready, attempting push to discord...");
 		try {
 			await this.application.commands.set(commands);
@@ -67,6 +71,13 @@ export class KyClient extends Client {
 			error("[Commands] Failed to push commands to discord: " + reason);
 			throw reason;
 		}
+	}
+
+    private async registerCommands() {
+		debug("[Commands] Gathering commands for registration...");
+        let cmds = await fetchCommandFiles(this.clientOptions.commandPath);
+		cmds.forEach((value, key) => this.commands.set(key, value));
+		debug("[Commands] Commands gathered, awaiting bot status of 'Ready'...");
 	}
 
     private async registerEvents() {
