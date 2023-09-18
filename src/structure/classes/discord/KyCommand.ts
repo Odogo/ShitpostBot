@@ -1,6 +1,6 @@
 import { ChatInputApplicationCommandData, CommandInteraction, CommandInteractionOptionResolver, GuildMember, PermissionResolvable } from 'discord.js';
 import { KyClient } from './KyClient';
-import { KyInteraction } from '../interfaces/KyInteraction';
+import { KyInteraction } from '../../interfaces/KyInteraction';
 
 export class KyCommand {
     constructor(
@@ -12,5 +12,5 @@ export class KyCommand {
 
 export type KyCommandOptions = {
     userPermissions?: PermissionResolvable[];
-    run: (client: KyClient, interaction: KyInteraction, options: CommandInteractionOptionResolver) => Promise<void>;
+    run: (client: KyClient, interaction: KyInteraction, options: CommandInteractionOptionResolver) => Promise<any>;
 } & ChatInputApplicationCommandData;

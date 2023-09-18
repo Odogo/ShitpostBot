@@ -1,12 +1,12 @@
 // -- Package Imports --
 import provider, { SoundCloudPlaylist, SoundCloudTrack, SpotifyAlbum, SpotifyPlaylist, SpotifyTrack } from 'play-dl';
-import { APIEmbedField, EmbedBuilder, Guild, TextChannel, VoiceChannel } from 'discord.js';
+import { APIEmbedField, EmbedBuilder, Guild, TextBasedChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from 'discord.js';
 
 // -- Local Imports --
 import { info, warn } from '../../utilities/System';
 import { SongDetails } from './SongDetails';
 import { ServerQueueModel } from '../../utilities/database/ServerQueueModel';
-import { AudioPlayerStatus, NoSubscriberBehavior, StreamType, VoiceConnection, VoiceConnectionStatus, createAudioPlayer, createAudioResource, entersState, getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
+import { AudioPlayerStatus, NoSubscriberBehavior, StreamType, VoiceConnection, VoiceConnectionReadyState, VoiceConnectionStatus, createAudioPlayer, createAudioResource, entersState, getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
 
 export enum PlayingQueueStatus { NoQueueData, NoSongsInQueue, NoQueueIndex, EndOfQueue, Success }
 
@@ -491,7 +491,7 @@ export class MediaManager {
 	 * @param channel the voice channel to join
 	 * @returns the new voice connection
 	 */
-	public static async createConnection(guild: Guild, channel: VoiceChannel): Promise<VoiceConnection> {
+	public static async createConnection(guild: Guild, channel: VoiceBasedChannel): Promise<VoiceConnection> {
 		return new Promise(async (resolve, reject) => {
 			const connection = joinVoiceChannel({
 				guildId: guild.id,
@@ -533,7 +533,18 @@ export class MediaManager {
 		});
 	}
 
-	public static async beginPlayingQueue(guild: Guild, voiceChannel: VoiceChannel, textChannel: TextChannel): Promise<PlayingQueueStatus> {
+	/**
+	 * Creates a new voice connection [or finds the current active one] and creates a new audi player
+	 * to begin processing the queue. The queue will begin at the current index.
+	 * 
+	 * Unless already at -1, to which it'll start at the beginning.
+	 * 
+	 * @param guild the guild to find the connection [or create one] for
+	 * @param voiceChannel the channel to use if needs to be  created
+	 * @param textChannel the channel to post 'now playing' notifications (or other notifications)
+	 * @returns the status of the operation
+	 */
+	public static async beginPlayingQueue(guild: Guild, voiceChannel: VoiceBasedChannel, textChannel: TextBasedChannel): Promise<PlayingQueueStatus> {
 		// Create the voice connection [or get it if it exists] and verifies we've connected
 		const connection = getVoiceConnection(guild.id) || await this.createConnection(guild, voiceChannel);
 		await entersState(connection, VoiceConnectionStatus.Ready, 20_000);
@@ -754,59 +765,68 @@ export class MediaManager {
 		});
 	}
 
+	/**
+ 	 * Depending on the 'shuffle type' when this function is executed, the current queue will be shuffled.
+ 	 * 
+ 	 * If shuffle type is "keepPlaying", the queue will try to preserve the currently playing song and
+ 	 * put it at the beginning of the queue and will shuffle the rest of the songs randomly.
+ 	 * 
+ 	 * If shuffle type is "stopShuffle", the player will be stopped and the entire queue will be shuffled
+ 	 * randomly and will be restarted at the beginning of the queue (pos 0)
+ 	 * 
+ 	 * @param guild the guild trying to shuffle
+ 	 * @param shuffleType the shuffle type, description above
+ 	 * @returns the new array of songs
+ 	*/
 	public static async shuffleQueue(guild: Guild, shuffleType: "keepPlaying" | "stopShuffle") {
 		return new Promise(async (resolve, reject) => {
 			const connection = getVoiceConnection(guild.id);
 			if(connection === undefined) reject(new Error("No active connection"));
-	
-			let curIndex = -99;
-			if(index == null) {
-				curIndex = await this.fetchQueueIndex(guild).catch(error => reject(error));
-				if(curIndex === undefined) reject(new Error("No queue data found"));
-			} else {
-				curIndex = index;
-			}
-	
-			/** @type {PlayerSubscription} */
-			let subscription = connection.state.subscription;
-			const player = subscription.player;
-	
-			let songList = [];
-			if(songs == null) {
-				songList = await this.fetchSongQueue(guild);
-				if(songList === undefined) reject(new Error("No queue data found"));
-			} else {
-				songList = songs;
-			}
-	
-			/** @type {SongDetails[]} */ let newQueue = [];
-			if(shuffleType === 'stopShuffle') {
-				player.pause();
-				newQueue = songList.slice().sort((a,b) => 0.5 - Math.random());
-			} else if(shuffleType === 'keepPlaying') {
-				newQueue.push(songList[index]);
-	
-				let shuffled = songList.slice();
-				delete shuffled[index];
-				shuffled.sort((a,b) => 0.5 - Math.random());
-	
-				for(let i=0;i<shuffled.length; i++) {
-					newQueue.push(shuffled[i]);
-				}
-			}
-	
+			
 			try {
-				await this.setSongQueue(guild, newQueue);
-				await this.setQueueIndex(guild, -1 + (shuffleType === 'keepPlaying' ? 1 : 0));
-			} catch(error) { 
-				reject(new Error(error));
-			}
-				
-			if(shuffleType === 'stopShuffle') {
-				player.stop();
-			}
+				let index = await this.fetchQueueIndex(guild)
+				if(index === undefined) reject(new Error("No queue data found"));
 	
-			resolve(newQueue);
+				let connectionState = connection.state;
+				if(connectionState.status !== VoiceConnectionStatus.Ready) reject(new Error("Voice connection was not ready, please wait and/or try again."));
+				connectionState = connectionState as VoiceConnectionReadyState;
+
+				const player = connectionState.subscription.player;
+	
+				let songs = await this.fetchSongQueue(guild);
+				if(songs === undefined) reject(new Error("No queue data found"));
+	
+				/** @type {SongDetails[]} */ let newQueue = [];
+				if(shuffleType === 'stopShuffle') {
+					player.pause();
+					newQueue = songs.slice().sort((a,b) => 0.5 - Math.random());
+				} else if(shuffleType === 'keepPlaying') {
+					newQueue.push(songs[index]);
+	
+					let shuffled = songs.slice();
+					delete shuffled[index];
+					shuffled.sort((a,b) => 0.5 - Math.random());
+	
+					for(let i=0;i<shuffled.length; i++) {
+						newQueue.push(shuffled[i]);
+					}
+				}
+	
+				try {
+					await this.setSongQueue(guild, newQueue);
+					await this.setQueueIndex(guild, -1 + (shuffleType === 'keepPlaying' ? 1 : 0));
+				} catch(error) { 
+					reject(new Error(error));
+				}
+				
+				if(shuffleType === 'stopShuffle') {
+					player.stop();
+				}
+	
+				resolve(newQueue);
+			} catch(error) {
+				reject(error);
+			}
 		});
 	}
 }
