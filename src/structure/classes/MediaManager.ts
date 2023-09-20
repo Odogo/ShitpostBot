@@ -232,9 +232,11 @@ export class MediaManager {
     public static async fetchQueueIndex(guild: Guild): Promise<number | undefined> {
         return new Promise(async (resolve, reject) => {
             await ServerQueueModel.findOne({ where: { guildId: guild.id }}).then(async (data) => {
-                if(!data) resolve(undefined);
-
-                resolve(data.queueIndex);
+                if(!data) { 
+					resolve(undefined);
+				} else {
+                	resolve(data.queueIndex);
+				}
             }).catch(reject);
         });
     }
@@ -556,7 +558,7 @@ export class MediaManager {
 
 		// Check if the index exists.
 		let index = await this.fetchQueueIndex(guild);
-		if(index === undefined) return PlayingQueueStatus.NoQueueIndex;
+		if(index == undefined) return PlayingQueueStatus.NoQueueIndex;
 
 		// Add to the index to advance the queue forward by one.
 		// if(index == -1) { index = 0; await setQueueIndex(guild.id, index); } [dont need this anymore]
@@ -725,11 +727,14 @@ export class MediaManager {
 	public static async generateQueueList(guild: Guild, perPage = -1, page = -1): Promise<EmbedBuilder> {
 		return new Promise(async (resolve, reject) => {
 			await this.fetchSongQueue(guild).then(async songs => {
+				// Data validation and range checking
 				if(songs == undefined) reject("There are no songs to make a queue list from.");
 				if(perPage < 5 || perPage > 15) reject("The minimum and maximum limit for each page is between 5 and 15 entries.");
 
+				// Finding the total pages via this dumbass equation
 				let totalPages = Math.floor(songs.length / perPage) + (songs.length % perPage == 0 ? 0:1);
 
+				// Building the base of the embed
 				const embed = new EmbedBuilder({
 					color: 0x73e1fa,
 					footer: { text: "Queue | Page: " + page + "/" + totalPages + " | " + perPage + "/page" },
@@ -737,28 +742,33 @@ export class MediaManager {
 					author: { name: guild.name, icon_url: guild.iconURL({extension: 'png', size: 4096}) }
 				});
 
+				// Loop variables and loop stuff
 				let start = (page - 1) * perPage;
 				let paginate = songs.slice(start, page * perPage);
 
 				let fields = new Array<APIEmbedField>();
 				for(let index=0; index<paginate.length; index++) {
-					let details = paginate[index];
+					let details = paginate[index]; // grab the song
 
+					// get the details and the placement
 					let vDetails = (await provider.video_basic_info(details.songUrl)).video_details;
 					let placement = "" + ((start + index) + 1);
 
+					// check if the current loop index is the queue index
 					if((start + index) == await this.fetchQueueIndex(guild)) {
 						placement = "-NOW-";
 					} else {
-						placement = ".";
+						placement += ".";
 					}
 
+					// push to embed
 					fields.push({
 						name: placement + " " + vDetails.title + " by " + vDetails.channel.name,
 						value: details.songUrl + " [requested by: <@" + details.submitterId + ">]"
 					});
 				}
 
+				// finish embed
 				embed.addFields(fields);
 				resolve(embed);
 			}).catch(reject);
@@ -796,7 +806,7 @@ export class MediaManager {
 				let songs = await this.fetchSongQueue(guild);
 				if(songs === undefined) reject(new Error("No queue data found"));
 	
-				/** @type {SongDetails[]} */ let newQueue = [];
+				let newQueue = new Array<SongDetails>;
 				if(shuffleType === 'stopShuffle') {
 					player.pause();
 					newQueue = songs.slice().sort((a,b) => 0.5 - Math.random());

@@ -14,13 +14,13 @@
     "discord.js": "^14.13.0",
     "ffmpeg-static": "^5.2.0",
     "libsodium-wrappers": "^0.7.13",
-    "play-dl": "^1.9.6",
+    "play-dl": "https://github.com/Odogo/play-dl/tarball/main",
     "sequelize": "^6.33.0",
     "sqlite3": "^5.1.6",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
-    "@types/node": "^20.6.2"
+    "@types/node": "^20.6.3"
   }
 }

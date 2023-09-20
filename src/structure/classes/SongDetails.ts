@@ -4,7 +4,7 @@ export class SongDetails {
         let jsonData = JSON.parse(string);
 
         if(jsonData != null && jsonData.songUrl && jsonData.submitterId && jsonData.submitTimestamp) {
-            return new SongDetails(jsonData.songUrl, jsonData.submitterId, jsonData.submittimestamp);
+            return new SongDetails(jsonData.songUrl, jsonData.submitterId, jsonData.submitTimestamp);
         }
         
         return null;

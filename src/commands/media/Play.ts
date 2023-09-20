@@ -22,14 +22,13 @@ export default new KyCommand({
 
         let songDatas = new Array<SongDetails>();
         await MediaManager.finalizeURL(options.getString("song")).then((tracks) => {
-            let time = Date.now();
-            for(let i=0; i<tracks.length; i++) songDatas.push(new SongDetails(tracks[i], interaction.member.id, "" + time));
+            for(let i=0; i<tracks.length; i++) songDatas.push(new SongDetails(tracks[i], interaction.member.id, new Date().toISOString()));
         }).catch(async (error) => {
             if(error === "Invalid URL") {
                 await interaction.followUp({ content: "Could not validate URL, attempting to search via keywords!", ephemeral: true });
                 
                 await MediaManager.searchForURL(options.getString("song")).then((url) => {
-                    songDatas.push(new SongDetails(url, interaction.member.id, Date.now() + ""));
+                    songDatas.push(new SongDetails(url, interaction.member.id, new Date().toISOString()));
                 }).catch(async err => {
                     return await interaction.editReply({ content: null, embeds: [new EmbedBuilder({
                         author: {
@@ -70,7 +69,6 @@ export default new KyCommand({
         let connection = getVoiceConnection(interaction.guild.id);
 
         let voiceState = interaction.member.voice;
-        debug(voiceState);
         if(!voiceState.channel)
             return await interaction.editReply({ content: "You are not connected to any voice channel!"});
 
