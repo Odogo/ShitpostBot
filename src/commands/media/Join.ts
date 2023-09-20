@@ -21,8 +21,8 @@ export default new KyCommand({
         if(!voiceState) return await interaction.editReply({ content: "Could not find your voice connection" });
         if(!voiceState.channel) return await interaction.editReply({ content: "Could not find your voice connection" });
 
-        if(!voiceState.channel.joinable || voiceState.channel.permissionsFor(interaction.guild.members.me)) {
-            return await interaction.reply({ content: "The voice channel you currently are in is unaccessible to my knowledge." });
+        if(!voiceState.channel.joinable || !voiceState.channel.permissionsFor(interaction.guild.members.me)) {
+            return await interaction.editReply({ content: "The voice channel you currently are in is unaccessible to my knowledge." });
         }
 
         if(getVoiceConnection(interaction.guild.id) == undefined) {

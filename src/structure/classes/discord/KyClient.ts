@@ -36,7 +36,7 @@ export class KyClient extends Client {
 	 * @param options Required parameters to start the bot, like the token, clientId, command and event paths.
 	 */
     constructor(options: KyClientOptions) {
-        super({ intents: [GatewayIntentBits.MessageContent] });
+        super({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates] });
 
         this.clientOptions = options;
         this.commands = new Collection();

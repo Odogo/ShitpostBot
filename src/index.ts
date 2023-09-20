@@ -5,7 +5,6 @@ import { Sequelize } from "sequelize";
 import { KyClient } from "./structure/classes/discord/KyClient";
 import manifest from "../.env/bot_manifest.json";
 import { ServerQueueModel } from "./utilities/database/ServerQueueModel";
-import { MediaManager } from "./structure/classes/MediaManager";
 
 export const seqInstance = new Sequelize({ host: 'localhost', dialect: 'sqlite', logging: false, storage: 'database.sql'});
 

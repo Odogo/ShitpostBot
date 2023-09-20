@@ -21,6 +21,9 @@ export default new KyEvent(Events.InteractionCreate, async (interaction) => {
         error("[CommandManager] Command execution failed, with given reason: " + reason);
         error(reason);
         
-        await interaction.reply("Failed to execute command: " + reason);
+        if(!interaction.replied)
+            await interaction.reply("Failed to execute command: " + reason);
+        else 
+            await interaction.followUp("Failed to execute command: " + reason);
     });
 });

@@ -3,10 +3,10 @@ import provider, { SoundCloudPlaylist, SoundCloudTrack, SpotifyAlbum, SpotifyPla
 import { APIEmbedField, EmbedBuilder, Guild, TextBasedChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from 'discord.js';
 
 // -- Local Imports --
-import { info, warn } from '../../utilities/System';
+import { info, warn, debug } from '../../utilities/System';
 import { SongDetails } from './SongDetails';
 import { ServerQueueModel } from '../../utilities/database/ServerQueueModel';
-import { AudioPlayerStatus, NoSubscriberBehavior, StreamType, VoiceConnection, VoiceConnectionReadyState, VoiceConnectionStatus, createAudioPlayer, createAudioResource, entersState, getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
+import { AudioPlayerPlayingState, AudioPlayerStatus, NoSubscriberBehavior, StreamType, VoiceConnection, VoiceConnectionReadyState, VoiceConnectionStatus, createAudioPlayer, createAudioResource, entersState, getVoiceConnection, joinVoiceChannel } from '@discordjs/voice';
 
 export enum PlayingQueueStatus { NoQueueData, NoSongsInQueue, NoQueueIndex, EndOfQueue, Success }
 
@@ -590,7 +590,7 @@ export class MediaManager {
 		info("Connected and began processing queue at index " + index + " [GID: " + guild.id + "]");
 		info("Song started playing: " + details.title + " by " + details.channel.name + " [GID: " + guild.id + "]");
 
-		// textChannel.send({ embeds: [await generateSongEmbed(guild, songs[index], "nowPlaying")]});
+		textChannel.send({ embeds: [await this.generateSongEmbed(guild, songs[index], "nowPlaying")]});
 
 		player.on('error', async (error) => {
 			warn("An error occured while attempting to use the AudioPlayer: " + error);
@@ -629,7 +629,7 @@ export class MediaManager {
 					player.play(resource);
 
 					// Send a message into the text channel about the song now playing.
-					// textChannel.send({ embeds: [await generateSongEmbed(guild, songs[index], "nowPlaying")]});
+					textChannel.send({ embeds: [await this.generateSongEmbed(guild, songs[index], "nowPlaying")]});
 
 					// Display in console that we've started playing the song.
 					details = (await provider.video_info(songs[index].songUrl)).video_details;
@@ -663,7 +663,7 @@ export class MediaManager {
 							await this.setQueueIndex(guild, index);
 
 							// Announce to the text channel that we're now playing a new song, and announce to console.
-							// textChannel.send({ embeds: [await generateSongEmbed(guild, songs[index], "nowPlaying")]});
+							textChannel.send({ embeds: [await this.generateSongEmbed(guild, songs[index], "nowPlaying")]});
 
 							details = (await provider.video_info(songs[index].songUrl)).video_details;
                         	info("Song started playing: " + details.title + " by " + details.channel.name + " [GID: " + guild.id + "]");
@@ -702,7 +702,7 @@ export class MediaManager {
 					await this.setQueueIndex(guild, index);
 
 					// Announce to the text channel that we're now playing a new song, and announce to console.
-					// textChannel.send({ embeds: [await generateSongEmbed(guild, songs[index], "nowPlaying")]});
+					textChannel.send({ embeds: [await this.generateSongEmbed(guild, songs[index], "nowPlaying")]});
 
 					details = (await provider.video_info(songs[index].songUrl)).video_details;
                     info("Song started playing: " + details.title + " by " + details.channel.name + " [GID: " + guild.id + "]");
@@ -722,11 +722,11 @@ export class MediaManager {
 	 * @param page what page to display
 	 * @returns the built embed
 	 */
-	public static async generateQueueList(guild: Guild, perPage = -1, page = -1): Promise<string | EmbedBuilder> {
+	public static async generateQueueList(guild: Guild, perPage = -1, page = -1): Promise<EmbedBuilder> {
 		return new Promise(async (resolve, reject) => {
 			await this.fetchSongQueue(guild).then(async songs => {
-				if(songs == undefined) resolve("There are no songs to make a queue list from.");
-				if(perPage < 5 || perPage > 15) resolve("The minimum and maximum limit for each page is between 5 and 15 entries.");
+				if(songs == undefined) reject("There are no songs to make a queue list from.");
+				if(perPage < 5 || perPage > 15) reject("The minimum and maximum limit for each page is between 5 and 15 entries.");
 
 				let totalPages = Math.floor(songs.length / perPage) + (songs.length % perPage == 0 ? 0:1);
 
@@ -826,6 +826,93 @@ export class MediaManager {
 				resolve(newQueue);
 			} catch(error) {
 				reject(error);
+			}
+		});
+	}
+
+	// Utilities
+	public static capFirstChar(input: string) { return input.charAt(0).toUpperCase() + input.slice(1).toLowerCase(); }
+
+	public static placementNumber(number: number): string {
+		let placement: string;
+
+        if (number >= 11 && number <= 20) {
+            placement = number + 'th';
+        } else {
+            const lastDigit = number % 10;
+            switch (lastDigit) {
+                case 1: { placement = number + 'st'; break; }
+                case 2: { placement = number + 'nd'; break; }
+                case 3: { placement = number + 'rd'; break; }
+                default: { placement = number + 'th'; break; }
+            }
+        }
+
+        return placement;
+	}
+
+	public static async generateSongEmbed(guild: Guild, song: SongDetails, embedType: "addedToQueue" | "nowPlaying"): Promise<EmbedBuilder> {
+		return new Promise(async (resolve, reject) => {
+			let requester = await guild.members.fetch(song.submitterId);
+			let songInfo = await provider.video_info(song.songUrl);
+
+			if(embedType === 'nowPlaying') {
+				const connection = getVoiceConnection(guild.id);
+				if(connection == undefined)
+					reject(new Error("No connection exists for that guild"));
+
+				let state = connection.state;
+				if(state.status !== VoiceConnectionStatus.Ready) 
+					await entersState(connection, VoiceConnectionStatus.Ready, 5_000).catch(() => reject(new Error("Current connection is still attempting to connect (timeout 5s)")));
+				state = state as VoiceConnectionReadyState;
+
+				const player = state.subscription.player;
+				if(player.state.status !== AudioPlayerStatus.Playing)
+					reject(new Error("The player is not actively playing anything"));
+				player.state = player.state as AudioPlayerPlayingState;
+				
+				let currentPlaybackSeek = Math.ceil(player.state.playbackDuration / 1000);
+				let maxPlaybackSeek = songInfo.video_details.durationInSec;
+
+				const embed = new EmbedBuilder({
+					color: 0xff91f8,
+					footer: { text: "Requested - Now Playing" },
+					timestamp: song.submitTimestamp,
+					fields: [
+						{name: songInfo.video_details.title + " by " + songInfo.video_details.channel.name, value: songInfo.video_details.url } 
+					],
+					author: {
+						name: (requester.nickname == null ? this.capFirstChar(requester.displayName): this.capFirstChar(requester.nickname)),
+						icon_url: requester.user.avatarURL({extension: 'png', size: 4096})
+					}
+				});
+
+				if(currentPlaybackSeek > 6) {
+					let cMinutes = Math.floor(currentPlaybackSeek / 60), cSeconds = Math.floor(currentPlaybackSeek % 60);
+					let mMinutes = Math.floor(maxPlaybackSeek / 60), mSeconds = Math.floor(maxPlaybackSeek % 60);
+	
+					embed.addFields({ name: "Seek", value: cMinutes + ":" + (cSeconds > 9 ? cSeconds: "0" + cSeconds) + " / " + mMinutes + ":" + (mSeconds > 9 ? mSeconds: "0" + mSeconds) + " [" + (Math.floor((currentPlaybackSeek / maxPlaybackSeek) * 10000) / 100) + "%]" });
+				}
+			
+				resolve(embed);
+			} else if(embedType === 'addedToQueue') {
+				const embed = new EmbedBuilder({
+					color: 0xff91f8,
+					footer: { text: "Added to queue" },
+					timestamp: Date.now(),
+					fields: [
+						{ name: songInfo.video_details.title + " by " + songInfo.video_details.channel.name, value: songInfo.video_details.url },
+						{ name: "Position", value: this.placementNumber((await this.fetchSongQueue(guild)).length) + " in queue" }
+					],
+					author: {
+						name: (requester.nickname == null ? this.capFirstChar(requester.displayName): this.capFirstChar(requester.nickname)),
+						icon_url: requester.user.avatarURL({extension: 'png', size: 4096})
+					}
+				});
+	
+				resolve(embed);
+			} else {
+				reject(new Error("Invalid embed type"));
 			}
 		});
 	}
