@@ -1,11 +1,52 @@
-# ShitpostBot
+# Shitpost Bot
+> Version: v4.0.0
+>
+> Updated: 03/10/2023
 
-## v3.1.0
+## About
+Shitpost Bot is a discord bot aimed to remove the scum that is premium bots. It is designed to be user friendly for the end user and easy to access without paying a single dime to any Discord Bot out there.
 
-The ShitpostBot is a Discord bot developed by Odogo for her friends to use in their servers.
-This bot's intention is to mainly give the server owner's the ability to what they wish with their server,
-without having to pay a single dime, since most bots these days lock shit behind a paywall.
+This is achieved by custom written code using 3rd party libraries *(thank you library authors <3)* to give a similar experience to what a normal bot would be.
 
-## License
+## Planned Features
+- Music playback and functions
+  - Join & Leave
+  - Play & Search
+  - Skip & Back
+  - Pause & Resume
+  - Currently Playing & Queue
+  - Clear & Remove
+  - Repeat & Shuffle
+  - Jump
+  - Volume
+  - Playlist (later)
+  - ~~seek~~ (unable, library reason)
+- Auto roles (when a new user joins, give them x roles)
+- Reaction roles (reaction or dropdown)
+- Welcome / Leave messages
+- Server/User information
+- Moderation Commands (requires moderation power)
+  - Warn (unwarn)
+  - Kick
+  - Ban (unban)
+  - Timeout (untimeout)
+  - Punishment History
+    - View
+    - Clear
+  - Allow servers to see other infractions from other servers
+    - If linked with a punishment token ID, total punishment count, reason, and time will be displayed in the infraction list for each matching punishment token.
+- Extensive Logging
+  - Allows logs of ran commands (config setting to show failed commands as well)
+  - Message Events (Deleted, Edited, or Purged)
+  - Members (Joined, Leaving)
+  - Server (Channel & Role changes, server updates, emoji changes)
+  - Member (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
+  - Voice (Join, Move, Leave)
 
-This source code, and it's contents, being uploaded to GitHub is only for source control and backups of the code. The code in question or the final product of such cannot be sold, used, redistrubited, modified, or altered in any matter without express permission. You may not use this bot yourself.
+
+# Visual Database Tables
+## Channel Logging
+| Guild ID | Voice Channel Logging | Moderation Logs |
+| - | - | - |
+| 1085029228090761317 | 1085029228698931303 | 1092551550288789585 |
+| 3781237812783127832 | none/null/undefined | 3821893183892189318 |

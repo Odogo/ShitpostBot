@@ -1,6 +1,6 @@
 {
   "name": "shitpostbot",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "The shitpost everyone is talking about",
   "main": "index.js",
   "scripts": {
@@ -9,18 +9,11 @@
   "author": "Odogo",
   "license": "UNLICENSED",
   "dependencies": {
-    "@discordjs/opus": "^0.9.0",
-    "@discordjs/voice": "^0.16.0",
+    "@types/node": "^20.8.2",
     "discord.js": "^14.13.0",
-    "ffmpeg-static": "^5.2.0",
-    "libsodium-wrappers": "^0.7.13",
-    "play-dl": "https://github.com/Odogo/play-dl/tarball/main",
     "sequelize": "^6.33.0",
     "sqlite3": "^5.1.6",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
-  },
-  "devDependencies": {
-    "@types/node": "^20.6.3"
   }
 }
