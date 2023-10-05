@@ -34,7 +34,7 @@ export function isLoggingEnabled(guild: Guild, type: LoggingType): Promise<boole
     });
 }
 
-export function fetchLoggingChannel(guild: Guild, type: LoggingType): Promise<Channel | undefined> {
+export function fetchLoggingChannel(guild: Guild, type: LoggingType): Promise<Channel | null> {
     return new Promise(async (resolve, reject) => {
         await MServerLogging.findOne({ where: { guildId: guild.id }}).then(async (data) => {
             if(!data) {
@@ -55,11 +55,9 @@ export function fetchLoggingChannel(guild: Guild, type: LoggingType): Promise<Ch
             if(channelId) {
                 await guild.channels.fetch(channelId)
                     .then(resolve)
-                    .catch(async (reason) => {
-                        reject(reason);
-                    });
+                    .catch(async (reason) => { reject(reason); });
             } else {
-                resolve(undefined);
+                resolve(null);
             }
         }).catch(reject);
     });

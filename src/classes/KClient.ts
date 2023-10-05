@@ -2,7 +2,7 @@ import { ApplicationCommandData, ApplicationCommandDataResolvable, Client, Clien
 import { PathLike } from "fs";
 import { TKCommandOptions } from "./KCommand";
 import { lstat, readdir } from "fs/promises";
-import { logDebug, logError, logWarn } from '../system';
+import { logDebug, logError, logInfo, logWarn } from '../system';
 import { join } from "path";
 import { KEvent } from "./KEvent";
 
@@ -28,9 +28,11 @@ export class KClient extends Client {
     }
 
     public override async login(token = this.token): Promise<string> {
+        logInfo("Registering commands & events");
         await this.registerCommands();
         await this.registerEvents();
 
+        logInfo("Attemping login with token");
         return super.login(token);
     }
 
@@ -48,6 +50,7 @@ export class KClient extends Client {
 
     private async registerEvents() {
         this.once(Events.ClientReady, async () => {
+            logInfo("Bot is now active & ready!");
             await this.pushCommandsToDiscord(Array.from(this.commands.values()));
         });
 
