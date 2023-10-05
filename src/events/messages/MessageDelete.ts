@@ -1,28 +1,24 @@
 import { KEvent } from "../../classes/KEvent";
-import { EmbedBuilder, Events } from 'discord.js';
-import { LoggingType, fetchLoggingChannel, isLoggingEnabled } from "../../modules/Logging";
+import { ChannelType, EmbedBuilder, Events } from 'discord.js';
 import { logWarn } from "../../system";
+import { LoggingConfigCategory, LoggingConfigType, isCategoryLogged, isTypeLogged } from "../../modules/Logging";
 
 export default new KEvent(Events.MessageDelete, async (msg) => {
-    if(await isLoggingEnabled(msg.guild, LoggingType.MessageEvents)) {
-        let channel = await fetchLoggingChannel(msg.guild, LoggingType.MessageEvents);
-        if(channel.isTextBased()) {
-            const embed = new EmbedBuilder({
-                color: 0x7dffc7,
-                title: "Message Deleted",
-                fields: [
-                    { name: "In channel", value: "<#" + msg.channel.id + ">" },
-                    { name: "Contents", value: msg.content },
-                ],
-                author: {
-                    name: msg.author.username,
-                    icon_url: msg.author.avatarURL({ size: 4096, extension: 'png' })
-                }
-            });
-            
-            await channel.send({ embeds: [embed]});
-        } else {
-            logWarn("The given channel for type " + LoggingType.MessageEvents + " was not a text based channel.");
-        }
+    if(msg.author?.bot) return;
+    if(msg.guild === null) return;
+
+    if(await isTypeLogged(msg.guild, LoggingConfigType.MessageDelete)) {
+        let channelId = await isCategoryLogged(msg.guild, LoggingConfigCategory.MessageEvents);
+        if(channelId === undefined) return;
+
+        await msg.guild.channels.fetch(channelId).then(async (channel) => {
+            if(channel !== null && channel.isTextBased()) {
+                
+            } else {
+                logWarn("Failed to post log attempt (found channel): " + channel + " [channel object]");
+            }
+        }).catch((reason) => {
+            logWarn("Failed to post log attempt: " + reason);
+        });
     }
 });

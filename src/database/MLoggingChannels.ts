@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelInstance } from "..";
 
-export class MServerLogging extends Model {
+export class MLoggingChannels extends Model {
 
     // Identifier
     declare guildId: string;
@@ -13,13 +13,13 @@ export class MServerLogging extends Model {
     declare logMessages: string | undefined;
     
     // Server Enterance / Leaving
-    declare logServerDoor: string | undefined;
+    declare logGuildMembers: string | undefined;
 
     // Server Events (Channel & Role changes, server updates, emoji changes)
-    declare logServer: string | undefined;
+    declare logGuild: string | undefined;
 
     // Member Events (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
-    declare logMembers: string | undefined;
+    declare logGuildMember: string | undefined;
 
     // Voice Events (Join, Move, Leave)
     declare logVoice: string | undefined;
@@ -29,7 +29,7 @@ export class MServerLogging extends Model {
     declare logCommands: string | undefined;
 
     public static async initialize() {
-        return MServerLogging.init({
+        return MLoggingChannels.init({
 
             guildId: {
                 type: DataTypes.STRING,
@@ -38,22 +38,22 @@ export class MServerLogging extends Model {
                 allowNull: false
             },
 
-            logMessages: {
+            logMessage: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
 
-            logServerDoor: {
+            logGuildMembers: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
 
-            logServer: {
+            logGuild: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
 
-            logMembers: {
+            logGuildMember: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
@@ -69,7 +69,7 @@ export class MServerLogging extends Model {
             }
         }, {
             sequelize: sequelInstance,
-            tableName: "serverLogging",
+            tableName: "loggingChannels",
             timestamps: false
         });
     }

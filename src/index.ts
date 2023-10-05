@@ -3,8 +3,8 @@ import { Sequelize } from "sequelize";
 
 import manifest from '../.env/bot_manifesto.json';
 import { KClient } from "./classes/KClient";
-import { MServerLogging } from "./database/MServerLogging";
 import { join } from "path";
+import { MLoggingChannels } from "./database/MLoggingChannels";
 
 export const sequelInstance = new Sequelize({
     storage: 'database.sql',
@@ -20,7 +20,7 @@ export const client = new KClient({
  join(__dirname, "./commands"), join(__dirname, "./events"));
 
 (async () => {
-    await (await MServerLogging.initialize()).sync();
+    await (await MLoggingChannels.initialize()).sync();
 
     await client.login();
 })();
