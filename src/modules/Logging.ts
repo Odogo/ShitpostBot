@@ -241,7 +241,6 @@ export async function setStateForType(guild: Guild, type: LoggingConfigType, sta
                 default: reject(new Error("Invalid type")); break;
             }
 
-            logDebug("Updating database..");
             await data.save()
                 .then(() => resolve())
                 .catch(reject);

@@ -54,9 +54,6 @@ export default new KCommand({
             let option = new StringSelectMenuOptionBuilder(getSelectMenuOption(types[i]));
 
             await isTypeLogged(interaction.guild, types[i]).then((logged) => {
-                logDebug(types[i]);
-                logDebug(LoggingConfigType.MessagePurged);
-                logDebug(logged);
                 select.addOptions(option.setDefault(logged));
             }).catch((reason) => {
                 logDebug(reason);
@@ -70,12 +67,11 @@ export default new KCommand({
         
         collector.on('collect', async (collectInteract) => {
             for(let i=0; i<types.length; i++) {
-                logDebug(types[i]);
-                logDebug(collectInteract.values.includes(types[i]));
                 await setStateForType(interaction.guild, types[i], collectInteract.values.includes(types[i]));
             }
 
-            await collectInteract.reply({ content: "Successfully modified logging properties for category `" + category + "`", ephemeral: true });
+            await interaction.deleteReply();
+            await collectInteract.reply({ content: "Successfully modified logging properties for category `" + category + "`", components: [], ephemeral: true });
         });
     }
 });

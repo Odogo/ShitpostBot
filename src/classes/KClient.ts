@@ -63,7 +63,6 @@ export class KClient extends Client {
         let events = await fetchEventFiles(this.eventPath);
         events.forEach(async (event) => { 
             this.on(event.event, event.run);
-            logDebug(event.event + " was registered.");
         });
         logDebug("[Events] Events registered.");
     }

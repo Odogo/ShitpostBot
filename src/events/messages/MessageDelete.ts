@@ -4,30 +4,29 @@ import { LoggingConfigCategory, LoggingConfigType, isCategoryLogged, isTypeLogge
 import { EmbedBuilder, Events } from "discord.js";
 
 export default new KEvent(Events.MessageDelete, async (msg) => {
-    if(msg.author?.bot) return;
-    if(msg.guild === null) return;
+    if(msg.partial) {
+        msg = await msg.fetch(true);
+    }
 
-    logDebug("test a");
+    if(msg.author.bot) return;
+
     if(await isTypeLogged(msg.guild, LoggingConfigType.MessageDelete)) {
-        logDebug("test b");
         let channelId = await isCategoryLogged(msg.guild, LoggingConfigCategory.MessageEvents);
         if(channelId === undefined) return;
-
-        logDebug("test c");
         
         await msg.guild.channels.fetch(channelId).then(async (channel) => {
             if(channel !== null && channel.isTextBased()) {
                 const embed = new EmbedBuilder({
                     color: 0x7dffc7,
-                    title: "Message Deleted",
+                    description: `📃 [Message](${msg.url}) by <@${msg.author.id}> was **deleted!** \n\n **In Channel**: <#${msg.channel.id}>`,
                     fields: [
-                        { name: "In channel", value: "<#" + msg.channel.id + ">" },
                         { name: "Contents", value: msg.content },
                     ],
                     author: {
-                        name: msg.author.username,
-                        icon_url: msg.author.avatarURL({ size: 4096, extension: 'png' })
-                    }
+                        name: msg.author?.username,
+                        icon_url: msg.author?.avatarURL({ size: 4096, extension: 'png' })
+                    },
+                    timestamp: Date.now(),
                 });
                 
                 await channel.send({ embeds: [embed]});
