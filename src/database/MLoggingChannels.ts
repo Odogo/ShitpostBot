@@ -38,7 +38,7 @@ export class MLoggingChannels extends Model {
                 allowNull: false
             },
 
-            logMessage: {
+            logMessages: {
                 type: DataTypes.STRING,
                 allowNull: true
             },

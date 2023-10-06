@@ -13,7 +13,7 @@ export class KClient extends Client {
     public cmdPath: PathLike;
     public eventPath: PathLike;
 
-    private commands: Collection<string, TKCommandOptions>
+    public commands: Collection<string, TKCommandOptions>
 
     constructor(options: ClientOptions, token?: string, clientId?: string, cmdPath?: PathLike, eventPath?: PathLike) {
         super(options);
@@ -61,7 +61,10 @@ export class KClient extends Client {
         }
     
         let events = await fetchEventFiles(this.eventPath);
-        events.forEach(async (event) => this.on(event.event, event.run));
+        events.forEach(async (event) => { 
+            this.on(event.event, event.run);
+            logDebug(event.event + " was registered.");
+        });
         logDebug("[Events] Events registered.");
     }
 

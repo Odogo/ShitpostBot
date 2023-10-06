@@ -2,50 +2,51 @@
  * This module handles the interaction between the end user and the database.
  */
 
-import { Guild, TextBasedChannel } from "discord.js";
+import { APISelectMenuOption, Guild, SelectMenuComponentOptionData, StringSelectMenuOptionBuilder, TextBasedChannel } from "discord.js";
 import { MLoggingChannels } from "../database/MLoggingChannels";
 import { MLoggingConfig } from "../database/MLoggingConfig";
+import { logDebug, logError } from "../system";
 
 export enum LoggingConfigType {
     // Message Events
-    MessageDelete,
-    MessageEdited,
-    MessagePurged,
+    MessageDelete = "messageDelete",
+    MessageEdited = "messageEdited",
+    MessagePurged = "messagePurged",
 
     // Guild Members Events
-    MemberJoin,
-    MemberLeave,
+    MemberJoin = "memberJoin",
+    MemberLeave = "memberLeave",
 
     // Guild Events
-    ChannelAdd,
-    ChannelModify,
-    ChannelRemove,
+    ChannelAdd = "channelAdd",
+    ChannelModify = "channelModify",
+    ChannelRemove = "channelRemove",
 
-    RoleAdd,
-    RoleModify,
-    RoleRemove,
+    RoleAdd = "roleAdd",
+    RoleModify = "roleModify",
+    RoleRemove = "roleRemove",
 
-    GuildUpdate,
-    EmojiUpdate,
+    GuildUpdate = "guildUpdate",
+    EmojiUpdate = "emojiUpdate",
 
     // Guild Member Events
-    MemberRole,
-    MemberName,
-    MemberAvatar,
+    MemberRole = "memberRole",
+    MemberName = "memberName",
+    MemberAvatar = "memberAvatar",
 
-    MemberBan,
-    MemberUnban,
-    MemberTimeout,
-    MemberUntimeout,
+    MemberBan = "memberBan",
+    MemberUnban = "memberUnban",
+    MemberTimeout = "memberTimeout",
+    MemberUntimeout = "memberUntimeout",
 
     // Voice Events
-    VoiceJoin,
-    VoiceSwitch,
-    VoiceLeave,
+    VoiceJoin = "voiceJoin",
+    VoiceSwitch = "voiceSwitch",
+    VoiceLeave = "voiceLeave",
 
     // Application Events
-    SelfCommands,
-    SelfCommandError
+    SelfCommands = "selfCommand",
+    SelfCommandError = "selfCommandError"
 }
 
 export enum LoggingConfigCategory {
@@ -95,7 +96,7 @@ export function getTypes(category: LoggingConfigCategory): Array<LoggingConfigTy
  * @param category The category to check
  * @returns the channel id of the logging channel for the category
  */
-export async function isCategoryLogged(guild: Guild, category: LoggingConfigCategory): Promise<string|undefined> {
+export async function isCategoryLogged(guild: Guild, category: LoggingConfigCategory): Promise<string | undefined> {
     return new Promise(async (resolve, reject) => {
         await MLoggingChannels.findOne({ where: { guildId: guild.id }}).then(async (data) => {
             if(data === null || !data) {
@@ -105,23 +106,29 @@ export async function isCategoryLogged(guild: Guild, category: LoggingConfigCate
             switch(category) {
                 case LoggingConfigCategory.MessageEvents:
                     resolve(data.logMessages);
+                    break;
 
                 case LoggingConfigCategory.GuildMembersEvents:
                     resolve(data.logGuildMembers);
+                    break;
 
                 case LoggingConfigCategory.GuildEvents:
                     resolve(data.logGuild);
+                    break;
 
                 case LoggingConfigCategory.GuildMemberEvents:
                     resolve(data.logGuildMember);
+                    break;
 
                 case LoggingConfigCategory.VoiceEvents:
                     resolve(data.logVoice);
+                    break;
 
                 case LoggingConfigCategory.ApplicationEvents:
                     resolve(data.logCommands);
+                    break;
 
-                default: reject(new Error("Invalid category"));
+                default: reject(new Error("Invalid category")); break;
             }
         }).catch(reject);
     });
@@ -142,32 +149,32 @@ export async function isTypeLogged(guild: Guild, type: LoggingConfigType): Promi
             }
 
             switch(type) {
-                case LoggingConfigType.MessageDelete: resolve(data.msgDelete);
-                case LoggingConfigType.MessageEdited: resolve(data.msgEdited);
-                case LoggingConfigType.MessagePurged: resolve(data.msgPurged);
-                case LoggingConfigType.MemberJoin: resolve(data.memberJoin);
-                case LoggingConfigType.MemberLeave: resolve(data.memberLeave);
-                case LoggingConfigType.ChannelAdd: resolve(data.channelAdd);
-                case LoggingConfigType.ChannelModify: resolve(data.channelModify);
-                case LoggingConfigType.ChannelRemove: resolve(data.channelRemove);
-                case LoggingConfigType.RoleAdd: resolve(data.roleAdd);
-                case LoggingConfigType.RoleModify: resolve(data.roleModify);
-                case LoggingConfigType.RoleRemove: resolve(data.roleRemove);
-                case LoggingConfigType.GuildUpdate: resolve(data.guildUpdate);
-                case LoggingConfigType.EmojiUpdate: resolve(data.emojiUpdate);
-                case LoggingConfigType.MemberRole: resolve(data.memberRole);
-                case LoggingConfigType.MemberName: resolve(data.memberName);
-                case LoggingConfigType.MemberAvatar: resolve(data.memberAvatar)
-                case LoggingConfigType.MemberBan: resolve(data.memberBan);
-                case LoggingConfigType.MemberUnban: resolve(data.memberUnban);
-                case LoggingConfigType.MemberTimeout: resolve(data.memberTimeout);
-                case LoggingConfigType.MemberUntimeout: resolve(data.memberUntimeout);
-                case LoggingConfigType.VoiceJoin: resolve(data.voiceJoin);
-                case LoggingConfigType.VoiceSwitch: resolve(data.voiceSwitch);
-                case LoggingConfigType.VoiceLeave: resolve(data.voiceLeave);
-                case LoggingConfigType.SelfCommands: resolve(data.selfCommands);
-                case LoggingConfigType.SelfCommandError: resolve(data.selfCommandError);
-                default: reject(new Error("Invalid type"));
+                case LoggingConfigType.MessageDelete: resolve(data.msgDelete); break;
+                case LoggingConfigType.MessageEdited: resolve(data.msgEdited); break;
+                case LoggingConfigType.MessagePurged: resolve(data.msgPurged); break;
+                case LoggingConfigType.MemberJoin: resolve(data.memberJoin); break;
+                case LoggingConfigType.MemberLeave: resolve(data.memberLeave); break;
+                case LoggingConfigType.ChannelAdd: resolve(data.channelAdd); break;
+                case LoggingConfigType.ChannelModify: resolve(data.channelModify); break;
+                case LoggingConfigType.ChannelRemove: resolve(data.channelRemove); break;
+                case LoggingConfigType.RoleAdd: resolve(data.roleAdd); break;
+                case LoggingConfigType.RoleModify: resolve(data.roleModify); break;
+                case LoggingConfigType.RoleRemove: resolve(data.roleRemove); break;
+                case LoggingConfigType.GuildUpdate: resolve(data.guildUpdate); break;
+                case LoggingConfigType.EmojiUpdate: resolve(data.emojiUpdate); break;
+                case LoggingConfigType.MemberRole: resolve(data.memberRole); break;
+                case LoggingConfigType.MemberName: resolve(data.memberName); break;
+                case LoggingConfigType.MemberAvatar: resolve(data.memberAvatar); break;
+                case LoggingConfigType.MemberBan: resolve(data.memberBan); break;
+                case LoggingConfigType.MemberUnban: resolve(data.memberUnban); break;
+                case LoggingConfigType.MemberTimeout: resolve(data.memberTimeout); break;
+                case LoggingConfigType.MemberUntimeout: resolve(data.memberUntimeout); break;
+                case LoggingConfigType.VoiceJoin: resolve(data.voiceJoin); break;
+                case LoggingConfigType.VoiceSwitch: resolve(data.voiceSwitch); break;
+                case LoggingConfigType.VoiceLeave: resolve(data.voiceLeave); break;
+                case LoggingConfigType.SelfCommands: resolve(data.selfCommands); break;
+                case LoggingConfigType.SelfCommandError: resolve(data.selfCommandError); break;
+                default: reject(new Error("Invalid type")); break;
             }
         }).catch(reject);
     });
@@ -190,7 +197,7 @@ export async function setChannelForCategory(guild: Guild, category: LoggingConfi
                 default: reject(new Error("Invalid category"));
             }    
 
-            await MLoggingChannels.update(data, { where: { guildId: guild.id }})
+            await data.save()
                 .then(() => resolve())
                 .catch(reject);
         }).catch(reject);
@@ -204,39 +211,70 @@ export async function setStateForType(guild: Guild, type: LoggingConfigType, sta
                 data = await MLoggingConfig.create({ guildId: guild.id });
             }
 
-            switch(type) {
-                case LoggingConfigType.MessageDelete: data.msgDelete = state;
-                case LoggingConfigType.MessageEdited: data.msgEdited = state;
-                case LoggingConfigType.MessagePurged: data.msgPurged = state;
-                case LoggingConfigType.MemberJoin: data.memberJoin = state;
-                case LoggingConfigType.MemberLeave: data.memberLeave = state;
-                case LoggingConfigType.ChannelAdd: data.channelAdd = state;
-                case LoggingConfigType.ChannelModify: data.channelModify = state;
-                case LoggingConfigType.ChannelRemove: data.channelRemove = state;
-                case LoggingConfigType.RoleAdd: data.roleAdd = state;
-                case LoggingConfigType.RoleModify: data.roleModify = state;
-                case LoggingConfigType.RoleRemove: data.roleRemove = state;
-                case LoggingConfigType.GuildUpdate: data.guildUpdate = state;
-                case LoggingConfigType.EmojiUpdate: data.emojiUpdate = state;
-                case LoggingConfigType.MemberRole: data.memberRole = state;
-                case LoggingConfigType.MemberName: data.memberName = state; 
-                case LoggingConfigType.MemberAvatar: data.memberAvatar = state;
-                case LoggingConfigType.MemberBan: data.memberBan = state;
-                case LoggingConfigType.MemberUnban: data.memberUnban = state;
-                case LoggingConfigType.MemberTimeout: data.memberTimeout = state;
-                case LoggingConfigType.MemberUntimeout: data.memberUntimeout = state;
-                case LoggingConfigType.VoiceJoin: data.voiceJoin = state;
-                case LoggingConfigType.VoiceSwitch: data.voiceSwitch = state;
-                case LoggingConfigType.VoiceLeave: data.voiceLeave = state;
-                case LoggingConfigType.SelfCommands: data.selfCommands = state;
-                case LoggingConfigType.SelfCommandError: data.selfCommandError = state;
+            switch(type as LoggingConfigType) {
+                case LoggingConfigType.MessageDelete: data.msgDelete = state; break;
+                case LoggingConfigType.MessageEdited: data.msgEdited = state; break;
+                case LoggingConfigType.MessagePurged: data.msgPurged = state; break;
+                case LoggingConfigType.MemberJoin: data.memberJoin = state; break;
+                case LoggingConfigType.MemberLeave: data.memberLeave = state; break;
+                case LoggingConfigType.ChannelAdd: data.channelAdd = state; break;
+                case LoggingConfigType.ChannelModify: data.channelModify = state; break;
+                case LoggingConfigType.ChannelRemove: data.channelRemove = state; break;
+                case LoggingConfigType.RoleAdd: data.roleAdd = state; break;
+                case LoggingConfigType.RoleModify: data.roleModify = state; break;
+                case LoggingConfigType.RoleRemove: data.roleRemove = state; break;
+                case LoggingConfigType.GuildUpdate: data.guildUpdate = state; break;
+                case LoggingConfigType.EmojiUpdate: data.emojiUpdate = state; break;
+                case LoggingConfigType.MemberRole: data.memberRole = state; break;
+                case LoggingConfigType.MemberName: data.memberName = state; break;
+                case LoggingConfigType.MemberAvatar: data.memberAvatar = state; break;
+                case LoggingConfigType.MemberBan: data.memberBan = state; break;
+                case LoggingConfigType.MemberUnban: data.memberUnban = state; break;
+                case LoggingConfigType.MemberTimeout: data.memberTimeout = state; break;
+                case LoggingConfigType.MemberUntimeout: data.memberUntimeout = state; break;
+                case LoggingConfigType.VoiceJoin: data.voiceJoin = state; break;
+                case LoggingConfigType.VoiceSwitch: data.voiceSwitch = state; break;
+                case LoggingConfigType.VoiceLeave: data.voiceLeave = state; break;
+                case LoggingConfigType.SelfCommands: data.selfCommands = state; break;
+                case LoggingConfigType.SelfCommandError: data.selfCommandError = state; break;
                 
-                default: reject(new Error("Invalid type"));
+                default: reject(new Error("Invalid type")); break;
             }
 
-            await MLoggingConfig.update(data, { where: { guildId: guild.id }})
+            logDebug("Updating database..");
+            await data.save()
                 .then(() => resolve())
                 .catch(reject);
         }).catch(reject);
     });
+}
+
+export function getSelectMenuOption(type: LoggingConfigType): APISelectMenuOption  {
+    switch(type) {
+        case LoggingConfigType.MessageDelete: return { label: "Message Delete", value: LoggingConfigType.MessageDelete, description: "Post a log about a deleted message, it's content and who sent it" }
+        case LoggingConfigType.MessageEdited: return { label: "Message Edited", value: LoggingConfigType.MessageEdited, description: "Post a log about an edited message, what it was before and after" }
+        case LoggingConfigType.MessagePurged: return { label: "Message Purged", value: LoggingConfigType.MessagePurged, description: "Post a log about a bulk message deletion" }
+        case LoggingConfigType.MemberJoin: return { label: "Member Joined", value: LoggingConfigType.MemberJoin, description: "Show who joined!" }
+        case LoggingConfigType.MemberLeave: return { label: "Member Leave", value: LoggingConfigType.MemberLeave, description: "Show who left.." }
+        case LoggingConfigType.ChannelAdd: return { label: "Channel Added", value: LoggingConfigType.ChannelAdd, description: "Post a log about a newly added channel" }
+        case LoggingConfigType.ChannelModify: return { label: "Channel Modified", value: LoggingConfigType.ChannelModify, description: "Post a log about a modified channel and what changed" }
+        case LoggingConfigType.ChannelRemove: return { label: "Channel Removed", value: LoggingConfigType.ChannelRemove, description: "Post a log about a deleted channel" }
+        case LoggingConfigType.RoleAdd: return { label: "Role Added", value: LoggingConfigType.RoleAdd, description: "Post a log about a newly created role" }
+        case LoggingConfigType.RoleModify: return { label: "Role Modified", value: LoggingConfigType.RoleModify, description: "Post a log about a modified role and what changed" }
+        case LoggingConfigType.RoleRemove: return { label: "Role Removed", value: LoggingConfigType.RoleRemove, description: "Post a log about a deleted role" }
+        case LoggingConfigType.GuildUpdate: return { label: "Guild Updated", value: LoggingConfigType.GuildUpdate, description: "Post a log about any update to the guild settings" }
+        case LoggingConfigType.EmojiUpdate: return { label: "Emoji Updated", value: LoggingConfigType.EmojiUpdate, description: "Post a log about any expression update" }
+        case LoggingConfigType.MemberRole: return { label: "Member Role", value: LoggingConfigType.MemberRole, description: "Post a log when a member's role(s) are updated" }
+        case LoggingConfigType.MemberName: return { label: "Member Name", value: LoggingConfigType.MemberName, description: "Post a log when a member's name is updated" }
+        case LoggingConfigType.MemberAvatar: return { label: "Member Avatar", value: LoggingConfigType.MemberAvatar, description: "Post a log when a member's avatar is updated" }
+        case LoggingConfigType.MemberBan: return { label: "Member Banned", value: LoggingConfigType.MemberBan, description: "Post a log when a member gets banned from the guild" }
+        case LoggingConfigType.MemberUnban: return { label: "Member Unbanned", value: LoggingConfigType.MemberUnban, description: "Post a log when a member gets unbanned from the guild" }
+        case LoggingConfigType.MemberTimeout: return { label: "Member Timeout", value: LoggingConfigType.MemberTimeout, description: "Post a log when a member gets timed out from the guild" }
+        case LoggingConfigType.MemberUntimeout: return { label: "Member Untimeout", value: LoggingConfigType.MemberUntimeout, description: "Post a log when a member gets untimed out from the guild" }
+        case LoggingConfigType.VoiceJoin: return { label: "Voice Join", value: LoggingConfigType.VoiceJoin, description: "Post a log when a member joins a voice channel" }
+        case LoggingConfigType.VoiceSwitch: return { label: "Voice Switch", value: LoggingConfigType.VoiceSwitch, description: "Post a log when a member switches voice channel" }
+        case LoggingConfigType.VoiceLeave: return { label: "Voice Leave", value: LoggingConfigType.VoiceLeave, description: "Post a log when a member leaves a voice channel" }
+        case LoggingConfigType.SelfCommands: return { label: "Self App Commands", value: LoggingConfigType.SelfCommands, description: "Post a log when someone uses my commands" }
+        case LoggingConfigType.SelfCommandError: return { label: "Self App Commands Error", value: LoggingConfigType.SelfCommandError, description: "Self App Commands will also show failed/error'd commands" }
+    }
 }

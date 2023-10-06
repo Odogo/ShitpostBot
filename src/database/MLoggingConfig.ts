@@ -68,7 +68,7 @@ export class MLoggingConfig extends Model {
                 defaultValue: false
             },
 
-            msgPurge: {
+            msgPurged: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
