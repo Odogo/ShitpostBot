@@ -18,8 +18,9 @@ export default new KEvent(Events.MessageDelete, async (msg) => {
             if(channel !== null && channel.isTextBased()) {
                 const embed = new EmbedBuilder({
                     color: 0x7dffc7,
-                    description: `📃 [Message](${msg.url}) by <@${msg.author.id}> was **deleted!** \n\n **In Channel**: <#${msg.channel.id}>`,
+                    description: `[Message](${msg.url}) by <@${msg.author.id}> was **deleted!**`,
                     fields: [
+                        { name: "Channel", value: "<#" + msg.channel.id + ">"},
                         { name: "Contents", value: msg.content },
                     ],
                     author: {
