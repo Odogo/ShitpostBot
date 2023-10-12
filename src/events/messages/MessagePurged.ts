@@ -2,6 +2,7 @@ import { EmbedBuilder, Events } from "discord.js";
 import { KEvent } from "../../classes/KEvent";
 import { LoggingConfigCategory, LoggingConfigType, isCategoryLogged, isTypeLogged } from "../../modules/Logging";
 import { logWarn } from "../../system";
+import { client } from "../..";
 
 export default new KEvent(Events.MessageBulkDelete, async (msgs, channel) => {
     let guild = channel.guild;
@@ -14,13 +15,10 @@ export default new KEvent(Events.MessageBulkDelete, async (msgs, channel) => {
             if(logChannel != null && logChannel.isTextBased()) {
                 const embed = new EmbedBuilder({
                     color: 0x7dffc7,
-                    description: msgs.size + " was deleted (in bulk) from <#" + channel.id + ">",
-                    fields: [
-                        { name: "", value: ""}
-                    ],
+                    description: msgs.size + " messages were deleted (in bulk) from <#" + channel.id + ">",
                     author: {
                         name: guild.members.me.displayName,
-                        icon_url: guild.members.me.avatarURL({ size: 4096, extension: "png" })
+                        icon_url: client.user.avatarURL({ extension: 'png', size: 4096 })
                     }
                 });
 
