@@ -4,8 +4,8 @@ import { Sequelize } from "sequelize";
 import manifest from '../.env/bot_manifesto.json';
 import { KClient } from "./classes/KClient";
 import { join } from "path";
-import { MLoggingChannels } from "./database/MLoggingChannels";
-import { MLoggingConfig } from "./database/MLoggingConfig";
+import { MLoggingChannels } from "./database/logging/MLoggingChannels";
+import { MLoggingConfig } from "./database/logging/MLoggingConfig";
 
 export const sequelInstance = new Sequelize({
     storage: 'database.sql',

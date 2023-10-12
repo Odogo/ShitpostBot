@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelInstance } from "..";
+import { sequelInstance } from "../..";
 
 export class MLoggingConfig extends Model {
 

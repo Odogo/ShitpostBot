@@ -36,11 +36,15 @@ export default new KEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {
                     },
                     timestamp: Date.now(),
                 });
+
+                embed.data.fields
         
                 await channel.send({ embeds: [embed] });
             } else {
-                logWarn("Channel does not exist or is not text based");
+                logWarn("Failed to post log attempt (found channel): " + channel + " [channel object]");
             }
+        }).catch((reason) => {
+            logWarn("Failed to post log attempt: " + reason);
         });
     }
 });

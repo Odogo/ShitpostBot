@@ -3,8 +3,8 @@
  */
 
 import { APISelectMenuOption, Guild, SelectMenuComponentOptionData, StringSelectMenuOptionBuilder, TextBasedChannel } from "discord.js";
-import { MLoggingChannels } from "../database/MLoggingChannels";
-import { MLoggingConfig } from "../database/MLoggingConfig";
+import { MLoggingChannels } from "../database/logging/MLoggingChannels";
+import { MLoggingConfig } from "../database/logging/MLoggingConfig";
 import { logDebug, logError } from "../system";
 
 export enum LoggingConfigType {
