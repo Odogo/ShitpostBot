@@ -1,6 +1,6 @@
 OCO License
 
-Copyright (c) 2023-2024:  Kyomi "Odogo"
+Copyright (c) 2023-2024 Kyomi
 
 What you are allowed to do:
  - View and/or fork this repository,
