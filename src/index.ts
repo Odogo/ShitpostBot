@@ -21,13 +21,15 @@ export const client = new KClient({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.GuildMessageTyping
+        GatewayIntentBits.GuildMessageTyping,
     ],
     partials: [Partials.Message, Partials.Channel, Partials.GuildMember]
 }, manifest.token, manifest.clientId,
 join(__dirname, "./commands"), join(__dirname, "./events"));
 
+// Putting everything together
 (async () => {
+    // Logging Database
     await (await MLoggingChannels.initialize()).sync();
     await (await MLoggingConfig.initialize()).sync();
 

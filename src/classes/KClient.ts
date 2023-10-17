@@ -15,7 +15,7 @@ export class KClient extends Client {
 
     public commands: Collection<string, TKCommandOptions>
 
-    constructor(options: ClientOptions, token?: string, clientId?: string, cmdPath?: PathLike, eventPath?: PathLike) {
+    constructor(options: ClientOptions, token: string, clientId: string, cmdPath: PathLike, eventPath: PathLike) {
         super(options);
 
         this.token = token;
@@ -28,12 +28,19 @@ export class KClient extends Client {
     }
 
     public override async login(token = this.token): Promise<string> {
-        logInfo("Registering commands & events");
-        await this.registerCommands();
-        await this.registerEvents();
-
-        logInfo("Attemping login with token");
-        return super.login(token);
+        return new Promise(async (resolve, reject) => {
+            if(token == null || token == undefined) {
+                reject(new Error("token cannot be null or undefined"));
+                return;
+            }
+    
+            logInfo("Registering commands & events");
+            await this.registerCommands();
+            await this.registerEvents();
+    
+            logInfo("Attemping login with token");
+            resolve(await super.login(token));
+        });
     }
 
     private async registerCommands() {
@@ -70,7 +77,7 @@ export class KClient extends Client {
     private async pushCommandsToDiscord(commands: Array<ApplicationCommandDataResolvable>) {
         logDebug("[Commands] Bot ready, attempting to push to discord...");
         try {
-            await this.application.commands.set(commands);
+            await this.application?.commands.set(commands);
             logDebug("[Commands] Successfully pushed to discord.");
         } catch(reason) {
             logError("[Commands] Failed to push commands to discord: " + reason);
