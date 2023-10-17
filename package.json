@@ -9,7 +9,7 @@
   "author": "Odogo",
   "license": "UNLICENSED",
   "dependencies": {
-    "@types/node": "^20.8.2",
+    "@types/node": "^20.8.6",
     "discord.js": "^14.13.0",
     "sequelize": "^6.33.0",
     "sqlite3": "^5.1.6",
