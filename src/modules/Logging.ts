@@ -2,10 +2,10 @@
  * This module handles the interaction between the end user and the database.
  */
 
-import { APISelectMenuOption, Guild, NonThreadGuildBasedChannel, SelectMenuComponentOptionData, StringSelectMenuOptionBuilder, TextBasedChannel } from "discord.js";
+import { APISelectMenuOption, BaseGuildTextChannel, Collection, Guild, GuildTextBasedChannel, NonThreadGuildBasedChannel, SelectMenuComponentOptionData, StringSelectMenuOptionBuilder, TextBasedChannel, TextChannel } from "discord.js";
 import { MLoggingChannels } from "../database/logging/MLoggingChannels";
 import { MLoggingConfig } from "../database/logging/MLoggingConfig";
-import { logDebug, logError } from "../system";
+import { logDebug, logError, logWarn } from "../system";
 
 export enum LoggingConfigType {
     // Message Events
@@ -58,6 +58,13 @@ export enum LoggingConfigCategory {
     ApplicationEvents = "application"
 }
 
+export namespace LoggingConfigCategory {
+    export function values(): LoggingConfigCategory[] {
+        return [LoggingConfigCategory.ApplicationEvents, LoggingConfigCategory.GuildEvents, LoggingConfigCategory.GuildMembersEvents,
+             LoggingConfigCategory.GuildMemberEvents, LoggingConfigCategory.MessageEvents, LoggingConfigCategory.VoiceEvents];
+    }
+}
+
 export function getTypes(category: LoggingConfigCategory): Array<LoggingConfigType> | null {
     switch(category) {
         case LoggingConfigCategory.MessageEvents:
@@ -97,169 +104,6 @@ export function stringedType(channel: NonThreadGuildBasedChannel) {
     }
 };
 
-/**
- * Determines if we are actually logging the events provided inside of the category.
- * 
- * If true, there is a channel found in the database and we are logging this category events.
- * 
- * If false, there is no channel found, thus we aren't logging it.
- * 
- * @param guild The guild to grab data from
- * @param category The category to check
- * @returns the channel id of the logging channel for the category
- */
-export async function isCategoryLogged(guild: Guild, category: LoggingConfigCategory): Promise<string | undefined> {
-    return new Promise(async (resolve, reject) => {
-        await MLoggingChannels.findOne({ where: { guildId: guild.id }}).then(async (data) => {
-            if(data === null || !data) {
-                data = await MLoggingChannels.create({ guildId: guild.id });
-            }
-
-            switch(category) {
-                case LoggingConfigCategory.MessageEvents:
-                    resolve(data.logMessages);
-                    break;
-
-                case LoggingConfigCategory.GuildMembersEvents:
-                    resolve(data.logGuildMembers);
-                    break;
-
-                case LoggingConfigCategory.GuildEvents:
-                    resolve(data.logGuild);
-                    break;
-
-                case LoggingConfigCategory.GuildMemberEvents:
-                    resolve(data.logGuildMember);
-                    break;
-
-                case LoggingConfigCategory.VoiceEvents:
-                    resolve(data.logVoice);
-                    break;
-
-                case LoggingConfigCategory.ApplicationEvents:
-                    resolve(data.logCommands);
-                    break;
-
-                default: reject(new Error("Invalid category")); break;
-            }
-        }).catch(reject);
-    });
-}
-
-/**
- * Determines whether a specific logging type is active or not.
- * 
- * @param guild The guild to check for
- * @param type The config type to get
- * @returns The ConfigType's resulting boolean, true if active, false if not.
- */
-export async function isTypeLogged(guild: Guild, type: LoggingConfigType): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
-        await MLoggingConfig.findOne({ where: { guildId: guild.id }}).then(async (data) => {
-            if(data === null || !data) {
-                data = await MLoggingConfig.create({ guildId: guild.id });
-            }
-
-            switch(type) {
-                case LoggingConfigType.MessageDelete: resolve(data.msgDelete); break;
-                case LoggingConfigType.MessageEdited: resolve(data.msgEdited); break;
-                case LoggingConfigType.MessagePurged: resolve(data.msgPurged); break;
-                case LoggingConfigType.MemberJoin: resolve(data.memberJoin); break;
-                case LoggingConfigType.MemberLeave: resolve(data.memberLeave); break;
-                case LoggingConfigType.ChannelAdd: resolve(data.channelAdd); break;
-                case LoggingConfigType.ChannelModify: resolve(data.channelModify); break;
-                case LoggingConfigType.ChannelRemove: resolve(data.channelRemove); break;
-                case LoggingConfigType.RoleAdd: resolve(data.roleAdd); break;
-                case LoggingConfigType.RoleModify: resolve(data.roleModify); break;
-                case LoggingConfigType.RoleRemove: resolve(data.roleRemove); break;
-                case LoggingConfigType.GuildUpdate: resolve(data.guildUpdate); break;
-                case LoggingConfigType.EmojiUpdate: resolve(data.emojiUpdate); break;
-                case LoggingConfigType.MemberRole: resolve(data.memberRole); break;
-                case LoggingConfigType.MemberName: resolve(data.memberName); break;
-                case LoggingConfigType.MemberAvatar: resolve(data.memberAvatar); break;
-                case LoggingConfigType.MemberBan: resolve(data.memberBan); break;
-                case LoggingConfigType.MemberUnban: resolve(data.memberUnban); break;
-                case LoggingConfigType.MemberTimeout: resolve(data.memberTimeout); break;
-                case LoggingConfigType.MemberUntimeout: resolve(data.memberUntimeout); break;
-                case LoggingConfigType.VoiceJoin: resolve(data.voiceJoin); break;
-                case LoggingConfigType.VoiceSwitch: resolve(data.voiceSwitch); break;
-                case LoggingConfigType.VoiceLeave: resolve(data.voiceLeave); break;
-                case LoggingConfigType.SelfCommands: resolve(data.selfCommands); break;
-                case LoggingConfigType.SelfCommandError: resolve(data.selfCommandError); break;
-                default: reject(new Error("Invalid type")); break;
-            }
-        }).catch(reject);
-    });
-}
-
-export async function setChannelForCategory(guild: Guild, category: LoggingConfigCategory, channel: null | TextBasedChannel): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-        await MLoggingChannels.findOne({ where: { guildId: guild.id }}).then(async (data) => {
-            if(data === null || !data) {
-                data = await MLoggingChannels.create({ guildId: guild.id });
-            }
-        
-            switch(category) {
-                case LoggingConfigCategory.MessageEvents: data.logMessages = (channel ? channel.id: undefined); break;
-                case LoggingConfigCategory.GuildMembersEvents: data.logGuildMembers = (channel ? channel.id: undefined); break;
-                case LoggingConfigCategory.GuildEvents: data.logGuild = (channel ? channel.id: undefined); break;
-                case LoggingConfigCategory.GuildMemberEvents: data.logGuildMember = (channel ? channel.id: undefined); break;
-                case LoggingConfigCategory.VoiceEvents: data.logVoice = (channel ? channel.id: undefined); break;
-                case LoggingConfigCategory.ApplicationEvents: data.logCommands = (channel ? channel.id: undefined); break;
-                default: reject(new Error("Invalid category"));
-            }    
-
-            await data.save()
-                .then(() => resolve())
-                .catch(reject);
-        }).catch(reject);
-    });
-}
-
-export async function setStateForType(guild: Guild, type: LoggingConfigType, state: boolean): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-        await MLoggingConfig.findOne({ where: { guildId: guild.id }}).then(async (data) => {
-            if(data === null || !data) {
-                data = await MLoggingConfig.create({ guildId: guild.id });
-            }
-
-            switch(type as LoggingConfigType) {
-                case LoggingConfigType.MessageDelete: data.msgDelete = state; break;
-                case LoggingConfigType.MessageEdited: data.msgEdited = state; break;
-                case LoggingConfigType.MessagePurged: data.msgPurged = state; break;
-                case LoggingConfigType.MemberJoin: data.memberJoin = state; break;
-                case LoggingConfigType.MemberLeave: data.memberLeave = state; break;
-                case LoggingConfigType.ChannelAdd: data.channelAdd = state; break;
-                case LoggingConfigType.ChannelModify: data.channelModify = state; break;
-                case LoggingConfigType.ChannelRemove: data.channelRemove = state; break;
-                case LoggingConfigType.RoleAdd: data.roleAdd = state; break;
-                case LoggingConfigType.RoleModify: data.roleModify = state; break;
-                case LoggingConfigType.RoleRemove: data.roleRemove = state; break;
-                case LoggingConfigType.GuildUpdate: data.guildUpdate = state; break;
-                case LoggingConfigType.EmojiUpdate: data.emojiUpdate = state; break;
-                case LoggingConfigType.MemberRole: data.memberRole = state; break;
-                case LoggingConfigType.MemberName: data.memberName = state; break;
-                case LoggingConfigType.MemberAvatar: data.memberAvatar = state; break;
-                case LoggingConfigType.MemberBan: data.memberBan = state; break;
-                case LoggingConfigType.MemberUnban: data.memberUnban = state; break;
-                case LoggingConfigType.MemberTimeout: data.memberTimeout = state; break;
-                case LoggingConfigType.MemberUntimeout: data.memberUntimeout = state; break;
-                case LoggingConfigType.VoiceJoin: data.voiceJoin = state; break;
-                case LoggingConfigType.VoiceSwitch: data.voiceSwitch = state; break;
-                case LoggingConfigType.VoiceLeave: data.voiceLeave = state; break;
-                case LoggingConfigType.SelfCommands: data.selfCommands = state; break;
-                case LoggingConfigType.SelfCommandError: data.selfCommandError = state; break;
-                
-                default: reject(new Error("Invalid type")); break;
-            }
-
-            await data.save()
-                .then(() => resolve())
-                .catch(reject);
-        }).catch(reject);
-    });
-}
-
 export function getSelectMenuOption(type: LoggingConfigType): APISelectMenuOption  {
     switch(type) {
         case LoggingConfigType.MessageDelete: return { label: "Message Delete", value: LoggingConfigType.MessageDelete, description: "Post a log about a deleted message, it's content and who sent it" }
@@ -288,4 +132,120 @@ export function getSelectMenuOption(type: LoggingConfigType): APISelectMenuOptio
         case LoggingConfigType.SelfCommands: return { label: "Self App Commands", value: LoggingConfigType.SelfCommands, description: "Post a log when someone uses my commands" }
         case LoggingConfigType.SelfCommandError: return { label: "Self App Commands Error", value: LoggingConfigType.SelfCommandError, description: "Self App Commands will also show failed/error'd commands" }
     }
+}
+
+
+// Database Time (kill me)
+
+/**
+ * Gathers the logging categories of a TextChannel and returns them.
+ * 
+ * @param channel the channel to get categories for
+ * @returns an array of active logging categories associated with the channel
+ */
+export async function fetchChannelLogCategories(channel: TextChannel): Promise<LoggingConfigCategory[]> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await MLoggingChannels.findOne({ where: { channelId: channel.id }});
+
+            if(data === null || !data) {
+                data = await MLoggingChannels.create({ channelId: channel.id, guildId: channel.guild.id });
+            }
+
+            let categories: LoggingConfigCategory[] = [];
+            if(data.logMessages) categories.push(LoggingConfigCategory.MessageEvents);
+            if(data.logGuildMembers) categories.push(LoggingConfigCategory.GuildMembersEvents);
+            if(data.logGuild) categories.push(LoggingConfigCategory.GuildEvents);
+            if(data.logGuildMember) categories.push(LoggingConfigCategory.GuildMemberEvents);
+            if(data.logVoice) categories.push(LoggingConfigCategory.VoiceEvents);
+            if(data.logCommands) categories.push(LoggingConfigCategory.ApplicationEvents);
+            
+            resolve(categories);
+        } catch(error) {
+            reject(error);
+        }
+    });
+}
+
+/**
+ * Fetches all instances of a channel from the database with a matching guild ID.
+ * 
+ * Returns a collection of strings (channel IDs), with all active LoggingConfigCategory types.
+ * If empty, no logging categories are active, but previously had some.
+ * 
+ * @param guild the guild to search channels from
+ * @returns a collection of channel IDs and the active category types
+ */
+export async function fetchGuildChannelData(guild: Guild): Promise<Collection<TextChannel, Array<LoggingConfigCategory>>> {
+    return new Promise(async (resolve, reject) => {
+        await MLoggingChannels.findAll({ where: { guildId: guild.id }}).then(async (values) => {
+            let map = new Collection<TextChannel, Array<LoggingConfigCategory>>();
+
+            try {
+                let channelCache = guild.channels.cache;
+                for(let i=0; i<values.length; i++) {
+                    let dbObj = values[i];
+
+                    let channel = channelCache.get(dbObj.channelId);
+                    if(channel == undefined || !(channel instanceof TextChannel)) continue;
+
+                    map.set(channel, await fetchChannelLogCategories(channel));
+                }
+            } catch(error) { reject(error); }
+
+            resolve(map);
+        }).catch(reject);
+    });
+}
+
+/**
+ * Checks if the provided category is actively being logged inside given channel.
+ * 
+ * @param channel the channel to get categories for
+ * @param category the category to find
+ * @returns true/false if the category exists, (false if could not find channel)
+ */
+export async function hasCategoryLoggedInChannel(channel: TextChannel, category: LoggingConfigCategory): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let channelData = await fetchGuildChannelData(channel.guild)
+            let categories = channelData.get(channel);
+
+            if(categories === undefined) resolve(false);
+            else resolve(categories.includes(category));
+        } catch(error) {
+            reject(error);
+        }
+    });
+}
+
+export async function setCategoriesForChannel(channel: TextChannel, categories: LoggingConfigCategory[]): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await MLoggingChannels.findOne({ where: { channelId: channel.id, guildId: channel.guild.id }});
+            if(data === null || !data) {
+                data = await MLoggingChannels.create({ channelId: channel.id, guildId: channel.guild.id });
+            }
+
+            for(let i=0; i<LoggingConfigCategory.values().length; i++) {
+                let category = LoggingConfigCategory.values()[i];
+
+                let state = categories.includes(category);
+                switch(category) {
+                    case LoggingConfigCategory.MessageEvents:      { data.logMessages     = state; break; }
+                    case LoggingConfigCategory.GuildMembersEvents: { data.logGuildMembers = state; break; }
+                    case LoggingConfigCategory.GuildEvents:        { data.logGuild        = state; break; }
+                    case LoggingConfigCategory.GuildMemberEvents:  { data.logGuildMember  = state; break; }
+                    case LoggingConfigCategory.VoiceEvents:        { data.logVoice        = state; break; }
+                    case LoggingConfigCategory.ApplicationEvents:  { data.logCommands     = state; break; }
+                }
+            }
+
+            await data.save()
+                .then(() => resolve())
+                .catch(reject);
+        } catch(error) {
+            reject(error);
+        }
+    });
 }

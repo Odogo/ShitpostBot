@@ -3,7 +3,8 @@ import { sequelInstance } from "../..";
 
 export class MLoggingConfig extends Model {
 
-    declare guildId: string;
+    // Identifiers
+    declare guildId: string; // Primary Key
 
     // Message Events
     declare msgDelete: boolean;

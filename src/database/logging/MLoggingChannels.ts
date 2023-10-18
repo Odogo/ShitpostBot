@@ -4,68 +4,76 @@ import { sequelInstance } from "../..";
 export class MLoggingChannels extends Model {
 
     // Identifier
+    declare channelId: string; // Primary Key
     declare guildId: string;
 
     // All logging types are strings, if they are filled
     // they should be a channel Id, otherwise do not log.
     
     // Message Events (Edit, Delete, Purge)
-    declare logMessages: string | undefined;
+    declare logMessages: boolean;
     
     // Server Enterance / Leaving
-    declare logGuildMembers: string | undefined;
+    declare logGuildMembers: boolean;
 
     // Server Events (Channel & Role changes, server updates, emoji changes)
-    declare logGuild: string | undefined;
+    declare logGuild: boolean;
 
     // Member Events (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
-    declare logGuildMember: string | undefined;
+    declare logGuildMember: boolean;
 
     // Voice Events (Join, Move, Leave)
-    declare logVoice: string | undefined;
+    declare logVoice: boolean;
 
     // Shitpost Commands
     // - additional config setting for failed commands, if false only posts successful.
-    declare logCommands: string | undefined;
+    declare logCommands: boolean;
 
     public static async initialize() {
         return MLoggingChannels.init({
 
-            guildId: {
+            channelId: {
                 type: DataTypes.STRING,
                 unique: true,
                 primaryKey: true,
                 allowNull: false
             },
 
-            logMessages: {
+            guildId: {
                 type: DataTypes.STRING,
-                allowNull: true
+                unique: false,
+                primaryKey: false,
+                allowNull: false
+            },
+
+            logMessages: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             },
 
             logGuildMembers: {
-                type: DataTypes.STRING,
-                allowNull: true
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             },
 
             logGuild: {
-                type: DataTypes.STRING,
-                allowNull: true
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             },
 
             logGuildMember: {
-                type: DataTypes.STRING,
-                allowNull: true
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             },
 
             logVoice: {
-                type: DataTypes.STRING,
-                allowNull: true
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             },
 
             logCommands: {
-                type: DataTypes.STRING,
-                allowNull: true
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             }
         }, {
             sequelize: sequelInstance,

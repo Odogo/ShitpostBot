@@ -1,6 +1,7 @@
-import { ActionRowBuilder, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ComponentType, StringSelectMenuBuilder } from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ComponentType, StringSelectMenuBuilder, StringSelectMenuComponent } from 'discord.js';
 import { KCommand } from "../classes/KCommand";
-import { LoggingConfigCategory, isCategoryLogged, setChannelForCategory } from '../modules/Logging';
+import { LoggingConfigCategory, hasCategoryLoggedInChannel, setCategoriesForChannel } from '../modules/Logging';
+import { logDebug } from '../system';
 
 export default new KCommand({
     name: "logging",
@@ -67,27 +68,27 @@ export default new KCommand({
                 options: [
                     { 
                         label: "Messages", value: LoggingConfigCategory.MessageEvents,
-                        description: "Message related events: editing, deleting", default: (await isCategoryLogged(interaction.guild, LoggingConfigCategory.MessageEvents) !== undefined)
+                        description: "Message related events: editing, deleting", default: await hasCategoryLoggedInChannel(channel, LoggingConfigCategory.MessageEvents)
                     },
                     { 
                         label: "Guild Members (all)", value: LoggingConfigCategory.GuildMembersEvents,
-                        description: "Joining and Leaving events", default: (await isCategoryLogged(interaction.guild, LoggingConfigCategory.GuildMembersEvents) !== undefined)
+                        description: "Joining and Leaving events", default: await hasCategoryLoggedInChannel(channel, LoggingConfigCategory.GuildMembersEvents)
                     },
                     { 
                         label: "Guild", value: LoggingConfigCategory.GuildEvents,
-                        description: "Events pretaining to guild updates", default: (await isCategoryLogged(interaction.guild, LoggingConfigCategory.GuildEvents) !== undefined)
+                        description: "Events pretaining to guild updates", default: await hasCategoryLoggedInChannel(channel, LoggingConfigCategory.GuildEvents)
                     },
                     { 
                         label: "Guild Member (single)", value: LoggingConfigCategory.GuildMemberEvents,
-                        description: "Events pretaining to updates of a single member", default: (await isCategoryLogged(interaction.guild, LoggingConfigCategory.GuildMemberEvents) !== undefined)
+                        description: "Events pretaining to updates of a single member", default: await hasCategoryLoggedInChannel(channel, LoggingConfigCategory.GuildMemberEvents)
                     },
                     { 
                         label: "Voice", value: LoggingConfigCategory.VoiceEvents,
-                        description: "Joining, Leaving, Moving voice channels events", default: (await isCategoryLogged(interaction.guild, LoggingConfigCategory.VoiceEvents) !== undefined)
+                        description: "Joining, Leaving, Moving voice channels events", default: await hasCategoryLoggedInChannel(channel, LoggingConfigCategory.VoiceEvents)
                     },
                     { 
                         label: "Application", value: LoggingConfigCategory.ApplicationEvents,
-                        description: "Logging events pretaining to Shitpost's commands", default: (await isCategoryLogged(interaction.guild, LoggingConfigCategory.ApplicationEvents) !== undefined)
+                        description: "Logging events pretaining to Shitpost's commands", default: await hasCategoryLoggedInChannel(channel, LoggingConfigCategory.ApplicationEvents)
                     },
                 ]
             });
@@ -97,14 +98,18 @@ export default new KCommand({
             const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 300_000 });
 
             collector.on('collect', async (collectInteract) => {
-                if(collectInteract.guild == null) return;
+                // disable the component
 
-                for(let i=0; i<collectInteract.values.length; i++) {
-                    await setChannelForCategory(collectInteract.guild, collectInteract.values[i] as LoggingConfigCategory, channel);
-                }
+                await setCategoriesForChannel(channel, collectInteract.values as LoggingConfigCategory[]).then(async () => {
+                    let stringList = "";
+                    (collectInteract.values as LoggingConfigCategory[]).forEach((value) => {
+                        stringList += "- " + selectMenu.options.find((v) => v.data.value == value)?.data.label + "\n";
+                    })
 
-                await interaction.deleteReply();
-                await collectInteract.reply({ content: "Successfully modified the channel for <#" + channel.id + "> to allow" });
+                    await collectInteract.reply({ content: "Successfully modified the channel for <#" + channel.id + "> to allow types to be logged: \n" + stringList});
+                }).catch(async (reason) => {
+                    await collectInteract.reply({ content: "Failed to update database: " + reason });
+                });
             });
         } else if(subCommand === "types") {
             let category = options.getString("category", true) as LoggingConfigCategory;
