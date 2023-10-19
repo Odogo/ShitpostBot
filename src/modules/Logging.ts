@@ -3,10 +3,12 @@
  */
 
 import { Collection, Guild, TextChannel } from "discord.js";
+
+import { MLoggingConfig } from "../database/logging/MLoggingConfig";
 import { MLoggingChannels } from "../database/logging/MLoggingChannels";
+
 import { LoggingConfigCategory } from '../enums/LoggingConfigCategory';
 import { LoggingConfigType } from '../enums/LoggingConfigType';
-import { MLoggingConfig } from "../database/logging/MLoggingConfig";
 
 //#region Category Section 
 /**

@@ -1,27 +1,26 @@
 import { AuditLogEvent, EmbedBuilder, Events } from "discord.js";
+
 import { KEvent } from "../../classes/KEvent";
+import { logWarn } from "../../system";
 import { gatherChannelsForLogging, isGuildTypeLogged } from "../../modules/Logging";
 import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { logWarn } from "../../system";
 import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
 
 export default new KEvent(Events.MessageDelete, async (msg) => {
-    if(msg.guild === null) return;
-    if(msg.author === null) return;
+    if(msg.partial) {
+        await msg.fetch(true)
+            .then((newMsg) => { msg = newMsg; })
+            .catch(logWarn);
+    }
+
+    if(msg.guild === null || msg.author === null|| msg.content === null) return;
     if(msg.author.bot) return;
-    if(msg.content === null) return;
 
     try {
         let isTypeLogged = await isGuildTypeLogged(msg.guild, LoggingConfigType.MessageDelete);
         if(!isTypeLogged) return;
 
         let loggingChannels = await gatherChannelsForLogging(msg.guild, LoggingConfigCategory.MessageEvents);
-
-        let auditLogs = await msg.guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete });
-        let auditEntry = auditLogs.entries.first();
-        if(auditEntry === undefined) return;
-        const executor = auditEntry.executor;
-        if(executor === null) return;
 
         const embed = new EmbedBuilder({
             color: 0x7DFFC7,
@@ -31,7 +30,7 @@ export default new KEvent(Events.MessageDelete, async (msg) => {
                 icon_url: msg.author.displayAvatarURL({ size: 2048, extension: 'png' })
             },
             fields: [
-                { name: "Deleted by", value: "<@" + executor.id + ">" },
+                { name: "In channel", value: "<#" + msg.channel.id + ">" },
                 { name: "Message Contents", value: (msg.content.length >= 1024 - 3 ? msg.content.substring(0, 1024-3) + "...": msg.content)}
             ],
             timestamp: Date.now()
