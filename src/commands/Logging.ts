@@ -1,7 +1,8 @@
-import { ActionRowBuilder, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ComponentType, StringSelectMenuBuilder, StringSelectMenuComponent } from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ComponentType, StringSelectMenuBuilder, StringSelectMenuComponent, StringSelectMenuOptionBuilder } from 'discord.js';
 import { KCommand } from "../classes/KCommand";
-import { LoggingConfigCategory, hasCategoryLoggedInChannel, setCategoriesForChannel } from '../modules/Logging';
-import { logDebug } from '../system';
+import { getGuildLoggingTypes, hasCategoryLoggedInChannel, setCategoriesForChannel, setGuildLoggingTypes } from '../modules/Logging';
+import { LoggingConfigCategory } from '../enums/LoggingConfigCategory';
+import { LoggingConfigType } from '../enums/LoggingConfigType';
 
 export default new KCommand({
     name: "logging",
@@ -94,11 +95,12 @@ export default new KCommand({
             });
 
             let actionRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
-            const reply = await interaction.reply({ components: [actionRow ]});
+            const reply = await interaction.reply({ components: [actionRow], ephemeral: true });
             const collector = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 300_000 });
 
             collector.on('collect', async (collectInteract) => {
-                // disable the component
+                let component = collectInteract.message.components[0].components[0] as StringSelectMenuComponent;
+                await interaction.editReply({ components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(new StringSelectMenuBuilder(component.data).setDisabled(true))]});
 
                 await setCategoriesForChannel(channel, collectInteract.values as LoggingConfigCategory[]).then(async () => {
                     let stringList = "";
@@ -106,14 +108,48 @@ export default new KCommand({
                         stringList += "- " + selectMenu.options.find((v) => v.data.value == value)?.data.label + "\n";
                     })
 
-                    await collectInteract.reply({ content: "Successfully modified the channel for <#" + channel.id + "> to allow types to be logged: \n" + stringList});
+                    await collectInteract.reply({ content: "Successfully modified the channel for <#" + channel.id + "> to allow types to be logged: \n"
+                        + (stringList.length !== 0 ? stringList: "- No categories are active for this channel")});
                 }).catch(async (reason) => {
-                    await collectInteract.reply({ content: "Failed to update database: " + reason });
+                    await collectInteract.reply({ content: "Failed to update database: " + reason, ephemeral: true });
                 });
             });
         } else if(subCommand === "types") {
             let category = options.getString("category", true) as LoggingConfigCategory;
 
+            const select = new StringSelectMenuBuilder({ customId: "logging-types" });
+
+            let types = LoggingConfigCategory.getTypes(category);
+            select.setMinValues(0).setMaxValues(types.length);
+
+            let loggingTypes = await getGuildLoggingTypes(interaction.guild, category);
+
+            for(let i = 0; i < types.length; i++) {
+                let option = new StringSelectMenuOptionBuilder(LoggingConfigType.getSelectMenuOption(types[i]));
+                select.addOptions(option.setDefault(loggingTypes.get(types[i])));
+            }
+
+            let actionRow = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+            const reply = await interaction.reply({ components: [actionRow] });
+            const collection = reply.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 300_000 });
+
+            collection.on('collect', async (collectInteract) => {
+                if(collectInteract.guild === null) return;
+
+                let component = collectInteract.message.components[0].components[0] as StringSelectMenuComponent;
+                await interaction.editReply({ components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(new StringSelectMenuBuilder(component.data).setDisabled(true))]});
+
+                await setGuildLoggingTypes(collectInteract.guild, category, collectInteract.values as LoggingConfigType[]).then(async () => {
+                    let stringList = "";
+                    (collectInteract.values as LoggingConfigCategory[]).forEach((value) => {
+                        stringList += "- " + select.options.find((v) => v.data.value == value)?.data.label + "\n";
+                    });
+                    await collectInteract.reply({ content: "Successfully modified the guild's active logging types in category `" + category + "` to: \n"
+                        + (stringList.length !== 0 ? stringList : "- No types are logged in this category")});
+                }).catch(async (reason) => {
+                    await collectInteract.reply({ content: "Failed to update database: " + reason, ephemeral: true });
+                });
+            });
         }
     }
 });

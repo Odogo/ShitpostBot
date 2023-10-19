@@ -2,141 +2,13 @@
  * This module handles the interaction between the end user and the database.
  */
 
-import { APISelectMenuOption, BaseGuildTextChannel, Collection, Guild, GuildTextBasedChannel, NonThreadGuildBasedChannel, SelectMenuComponentOptionData, StringSelectMenuOptionBuilder, TextBasedChannel, TextChannel } from "discord.js";
+import { Collection, Guild, TextChannel } from "discord.js";
 import { MLoggingChannels } from "../database/logging/MLoggingChannels";
+import { LoggingConfigCategory } from '../enums/LoggingConfigCategory';
+import { LoggingConfigType } from '../enums/LoggingConfigType';
 import { MLoggingConfig } from "../database/logging/MLoggingConfig";
-import { logDebug, logError, logWarn } from "../system";
 
-export enum LoggingConfigType {
-    // Message Events
-    MessageDelete = "messageDelete",
-    MessageEdited = "messageEdited",
-    MessagePurged = "messagePurged",
-
-    // Guild Members Events
-    MemberJoin = "memberJoin",
-    MemberLeave = "memberLeave",
-
-    // Guild Events
-    ChannelAdd = "channelAdd",
-    ChannelModify = "channelModify",
-    ChannelRemove = "channelRemove",
-
-    RoleAdd = "roleAdd",
-    RoleModify = "roleModify",
-    RoleRemove = "roleRemove",
-
-    GuildUpdate = "guildUpdate",
-    EmojiUpdate = "emojiUpdate",
-
-    // Guild Member Events
-    MemberRole = "memberRole",
-    MemberName = "memberName",
-    MemberAvatar = "memberAvatar",
-
-    MemberBan = "memberBan",
-    MemberUnban = "memberUnban",
-    MemberTimeout = "memberTimeout",
-    MemberUntimeout = "memberUntimeout",
-
-    // Voice Events
-    VoiceJoin = "voiceJoin",
-    VoiceSwitch = "voiceSwitch",
-    VoiceLeave = "voiceLeave",
-
-    // Application Events
-    SelfCommands = "selfCommand",
-    SelfCommandError = "selfCommandError"
-}
-
-export enum LoggingConfigCategory {
-    MessageEvents = "message",
-    GuildMembersEvents = "guildMembers",
-    GuildEvents = "guild",
-    GuildMemberEvents = "guildMember",
-    VoiceEvents = "voice",
-    ApplicationEvents = "application"
-}
-
-export namespace LoggingConfigCategory {
-    export function values(): LoggingConfigCategory[] {
-        return [LoggingConfigCategory.ApplicationEvents, LoggingConfigCategory.GuildEvents, LoggingConfigCategory.GuildMembersEvents,
-             LoggingConfigCategory.GuildMemberEvents, LoggingConfigCategory.MessageEvents, LoggingConfigCategory.VoiceEvents];
-    }
-}
-
-export function getTypes(category: LoggingConfigCategory): Array<LoggingConfigType> | null {
-    switch(category) {
-        case LoggingConfigCategory.MessageEvents:
-            return [LoggingConfigType.MessageDelete, LoggingConfigType.MessageEdited, LoggingConfigType.MessagePurged];
-        
-        case LoggingConfigCategory.GuildMembersEvents:
-            return [LoggingConfigType.MemberJoin, LoggingConfigType.MemberLeave];
-
-        case LoggingConfigCategory.GuildEvents:
-            return [LoggingConfigType.ChannelAdd, LoggingConfigType.ChannelModify, LoggingConfigType.ChannelRemove,
-            LoggingConfigType.RoleAdd, LoggingConfigType.RoleModify, LoggingConfigType.RoleRemove,
-            LoggingConfigType.GuildUpdate, LoggingConfigType.EmojiUpdate];
-
-        case LoggingConfigCategory.GuildMemberEvents:
-            return [LoggingConfigType.MemberRole, LoggingConfigType.MemberName, LoggingConfigType.MemberAvatar,
-            LoggingConfigType.MemberBan, LoggingConfigType.MemberUnban, LoggingConfigType.MemberTimeout, LoggingConfigType.MemberUntimeout]
-
-        case LoggingConfigCategory.VoiceEvents:
-            return [LoggingConfigType.VoiceJoin, LoggingConfigType.VoiceSwitch, LoggingConfigType.VoiceLeave];
-
-        case LoggingConfigCategory.ApplicationEvents:
-            return [LoggingConfigType.SelfCommands, LoggingConfigType.SelfCommandError]
-                
-        default: return null;
-    }
-}
-
-export function stringedType(channel: NonThreadGuildBasedChannel) {
-    switch(channel.type) {
-        case 0: return "Text Channel";
-        case 2: return "Voice Channel";
-        case 4: return "Category";
-        case 5: return "Announcement Channel";
-        case 13: return "Stage Channel";
-        case 15: return "Forum Channel";
-        default: return "Unknown?";
-    }
-};
-
-export function getSelectMenuOption(type: LoggingConfigType): APISelectMenuOption  {
-    switch(type) {
-        case LoggingConfigType.MessageDelete: return { label: "Message Delete", value: LoggingConfigType.MessageDelete, description: "Post a log about a deleted message, it's content and who sent it" }
-        case LoggingConfigType.MessageEdited: return { label: "Message Edited", value: LoggingConfigType.MessageEdited, description: "Post a log about an edited message, what it was before and after" }
-        case LoggingConfigType.MessagePurged: return { label: "Message Purged", value: LoggingConfigType.MessagePurged, description: "Post a log about a bulk message deletion" }
-        case LoggingConfigType.MemberJoin: return { label: "Member Joined", value: LoggingConfigType.MemberJoin, description: "Show who joined!" }
-        case LoggingConfigType.MemberLeave: return { label: "Member Leave", value: LoggingConfigType.MemberLeave, description: "Show who left.." }
-        case LoggingConfigType.ChannelAdd: return { label: "Channel Added", value: LoggingConfigType.ChannelAdd, description: "Post a log about a newly added channel" }
-        case LoggingConfigType.ChannelModify: return { label: "Channel Modified", value: LoggingConfigType.ChannelModify, description: "Post a log about a modified channel and what changed" }
-        case LoggingConfigType.ChannelRemove: return { label: "Channel Removed", value: LoggingConfigType.ChannelRemove, description: "Post a log about a deleted channel" }
-        case LoggingConfigType.RoleAdd: return { label: "Role Added", value: LoggingConfigType.RoleAdd, description: "Post a log about a newly created role" }
-        case LoggingConfigType.RoleModify: return { label: "Role Modified", value: LoggingConfigType.RoleModify, description: "Post a log about a modified role and what changed" }
-        case LoggingConfigType.RoleRemove: return { label: "Role Removed", value: LoggingConfigType.RoleRemove, description: "Post a log about a deleted role" }
-        case LoggingConfigType.GuildUpdate: return { label: "Guild Updated", value: LoggingConfigType.GuildUpdate, description: "Post a log about any update to the guild settings" }
-        case LoggingConfigType.EmojiUpdate: return { label: "Emoji Updated", value: LoggingConfigType.EmojiUpdate, description: "Post a log about any expression update" }
-        case LoggingConfigType.MemberRole: return { label: "Member Role", value: LoggingConfigType.MemberRole, description: "Post a log when a member's role(s) are updated" }
-        case LoggingConfigType.MemberName: return { label: "Member Name", value: LoggingConfigType.MemberName, description: "Post a log when a member's name is updated" }
-        case LoggingConfigType.MemberAvatar: return { label: "Member Avatar", value: LoggingConfigType.MemberAvatar, description: "Post a log when a member's avatar is updated" }
-        case LoggingConfigType.MemberBan: return { label: "Member Banned", value: LoggingConfigType.MemberBan, description: "Post a log when a member gets banned from the guild" }
-        case LoggingConfigType.MemberUnban: return { label: "Member Unbanned", value: LoggingConfigType.MemberUnban, description: "Post a log when a member gets unbanned from the guild" }
-        case LoggingConfigType.MemberTimeout: return { label: "Member Timeout", value: LoggingConfigType.MemberTimeout, description: "Post a log when a member gets timed out from the guild" }
-        case LoggingConfigType.MemberUntimeout: return { label: "Member Untimeout", value: LoggingConfigType.MemberUntimeout, description: "Post a log when a member gets untimed out from the guild" }
-        case LoggingConfigType.VoiceJoin: return { label: "Voice Join", value: LoggingConfigType.VoiceJoin, description: "Post a log when a member joins a voice channel" }
-        case LoggingConfigType.VoiceSwitch: return { label: "Voice Switch", value: LoggingConfigType.VoiceSwitch, description: "Post a log when a member switches voice channel" }
-        case LoggingConfigType.VoiceLeave: return { label: "Voice Leave", value: LoggingConfigType.VoiceLeave, description: "Post a log when a member leaves a voice channel" }
-        case LoggingConfigType.SelfCommands: return { label: "Self App Commands", value: LoggingConfigType.SelfCommands, description: "Post a log when someone uses my commands" }
-        case LoggingConfigType.SelfCommandError: return { label: "Self App Commands Error", value: LoggingConfigType.SelfCommandError, description: "Self App Commands will also show failed/error'd commands" }
-    }
-}
-
-
-// Database Time (kill me)
-
+//#region Category Section 
 /**
  * Gathers the logging categories of a TextChannel and returns them.
  * 
@@ -153,12 +25,12 @@ export async function fetchChannelLogCategories(channel: TextChannel): Promise<L
             }
 
             let categories: LoggingConfigCategory[] = [];
-            if(data.logMessages) categories.push(LoggingConfigCategory.MessageEvents);
+            if(data.logMessages)     categories.push(LoggingConfigCategory.MessageEvents);
             if(data.logGuildMembers) categories.push(LoggingConfigCategory.GuildMembersEvents);
-            if(data.logGuild) categories.push(LoggingConfigCategory.GuildEvents);
-            if(data.logGuildMember) categories.push(LoggingConfigCategory.GuildMemberEvents);
-            if(data.logVoice) categories.push(LoggingConfigCategory.VoiceEvents);
-            if(data.logCommands) categories.push(LoggingConfigCategory.ApplicationEvents);
+            if(data.logGuild)        categories.push(LoggingConfigCategory.GuildEvents);
+            if(data.logGuildMember)  categories.push(LoggingConfigCategory.GuildMemberEvents);
+            if(data.logVoice)        categories.push(LoggingConfigCategory.VoiceEvents);
+            if(data.logCommands)     categories.push(LoggingConfigCategory.ApplicationEvents);
             
             resolve(categories);
         } catch(error) {
@@ -219,6 +91,12 @@ export async function hasCategoryLoggedInChannel(channel: TextChannel, category:
     });
 }
 
+/**
+ * Sets the active categories into the database for the specific channel.
+ * 
+ * @param channel the channel to set data for
+ * @param categories the categories that will now be active in this channel
+ */
 export async function setCategoriesForChannel(channel: TextChannel, categories: LoggingConfigCategory[]): Promise<void> {
     return new Promise(async (resolve, reject) => {
         try {
@@ -249,3 +127,174 @@ export async function setCategoriesForChannel(channel: TextChannel, categories: 
         }
     });
 }
+
+/**
+ * Finds all logging channels that include a specific logging category.
+ * 
+ * @param guild the guild to get the channels (and categories) from
+ * @param category the category to look for
+ * @returns an array of text channels that are logging the mentioned category
+ */
+export async function gatherChannelsForLogging(guild: Guild, category: LoggingConfigCategory): Promise<Array<TextChannel>> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let channels: TextChannel[] = [];
+
+            let data = await fetchGuildChannelData(guild);
+            for(let i = 0; i < data.size; i++) {
+                let categories = data.at(i);
+                if(categories === undefined) continue;
+
+                if(categories.includes(category)) {
+                    let channel = data.keyAt(i);
+                    if(channel == undefined) continue;
+                    channels.push(channel);
+                }
+            }
+
+            resolve(channels);
+        } catch(reason) {
+            reject(reason);
+        }
+    });
+}
+//#endregion
+
+//#region Types Section
+/**
+ * Gathers the config settings for the logging types based on the guild.
+ * 
+ * @param guild the guild to get the config settings for each logging type
+ * @returns a collection of configtypes and booleans, indicating which type is active or not
+ */
+export async function getGuildLoggingTypes(guild: Guild, category?: LoggingConfigCategory): Promise<Collection<LoggingConfigType, boolean>> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await MLoggingConfig.findOne({ where: { guildId: guild.id} });
+            if(data === null || !data) {
+                data = await MLoggingConfig.create({ guildId: guild.id });
+            }
+
+            let catTypes = (category !== undefined ? LoggingConfigCategory.getTypes(category): LoggingConfigType.values());
+            let collection = new Collection<LoggingConfigType, boolean>();
+            for(let i = 0; i < catTypes.length; i++) {
+                let type = catTypes[i];
+
+                let setData = false;
+                switch(type) {
+                    case LoggingConfigType.MessageDelete:    { setData = data.msgDelete; break; }
+                    case LoggingConfigType.MessageEdited:    { setData = data.msgEdited; break; }
+                    case LoggingConfigType.MessagePurged:    { setData = data.msgPurged; break; }
+                    case LoggingConfigType.MemberJoin:       { setData = data.memberJoin; break; }
+                    case LoggingConfigType.MemberLeave:      { setData = data.memberLeave; break; }
+                    case LoggingConfigType.ChannelAdd:       { setData = data.channelAdd; break; }
+                    case LoggingConfigType.ChannelModify:    { setData = data.channelModify; break; }
+                    case LoggingConfigType.ChannelRemove:    { setData = data.channelRemove; break; }
+                    case LoggingConfigType.RoleAdd:          { setData = data.roleAdd; break; }
+                    case LoggingConfigType.RoleModify:       { setData = data.roleModify; break; }
+                    case LoggingConfigType.RoleRemove:       { setData = data.roleRemove; break; }
+                    case LoggingConfigType.GuildUpdate:      { setData = data.guildUpdate; break; }
+                    case LoggingConfigType.EmojiUpdate:      { setData = data.emojiUpdate; break; }
+                    case LoggingConfigType.MemberRole:       { setData = data.memberRole; break; }
+                    case LoggingConfigType.MemberName:       { setData = data.memberName; break; }
+                    case LoggingConfigType.MemberAvatar:     { setData = data.memberAvatar; break; }
+                    case LoggingConfigType.MemberBan:        { setData = data.memberBan; break; }
+                    case LoggingConfigType.MemberUnban:      { setData = data.memberUnban; break; }
+                    case LoggingConfigType.MemberTimeout:    { setData = data.memberTimeout; break; }
+                    case LoggingConfigType.MemberUntimeout:  { setData = data.memberUntimeout; break; }
+                    case LoggingConfigType.VoiceJoin:        { setData = data.voiceJoin; break; }
+                    case LoggingConfigType.VoiceSwitch:      { setData = data.voiceSwitch; break; }
+                    case LoggingConfigType.VoiceLeave:       { setData = data.voiceLeave; break; }
+                    case LoggingConfigType.SelfCommands:     { setData = data.selfCommands; break; }
+                    case LoggingConfigType.SelfCommandError: { setData = data.selfCommandError; break; }
+                }
+
+                collection.set(type, setData);
+            }
+
+            resolve(collection);
+        } catch(error) {
+            reject(error);
+        }
+    });
+}
+
+/**
+ * 
+ * @param guild the guild to set everything into
+ * @param category the category to set the types
+ * @param types the new list of ACTIVE types
+ * @returns 
+ */
+export async function setGuildLoggingTypes(guild: Guild, category: LoggingConfigCategory, types: LoggingConfigType[]): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let data = await MLoggingConfig.findOne({ where: { guildId: guild.id} });
+            if(data === null || !data) {
+                data = await MLoggingConfig.create({ guildId: guild.id });
+            }
+
+            let catTypes = LoggingConfigCategory.getTypes(category);
+            for(let i = 0; i < catTypes.length; i++) {
+                let type = catTypes[i];
+                let active = types.includes(type);
+
+                switch(type) {
+                    case LoggingConfigType.MessageDelete:    { data.msgDelete = active; break; }
+                    case LoggingConfigType.MessageEdited:    { data.msgEdited = active; break; }
+                    case LoggingConfigType.MessagePurged:    { data.msgPurged = active; break; }
+                    case LoggingConfigType.MemberJoin:       { data.memberJoin = active; break; }
+                    case LoggingConfigType.MemberLeave:      { data.memberLeave = active; break; }
+                    case LoggingConfigType.ChannelAdd:       { data.channelAdd = active; break; }
+                    case LoggingConfigType.ChannelModify:    { data.channelModify = active; break; }
+                    case LoggingConfigType.ChannelRemove:    { data.channelRemove = active; break; }
+                    case LoggingConfigType.RoleAdd:          { data.roleAdd = active; break; }
+                    case LoggingConfigType.RoleModify:       { data.roleModify = active; break; }
+                    case LoggingConfigType.RoleRemove:       { data.roleRemove = active; break; }
+                    case LoggingConfigType.GuildUpdate:      { data.guildUpdate = active; break; }
+                    case LoggingConfigType.EmojiUpdate:      { data.emojiUpdate = active; break; }
+                    case LoggingConfigType.MemberRole:       { data.memberRole = active; break; }
+                    case LoggingConfigType.MemberName:       { data.memberName = active; break; }
+                    case LoggingConfigType.MemberAvatar:     { data.memberAvatar = active; break; }
+                    case LoggingConfigType.MemberBan:        { data.memberBan = active; break; }
+                    case LoggingConfigType.MemberUnban:      { data.memberUnban = active; break; }
+                    case LoggingConfigType.MemberTimeout:    { data.memberTimeout = active; break; }
+                    case LoggingConfigType.MemberUntimeout:  { data.memberUntimeout = active; break; }
+                    case LoggingConfigType.VoiceJoin:        { data.voiceJoin = active; break; }
+                    case LoggingConfigType.VoiceSwitch:      { data.voiceSwitch = active; break; }
+                    case LoggingConfigType.VoiceLeave:       { data.voiceLeave = active; break; }
+                    case LoggingConfigType.SelfCommands:     { data.selfCommands = active; break; }
+                    case LoggingConfigType.SelfCommandError: { data.selfCommandError = active; break; }
+                }
+            }
+
+            await data.save()
+                .then(() => resolve())
+                .catch(reject);
+        } catch(error) {
+            reject(error);
+        }
+    });
+}
+
+/**
+ * Grabs the state of the LoggingConfigType from the Guild's data
+ * 
+ * @param guild the guild to grab data from
+ * @param type the type to check for
+ * @returns true if logged, false otherwise (or if undefined for whatever reason)
+ */
+export async function isGuildTypeLogged(guild: Guild, type: LoggingConfigType): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+        await getGuildLoggingTypes(guild).then((value) => {
+            let result = value.get(type);
+            if(result === undefined) { 
+                resolve(false); 
+                return; 
+            }
+
+            resolve(result);
+        }).catch(reject);
+    });
+}
+//#endregion
