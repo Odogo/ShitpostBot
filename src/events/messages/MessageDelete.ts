@@ -21,36 +21,29 @@ export default new KEvent(Events.MessageDelete, async (msg) => {
         if(!isTypeLogged) return;
 
         let loggingChannels = await gatherChannelsForLogging(msg.guild, LoggingConfigCategory.MessageEvents);
+        if(loggingChannels.length <= 0) return;
+
+        const content = msg.content.slice(0, 1900) + (msg.content.length >= 1900 ? "...": "");
 
         const embed = new EmbedBuilder({
             color: 0x7DFFC7,
-            description: "**Message deleted**",
+            description: "A **message** was deleted in <#" + msg.channel.id + ">"
+                + "\n"
+                + "\n**Contents:**\n" + content,
             author: {
                 name: msg.author.displayName,
                 icon_url: msg.author.displayAvatarURL({ size: 2048, extension: 'png' })
             },
-            fields: [
-                { name: "In channel", value: "<#" + msg.channel.id + ">" },
-                { name: "Message Contents", value: (msg.content.length >= 1024 - 3 ? msg.content.substring(0, 1024-3) + "...": msg.content)}
-            ],
             timestamp: Date.now()
         });
 
-        if(msg.attachments.size >= 1) {
-            let attachments = "";
-            for(let i = 0; i < msg.attachments.size; i++) {
-                let url = msg.attachments.at(i)?.url;
-                if(url === undefined) continue;
-
-                if(attachments.length + url.length >= 1024) {
-                    attachments += "And " + (msg.attachments.size - i) + " more...";
-                    break;
-                } else {
-                    attachments += url + " \n";
-                }
+        if(msg.attachments.size > 0) {
+            let attachments = msg.attachments.map((a) => " " + a.url);
+            for(let i = 0; i<attachments.length; i++) {
+                let split = attachments[i].split("?");
+                attachments[i] = split[0];
             }
-
-            embed.addFields({ name: "Attachments", value: attachments });
+            embed.addFields({ name: "Attachments", value: " " + attachments, inline:  true});
         }
 
         for(let i = 0; i < loggingChannels.length; i++) {
