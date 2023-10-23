@@ -1,4 +1,4 @@
-import { AuditLogEvent, EmbedBuilder, Events } from "discord.js";
+import { EmbedBuilder, Events } from "discord.js";
 
 import { KEvent } from "../../classes/KEvent";
 import { logWarn } from "../../system";
