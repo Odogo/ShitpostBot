@@ -23,9 +23,15 @@ export const client = new KClient({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessageTyping,
     ],
-    partials: [Partials.Message, Partials.Channel, Partials.GuildMember]
-}, manifest.token, manifest.clientId,
-join(__dirname, "./commands"), join(__dirname, "./events"));
+    partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
+    token: manifest.token,
+    clientId: manifest.clientId,
+    paths: {
+        commands: join(__dirname, "./commands"),
+        events: join(__dirname, "./events"),
+        logging: join(__dirname, "./logging")
+    }
+});
 
 // Putting everything together
 (async () => {
