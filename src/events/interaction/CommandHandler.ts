@@ -1,5 +1,5 @@
 import { CommandInteractionOptionResolver, Events } from "discord.js";
-import { KEvent } from "../../classes/KEvent";
+import { KEvent } from "../../classes/objects/KEvent";
 import { logError, logInfo, logWarn } from "../../system";
 import { client } from "../..";
 import { KInteraction } from "../../interfaces/KInteraction";

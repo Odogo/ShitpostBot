@@ -1,3 +1,5 @@
+import { config } from '../.env/bot_manifesto.json';
+
 export class LogLevel {
     color: string;
     name: string;
@@ -16,8 +18,9 @@ export class LogLevel {
 }
 
 export function log(level: LogLevel, printable: any) {
+    if(!config.showDebugs) return;
+    
     let dateFormat = new Date().toLocaleString('en-us', { timeZone: 'America/Chicago', timeStyle: 'medium', dateStyle: 'short'});
-
     console.log(level.color + level.icon + " [" + dateFormat + "] [" + level.name.toUpperCase() + "]", printable);
 }
 

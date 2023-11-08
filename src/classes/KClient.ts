@@ -1,12 +1,12 @@
 import { ApplicationCommandDataResolvable, AuditLogEvent, Client, ClientEvents, ClientOptions, Collection, Events } from "discord.js";
 import { PathLike } from "fs";
-import { KCommand, TKCommandOptions } from "./KCommand";
+import { KCommand, TKCommandOptions } from "./objects/KCommand";
 import { lstat, readdir } from "fs/promises";
 import { logDebug, logError, logInfo, logWarn } from '../system';
 import { join } from "path";
-import { KEvent } from "./KEvent";
-import { KObject } from './KObject';
-import { KLogging } from "./KLogging";
+import { KEvent } from "./objects/KEvent";
+import { KObject } from './objects/KObject';
+import { KLogging } from "./objects/KLogging";
 
 type KClientOptions = {
     token: string,

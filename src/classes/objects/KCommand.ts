@@ -1,6 +1,6 @@
 import { ChatInputApplicationCommandData, CommandInteractionOptionResolver, PermissionResolvable } from "discord.js";
-import { KClient } from "./KClient";
-import { KInteraction } from "../interfaces/KInteraction";
+import { KClient } from "../KClient";
+import { KInteraction } from "../../interfaces/KInteraction";
 import { KObject } from "./KObject";
 
 export class KCommand extends KObject {

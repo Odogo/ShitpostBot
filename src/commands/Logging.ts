@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ApplicationCommandOptionType, ApplicationCommandType, ChannelType, ComponentType, StringSelectMenuBuilder, StringSelectMenuComponent, StringSelectMenuOptionBuilder } from 'discord.js';
-import { KCommand } from "../classes/KCommand";
+import { KCommand } from "../classes/objects/KCommand";
 import { getGuildLoggingTypes, hasCategoryLoggedInChannel, setCategoriesForChannel, setGuildLoggingTypes } from '../modules/Logging';
 import { LoggingConfigCategory } from '../enums/LoggingConfigCategory';
 import { LoggingConfigType } from '../enums/LoggingConfigType';

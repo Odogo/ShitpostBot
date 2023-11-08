@@ -1,8 +1,8 @@
 import { Events } from "discord.js";
-import { KEvent } from "../classes/KEvent";
-import { client } from "..";
-import { gatherChannelsForLogging, hasCategoryLoggedInChannel, isGuildTypeLogged } from "../modules/Logging";
-import { logWarn } from "../system";
+import { KEvent } from "../../classes/objects/KEvent";
+import { client } from "../..";
+import { gatherChannelsForLogging, isGuildTypeLogged } from "../../modules/Logging";
+import { logWarn } from "../../system";
 
 export default new KEvent(Events.GuildAuditLogEntryCreate, async (entry, guild) => {
     const { action } = entry;
@@ -17,7 +17,7 @@ export default new KEvent(Events.GuildAuditLogEntryCreate, async (entry, guild) 
         let loggingChannels = await gatherChannelsForLogging(guild, logObject.loggingConfig.category);
         if(loggingChannels.length <= 0) return;
 
-        const embed = logObject.embedCallback(entry);
+        const embed = await logObject.embedCallback(entry, guild);
 
         for(let i = 0; i < loggingChannels.length; i++) {
             await loggingChannels[i].send({ embeds: [embed] });

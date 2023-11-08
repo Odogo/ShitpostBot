@@ -1,16 +1,23 @@
-import { NonThreadGuildBasedChannel } from "discord.js";
+import { ChannelType, NonThreadGuildBasedChannel } from "discord.js";
 
 export namespace Utilities {
 
-    export function stringedType(channel: NonThreadGuildBasedChannel) {
-        switch(channel.type) {
+    export function channelTypeString(type: ChannelType) {
+        switch(type) {
             case 0: return "Text Channel";
+            case 1: return "DM";
             case 2: return "Voice Channel";
+            case 3: return "Group DM";
             case 4: return "Category";
             case 5: return "Announcement Channel";
+            // case 6-9 does not exist
+            case 10: return "Announcement Thread";
+            case 11: return "Public Thread";
+            case 12: return "Private Thread";
             case 13: return "Stage Channel";
+            case 14: return "Directory";
             case 15: return "Forum Channel";
-            default: return "Unknown?";
+            default: return "Unknown";
         }
     }
 

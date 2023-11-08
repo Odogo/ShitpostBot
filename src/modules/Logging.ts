@@ -10,6 +10,12 @@ import { MLoggingChannels } from "../database/logging/MLoggingChannels";
 import { LoggingConfigCategory } from '../enums/LoggingConfigCategory';
 import { LoggingConfigType } from '../enums/LoggingConfigType';
 
+export const EmbedColors = {
+    change: 0xf29b29,
+    add: 0x75ff6b,
+    remove: 0xff6b6b
+}
+
 //#region Category Section 
 /**
  * Gathers the logging categories of a TextChannel and returns them.
