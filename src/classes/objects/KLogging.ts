@@ -69,4 +69,4 @@ type KLoggingObjectConfig = {
     category: LoggingConfigCategory
 }
 
-type KLoggingEmbedCallback = (entry: GuildAuditLogsEntry, guild: Guild) => Promise<EmbedBuilder>;
+type KLoggingEmbedCallback = (entry: GuildAuditLogsEntry, guild: Guild) => Promise<EmbedBuilder | null>;

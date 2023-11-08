@@ -18,6 +18,7 @@ export default new KEvent(Events.GuildAuditLogEntryCreate, async (entry, guild) 
         if(loggingChannels.length <= 0) return;
 
         const embed = await logObject.embedCallback(entry, guild);
+        if(embed === null) return;
 
         for(let i = 0; i < loggingChannels.length; i++) {
             await loggingChannels[i].send({ embeds: [embed] });

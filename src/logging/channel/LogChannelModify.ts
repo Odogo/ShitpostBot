@@ -1,4 +1,4 @@
-import { AuditLogEvent, GuildChannel } from "discord.js";
+import { AuditLogEvent, NonThreadGuildBasedChannel } from "discord.js";
 import { KLogging } from "../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
@@ -13,11 +13,11 @@ export default new KLogging({
     },
 
     embedCallback: async (entry, guild) => {
-        const channel = entry.target as GuildChannel;
+        const channel = entry.target as NonThreadGuildBasedChannel;
 
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.change,
-            description: "A [channel](" + channel.url + ") was updated"
+            description: "A [channel](" + channel.url + ") was updated\n<#" + channel.id + ">",
         });
 
         if(channel.parent !== null) { embed.addFields({ name: "Under category", value: channel.parent.name }); }
@@ -26,11 +26,11 @@ export default new KLogging({
         for(let i = 0; i < changes.length; i++) {
             let newKey = Utilities.auditLogKey(changes[i].key);
             let newOld = changes[i].old === undefined || changes[i].old === null || ((changes[i].old as String).length <= 0) ? "Not set": changes[i].old;
-            let newNew = changes[i].new === undefined || changes[i].new === null || ((changes[i].old as String).length <= 0) ? "Not set": changes[i].new;
+            let newNew = changes[i].new === undefined || changes[i].new === null || ((changes[i].new as String).length <= 0) ? "Not set": changes[i].new;
 
             embed.addFields([
                 { name: newKey, value: "Previously `" + newOld + "`, now `" + newNew + "`" }
-            ])
+            ]);
         }
 
         return embed;

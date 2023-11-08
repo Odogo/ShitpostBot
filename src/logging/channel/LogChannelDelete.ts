@@ -1,4 +1,4 @@
-import { AuditLogEvent, GuildChannel } from "discord.js";
+import { AuditLogEvent, NonThreadGuildBasedChannel } from "discord.js";
 import { KLogging } from "../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
@@ -13,7 +13,7 @@ export default new KLogging({
     },
 
     embedCallback: async (entry, guild) => {
-        const channel = entry.target as GuildChannel;
+        const channel = entry.target as NonThreadGuildBasedChannel;
         
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.remove,
