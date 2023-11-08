@@ -67,7 +67,10 @@ export async function fetchGuildChannelData(guild: Guild): Promise<Collection<Te
                     let dbObj = values[i];
 
                     let channel = channelCache.get(dbObj.channelId);
-                    if(channel == undefined || !(channel instanceof TextChannel)) continue;
+                    if(channel == undefined || !(channel instanceof TextChannel)) {
+                        await MLoggingChannels.destroy({ where: { channelId: dbObj.channelId, guildId: dbObj.guildId }});
+                        continue;
+                    }
 
                     map.set(channel, await fetchChannelLogCategories(channel));
                 }
@@ -155,7 +158,7 @@ export async function gatherChannelsForLogging(guild: Guild, category: LoggingCo
 
                 if(categories.includes(category)) {
                     let channel = data.keyAt(i);
-                    if(channel == undefined) continue;
+                    if(channel === undefined) continue;
                     channels.push(channel);
                 }
             }

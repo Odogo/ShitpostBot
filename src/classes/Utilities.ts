@@ -1,4 +1,4 @@
-import { ChannelType, NonThreadGuildBasedChannel } from "discord.js";
+import { APIAuditLogChange, ChannelType, NonThreadGuildBasedChannel } from "discord.js";
 
 export namespace Utilities {
 
@@ -21,4 +21,11 @@ export namespace Utilities {
         }
     }
 
+    export function auditLogKey(key: APIAuditLogChange['key']) {
+        let keySplit = key.split("_");
+        for(let i = 0; i < keySplit.length; i++) {
+            keySplit[i] = keySplit[i].substring(0, 1).toUpperCase() + keySplit[i].substring(1).toLowerCase();
+        }
+        return keySplit.join(" ");
+    }
 }

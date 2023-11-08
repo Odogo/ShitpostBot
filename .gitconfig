@@ -1,0 +1,7 @@
+[user]
+    email = odogogaming514@gmail.com
+    name = Kyomi
+[gpg]
+    program = gpg2
+[commit]
+    gpgsign = true
