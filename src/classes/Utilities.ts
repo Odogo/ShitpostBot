@@ -1,4 +1,5 @@
-import { APIAuditLogChange, ChannelType, NonThreadGuildBasedChannel } from "discord.js";
+import { APIAuditLogChange, ChannelType, NonThreadGuildBasedChannel, PermissionsBitField } from "discord.js";
+import { PermissionFields } from "../interfaces/PermissionFields";
 
 export namespace Utilities {
 
@@ -27,5 +28,12 @@ export namespace Utilities {
             keySplit[i] = keySplit[i].substring(0, 1).toUpperCase() + keySplit[i].substring(1).toLowerCase();
         }
         return keySplit.join(" ");
+    }
+
+    export function parsePermissions(permissionField: PermissionsBitField): PermissionFields {
+        return Object.entries(PermissionsBitField.Flags)
+            .reduce((obj, [perm, value]) => 
+                ({ ...obj, [perm]: permissionField.has(value) }),
+                {} as PermissionFields);
     }
 }

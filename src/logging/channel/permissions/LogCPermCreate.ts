@@ -3,6 +3,8 @@ import { KLogging } from "../../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
 import { EmbedColors } from "../../../modules/Logging";
+import { PermissionFields } from "../../../interfaces/PermissionFields";
+import { Utilities } from "../../../classes/Utilities";
 
 export default new KLogging({
     logEvent: AuditLogEvent.ChannelOverwriteCreate,
@@ -23,12 +25,8 @@ export default new KLogging({
         });
 
         let _allowed = entry.changes.find((v) => v.key === "allow")?.new, _denied = entry.changes.find((v) => v.key === "deny")?.new;
-        let allowed = new PermissionsBitField(BigInt(_allowed + "")), denied = new PermissionsBitField(BigInt(_denied + ""));
-        const allowedPerms = Object.entries(PermissionsBitField.Flags).reduce((obj, [perm, value]) => ({ ...obj, [perm]: allowed.has(value) }), {});
-        const deniedPerms = Object.entries(PermissionsBitField.Flags).reduce((obj, [perm, value]) => ({ ...obj, [perm]: denied.has(value) }), {});
-        
-        console.log(allowedPerms);
-        console.log(deniedPerms);
+        const allowedPerms = Utilities.parsePermissions(new PermissionsBitField(BigInt(_allowed + "")));
+        const deniedPerms = Utilities.parsePermissions(new PermissionsBitField(BigInt(_denied + "")));
 
         return embed;
     }
