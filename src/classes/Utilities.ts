@@ -1,5 +1,4 @@
 import { APIAuditLogChange, ChannelType, NonThreadGuildBasedChannel, PermissionsBitField } from "discord.js";
-import { PermissionFilterableFlags } from "../types/PermissionFilterableFlags";
 
 export namespace Utilities {
 

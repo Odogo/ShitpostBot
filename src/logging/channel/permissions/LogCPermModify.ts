@@ -2,17 +2,15 @@ import {
 	AuditLogEvent,
 	GuildAuditLogsEntryExtraField,
 	NonThreadGuildBasedChannel,
+	PermissionsBitField,
+	PermissionsString,
 	Role,
 } from "discord.js";
 import { KLogging } from "../../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
 import { EmbedColors } from "../../../modules/Logging";
-import {
-	parsePermissions,
-	flagsFindDifference,
-	PermissionFilterableFlags,
-} from "../../../types/PermissionFilterableFlags";
+import { PermFlag_Default, flagsFindDifference, transEmoji } from "../../../types/PermissionFilterableFlags";
 
 export default new KLogging({
 	logEvent: AuditLogEvent.ChannelOverwriteUpdate,
@@ -32,76 +30,63 @@ export default new KLogging({
 				"A [channel's](" +
 				channel.url +
 				") permissions override modified\n" +
-				(extra instanceof Role
-					? "<@&" + extra.id + ">"
-					: "<@" + extra.id + ">") +
-				"\nwith the following changes:\n",
+				(extra instanceof Role ? "<@&" + extra.id + ">" : "<@" + extra.id + ">") + "\n" + 
+				"with the following changes:\n",
             fields: [
                 { name: "Channel", value: "<#" + channel.id + ">" }
             ]
 		});
 
-		const oldAllowChange = entry.changes.find((v) => v.key === "allow");
-		const oldDenyChange = entry.changes.find((v) => v.key === "deny");
+		const allowChange = entry.changes.find((v) => v.key === "allow");
+		const denyChange = entry.changes.find((v) => v.key === "deny");
 
-		const oldAllow =
-			typeof oldAllowChange?.old === "number"
-				? parsePermissions(BigInt(oldAllowChange.old))
-				: ({} as PermissionFilterableFlags);
-		const oldDeny =
-			typeof oldDenyChange?.old === "number"
-				? parsePermissions(BigInt(oldDenyChange.old))
-				: ({} as PermissionFilterableFlags);
-		const newAllow =
-			typeof oldAllowChange?.new === "number"
-				? parsePermissions(BigInt(oldAllowChange.new))
-				: ({} as PermissionFilterableFlags);
-		const newDeny =
-			typeof oldDenyChange?.new === "number"
-				? parsePermissions(BigInt(oldDenyChange.new))
-				: ({} as PermissionFilterableFlags);
+		let oldFlags = PermFlag_Default(), newFlags = PermFlag_Default();
 
-		const oldDiff = flagsFindDifference(oldAllow, oldDeny);
-		const newDiff = flagsFindDifference(newAllow, newDeny);
+		if(allowChange) {
+			let allowOld = new PermissionsBitField(BigInt(allowChange.old + "")), allowNew = new PermissionsBitField(BigInt(allowChange.new + ""));
+			
+			const allowOldSer = allowOld.serialize();
+			for(const key in allowOldSer) {
+				if(allowOldSer[key] === true)
+					oldFlags[key] = true;
+			}
 
-		const comparisonMessage: string[] = [];
-		for (const key in oldDiff) {
-			const oldValue = oldDiff[key] ? ":x:" : ":white_check_mark:";
-			const newValue = newDiff[key] ? ":x:" : ":white_check_mark:";
-
-			if (key in newDiff) {
-				if (oldValue !== newValue) {
-					comparisonMessage.push(
-						`- **${key}**: Changed from ${oldValue} to ${newValue}`
-					);
-				} else {
-					comparisonMessage.push(
-						`- **${key}**: Changed from ${oldValue} to :record_button: `
-					);
-				}
-			} else {
-				comparisonMessage.push(
-					`- **${key}**: Changed from ${oldValue} to :record_button: `
-				);
+			const allowNewSer = allowNew.serialize();
+			for(const key in allowNewSer) {
+				if(allowNewSer[key] === true) 
+					newFlags[key] = true;
 			}
 		}
 
-		for (const key in newDiff) {
-			if (!(key in oldDiff)) {
-				const newValue = newDiff[key] ? ":x:" : ":white_check_mark:";
-				comparisonMessage.push(
-					`- **${key}**: Changed from :record_button:  to ${newValue}`
-				);
+		if(denyChange) {
+			let denyOld = new PermissionsBitField(BigInt(denyChange.old + "")), denyNew = new PermissionsBitField(BigInt(denyChange.new + ""));
+			
+			const denyOldSer = denyOld.serialize();
+			for(const key in denyOldSer) {
+				if(denyOldSer[key] === true) 
+					oldFlags[key] = false;
+			}
+
+			const denyNewSer = denyNew.serialize();
+			for(const key in denyNewSer) {
+				if(denyNewSer[key] === true) 
+					newFlags[key] = false;
 			}
 		}
 
-		if (comparisonMessage.length > 0) {
-			embed.setDescription(
-				embed.data.description + comparisonMessage.join("\n") + "\n"
-			);
-		} else {
-			embed.setDescription(embed.data.description + "No permission changes.\n");
+		const difference = flagsFindDifference(oldFlags, newFlags);
+		let diffMsg = "";
+		for(let i=0; i<difference.size; i++) {
+			let indexKey = difference.keyAt(i);
+			if(!indexKey) continue;
+
+			let diff = difference.get(indexKey);
+			if(!diff) continue;
+
+			diffMsg += "- **" + indexKey + ":** Changed from " + transEmoji(diff[0]) + " to " + transEmoji(diff[1]) + "\n";
 		}
+
+		embed.setDescription(embed.data.description + diffMsg);
 
 		return embed;
 	},
