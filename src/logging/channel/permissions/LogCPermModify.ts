@@ -1,16 +1,9 @@
-import {
-	AuditLogEvent,
-	GuildAuditLogsEntryExtraField,
-	NonThreadGuildBasedChannel,
-	PermissionsBitField,
-	PermissionsString,
-	Role,
-} from "discord.js";
+import { AuditLogEvent, GuildAuditLogsEntryExtraField, NonThreadGuildBasedChannel, PermissionsBitField, Role } from "discord.js";
 import { KLogging } from "../../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
 import { EmbedColors } from "../../../modules/Logging";
-import { PermFlag_Default, flagsFindDifference, transEmoji } from "../../../types/PermissionFilterableFlags";
+import { PermFlag_Default, flagsFindDifference, transEmoji } from "../../../types/PermFlags";
 
 export default new KLogging({
 	logEvent: AuditLogEvent.ChannelOverwriteUpdate,

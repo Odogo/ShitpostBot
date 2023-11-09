@@ -3,7 +3,7 @@ import { KLogging } from "../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
 import { EmbedColors } from "../../modules/Logging";
-import { PermFlags, flagsFilter } from "../../types/PermissionFilterableFlags";
+import { PermFlags, flagsFilter } from "../../types/PermFlags";
 
 export default new KLogging({
     logEvent: AuditLogEvent.RoleDelete,
