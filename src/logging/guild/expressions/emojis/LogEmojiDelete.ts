@@ -1,8 +1,8 @@
 import { AuditLogEvent, GuildEmoji } from "discord.js";
-import { KLogging } from "../../classes/objects/KLogging";
-import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { EmbedColors } from "../../modules/Logging";
+import { KLogging } from "../../../../classes/objects/KLogging";
+import { LoggingConfigCategory } from "../../../../enums/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../../enums/LoggingConfigType";
+import { EmbedColors } from "../../../../modules/Logging";
 
 export default new KLogging({
     logEvent: AuditLogEvent.EmojiDelete,

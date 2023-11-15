@@ -4,20 +4,20 @@
 > Updated: 10/11/2023
 
 ## About
-The Shitpost Bot Project (SBP) is a Discord Bot that aims to be the all-in-one solution to every bot out there, all without paying a single penny. Forget having the simplest features locked behind a paywall or some scummy corporations overcharging for a lifetime plan; this bot includes it all and more. This bot includes features most bots include [^1] alongside its additional features that may further assist you in your server management needs.
+The Shitpost Bot Project (SBP) is a Discord Bot project that's sole objective to be an all-in-one solution. These features are provided to you at **zero cost**, which is impressive when every bot has some sort of premium feature. This project will contain no such "premium feature(s)", and it's license prohibits any commerical use of this bot. The only money that this project will *ever* generate is anyone who considers to support this project or developers by donation, which is by no means neccessary (see **Supporting** below).
+
+To further emphasize, this project contains features that are common among most bots, including some premium selections. Additionally some features might have additional features that are added to further assist guild owners in their quest to keep their community how they like it to be.
 
 ### History
-Originally, SBP was founded as a private music bot and was even further emphasized when some popular music bots were issued a cease and desist letter by YouTube/Google.
-
-But the project shifted after noticing the number of features that discord bot hides behind an intense paywall or the support of NFTs (lookin' at you *Mee6*), and those features were further expanded on by adding some additional functions, if applicable.
+The history of this project dates back to 2021, when YouTube/Google issues a couple of *cease and desist* letters to some of the popular music bot, and was designed to become a private music bot for a small community server of friends. Now, as more and more bots come out, they lock features behind a expensive payment barrier or additionally support NFTs or cryptocurrencies. The project and it's developers are against NFTs and cryptocurrencies, and have zero future in investing in them. Additionally, the expensive payment barrier wont be an issue, as no features will be locked behind a payment wall.
 
 ### Access
-Gaining access to this bot is a simple process. SBP is "invitation only", you can only gain access by submitting a request form. As per the attached [license](./LICENSE.md), we ask that you do not use your code without any modifications. Submit a request to get access to the bot. Read the [full licnese](./LICENSE.md) for more information.
+ShitpostBot may only be accessed through invitation or application process. The application is, at this time of writing, not accessible. This project is still in development.
 
-The invitation-only access might change later, depending on how it goes with the closed beta test, but as of now, it's invitation-only. A form link will be put somewhere here for you to submit access.
+**Note:** SBP being "invitation only" access may change at a later date once the project advances further.
 
 ### Supporting
-Supporting this project by donation or other means is by no means necessary and will not grant you any additional features towards the bot. Potentially grant early testing access or polls for the next feature to add.
+Supporting SBP or it's developers in regards to this project by no means will grant you "additional features" to the bot itself, however, you may receive an opportunity to pick which feature gets added next into the project. Additionally, you may receive access to a PTB (Private Test Beta) version of the bot codenamed "TestpostBot". Besides these, you will not receive any special treatment or additional features.
 
 ## Planned Features
 - Music playback and functions
@@ -49,9 +49,7 @@ Supporting this project by donation or other means is by no means necessary and 
 - Extensive Logging
   - Allows logs of ran commands (config setting to show failed commands as well)
   - Message Events (Deleted, Edited, or Purged)
-  - Members (Joined, Leaving)
-  - Server (Channel & Role changes, server updates, emoji changes)
+  - ~~Members (Joined, Leaving)~~
+  - ~~Server (Channel & Role changes, server updates, emoji changes)~~
   - Member (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
   - Voice (Join, Move, Leave)
-
-[^1]:  Granted, some of these features are standard to "what most bot should include", but adding them is just nice in my opinion. They're helpful, ok?

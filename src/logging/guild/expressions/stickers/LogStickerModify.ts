@@ -1,9 +1,9 @@
 import { AuditLogEvent, GuildEmoji, Sticker } from "discord.js";
-import { KLogging } from "../../classes/objects/KLogging";
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
-import { EmbedColors } from "../../modules/Logging";
-import { client } from "../..";
+import { KLogging } from "../../../../classes/objects/KLogging";
+import { LoggingConfigType } from "../../../../enums/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../../enums/LoggingConfigCategory";
+import { EmbedColors } from "../../../../modules/Logging";
+import { client } from "../../../..";
 
 export default new KLogging({
     logEvent: AuditLogEvent.StickerUpdate,

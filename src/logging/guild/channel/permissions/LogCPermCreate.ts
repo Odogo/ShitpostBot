@@ -1,8 +1,8 @@
 import { AuditLogEvent, GuildAuditLogsEntryExtraField, NonThreadGuildBasedChannel, Role } from "discord.js";
-import { KLogging } from "../../../classes/objects/KLogging";
-import { LoggingConfigType } from "../../../enums/LoggingConfigType";
-import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
-import { EmbedColors } from "../../../modules/Logging";
+import { KLogging } from "../../../../classes/objects/KLogging";
+import { LoggingConfigType } from "../../../../enums/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../../enums/LoggingConfigCategory";
+import { EmbedColors } from "../../../../modules/Logging";
 
 export default new KLogging({
     logEvent: AuditLogEvent.ChannelOverwriteCreate,

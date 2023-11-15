@@ -1,12 +1,12 @@
 import { AuditLogEvent, GuildEmoji, Sticker, StickerFormatType } from "discord.js";
-import { KLogging } from "../../classes/objects/KLogging";
-import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { EmbedColors } from "../../modules/Logging";
-import { client } from "../..";
+import { KLogging } from "../../../../classes/objects/KLogging";
+import { LoggingConfigType } from "../../../../enums/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../../enums/LoggingConfigCategory";
+import { EmbedColors } from "../../../../modules/Logging";
+import { client } from "../../../..";
 
 export default new KLogging({
-    logEvent: AuditLogEvent.StickerDelete,
+    logEvent: AuditLogEvent.StickerCreate,
     loggingConfig: {
         type: LoggingConfigType.EmojiUpdate,
         category: LoggingConfigCategory.GuildEvents
@@ -21,7 +21,7 @@ export default new KLogging({
         }
 
         const embed = await KLogging.baseEmbed(entry, guild, {
-            color: EmbedColors.remove,
+            color: EmbedColors.add,
             description: "A sticker was removed from the sticker pool.\n"
                 + "**Name:** " + target.name + "\n"
                 + "**Related Emoji:** " + (tagEmoji === null ? "`None set`" : (!Number.isInteger(tagEmoji) ? tagEmoji : "`" + (tagEmoji as GuildEmoji).name + "`")) + "`\n"

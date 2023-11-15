@@ -1,9 +1,9 @@
 import { AuditLogEvent, PermissionsBitField, Role } from "discord.js";
-import { KLogging } from "../../classes/objects/KLogging";
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
-import { EmbedColors } from "../../modules/Logging";
-import { PermFlags, flagsFindDifference, transEmoji } from "../../types/PermFlags";
+import { KLogging } from "../../../classes/objects/KLogging";
+import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../enums/LoggingConfigType";
+import { EmbedColors } from "../../../modules/Logging";
+import { PermFlags, flagsFindDifference, transEmoji } from "../../../types/PermFlags";
 
 export default new KLogging({
     logEvent: AuditLogEvent.RoleUpdate,

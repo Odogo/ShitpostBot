@@ -1,9 +1,9 @@
 import { AuditLogEvent, NonThreadGuildBasedChannel } from "discord.js";
-import { Utilities } from "../../classes/Utilities";
-import { KLogging } from "../../classes/objects/KLogging";
-import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { EmbedColors } from "../../modules/Logging";
+import { Utilities } from "../../../classes/Utilities";
+import { KLogging } from "../../../classes/objects/KLogging";
+import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../enums/LoggingConfigType";
+import { EmbedColors } from "../../../modules/Logging";
 
 export default new KLogging({
     logEvent: AuditLogEvent.ChannelCreate,

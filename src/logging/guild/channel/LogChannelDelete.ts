@@ -1,26 +1,30 @@
-import { AuditLogEvent, GuildAuditLogsEntryExtraField, NonThreadGuildBasedChannel, Role } from "discord.js";
+import { AuditLogEvent, NonThreadGuildBasedChannel } from "discord.js";
 import { KLogging } from "../../../classes/objects/KLogging";
 import { LoggingConfigType } from "../../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
 import { EmbedColors } from "../../../modules/Logging";
+import { Utilities } from "../../../classes/Utilities";
 
 export default new KLogging({
-    logEvent: AuditLogEvent.ChannelOverwriteDelete,
+    logEvent: AuditLogEvent.ChannelDelete,
     loggingConfig: {
-        type: LoggingConfigType.ChannelModify,
+        type: LoggingConfigType.ChannelRemove,
         category: LoggingConfigCategory.GuildEvents
     },
 
     embedCallback: async (entry, guild) => {
-        const extra = entry.extra as GuildAuditLogsEntryExtraField[AuditLogEvent.ChannelOverwriteCreate];
         const channel = entry.target as NonThreadGuildBasedChannel;
-
+        
         const embed = await KLogging.baseEmbed(entry, guild, {
-            color: EmbedColors.add,
-            description: "A [channel's](" + channel.url + ") permissions override was modified to remove:\n"
-                + (extra instanceof Role ? "<@&" + extra.id + ">" : "<@" + extra.id + ">")
+            color: EmbedColors.remove,
+            description: "A channel was deleted"
         });
+
+        embed.addFields([
+            { name: "Channel Type", value: Utilities.channelTypeString(channel.type) },
+            { name: "Channel Name", value: channel.name + "" }
+        ]);
 
         return embed;
     }
-})
+});
