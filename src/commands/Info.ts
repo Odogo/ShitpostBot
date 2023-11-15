@@ -1,5 +1,6 @@
-import { ApplicationCommandOptionType, Embed, EmbedBuilder, UserFlags, UserFlagsBitField, UserFlagsString } from "discord.js";
+import { ApplicationCommandOptionType, Embed, EmbedBuilder, PermissionsBitField, UserFlags, UserFlagsBitField, UserFlagsString } from "discord.js";
 import { KCommand } from "../classes/objects/KCommand";
+import { PermFlags } from "../types/PermFlags";
 
 export default new KCommand({
     name: "info",
@@ -95,11 +96,46 @@ export default new KCommand({
                     embed.addFields({ name: "Flags", value: stringFlags.join(", ")});
             }
         } else if(subCommand === "role") {
-            const role = options.getRole("role", true);
+            const apiRole = options.getRole("role", true);
+            const role = await guild.roles.fetch(apiRole.id);
+            if(role === null)
+                return await interaction.reply({ content: "The given role no longer exists!", ephemeral: true });
 
-            embed.setTitle("Server Information")
+            embed.setTitle("Role Information")
                 .setAuthor({ name: guild.name, iconURL: guild.iconURL({ extension: 'png', size: 1024 }) || undefined })
-                
+                .setDescription("<@&" + role.id + ">\n");
+            
+            const permBit = new PermissionsBitField(role.permissions.bitfield);
+            const perms = Object.entries(PermissionsBitField.Flags).reduce((obj, [perm, value]) => ({ ...obj, [perm]: permBit.has(value) }), {} as PermFlags);
+            const keys = Object.keys(perms);
+
+            let diffMsg = "**Permissions:**";
+            if(permBit.has(PermissionsBitField.Flags.Administrator)) {
+                diffMsg += "\n**Administrator**: :white_check_mark:";
+                diffMsg += "\nWith **" + (keys.length - 1) + "** dismissed *(overriden from Administrator)*";
+            } else {
+                if(keys.length > 0) {
+                    for(let i=0; i < Math.min(keys.length, 25); i++) {
+                        let key = keys[i];
+                        if(perms[key] === true) {
+                            diffMsg += "\n**" + key + "**: :white_check_mark:";
+                        }
+
+                        if(i === 24) {
+                            diffMsg += "\nWith **" + (keys.length - 25) + "** others...";
+                        }
+                    }
+                } else {
+                    diffMsg += "\nNo permissions granted.";
+                }
+            }
+
+            embed.setDescription(embed.data.description + diffMsg);
+
+            embed.addFields([
+                { name: "Created", value: "<t:" + Math.floor(role.createdTimestamp / 1000) + ":R>" },
+                { name: "Color", value: role.hexColor }
+            ]);
         } else {
             return await interaction.reply({ content: "Invalid subcommand option, something wrong must've happened as you should not be seeing this! Try again or report this issue!", ephemeral: true });
         }
