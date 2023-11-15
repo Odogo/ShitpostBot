@@ -1,14 +1,15 @@
 import { EmbedBuilder, Events } from "discord.js";
 import { KEvent } from "../../classes/objects/KEvent";
 import { client } from "../..";
-import { gatherChannelsForLogging, isGuildTypeLogged } from "../../modules/Logging";
+import { EmbedColors, gatherChannelsForLogging, isGuildTypeLogged } from "../../modules/Logging";
 import { LoggingConfigType } from "../../enums/LoggingConfigType";
 import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
 
 export default new KEvent(Events.VoiceStateUpdate, async (oldState, newState) => {
-    const { guild } = oldState;
+    const { guild, member } = oldState;
     const clientUser = client.user;
-    if(clientUser === null) return;
+
+    if(clientUser === null || member == null) return;
 
     const prevChannel = oldState.channel, newChannel = newState.channel;
 
@@ -16,17 +17,37 @@ export default new KEvent(Events.VoiceStateUpdate, async (oldState, newState) =>
     if(loggingChannels.length <= 0) return;
 
     const embed = new EmbedBuilder({
-
+        author: {
+            name: member.displayName,
+            iconURL: member.avatarURL({ extension: 'png', size: 1024 }) || undefined
+        },
+        timestamp: Date.now(),
+        footer: {
+            text: clientUser.displayName,
+            iconURL: clientUser.avatarURL({ extension: 'png', size: 1024}) || undefined
+        }
     });
 
     if(newChannel === null) { // Left a voice channel
         let isTypeLogged = await isGuildTypeLogged(guild, LoggingConfigType.VoiceLeave);
         if(!isTypeLogged) return;
+
+        embed.setColor(EmbedColors.remove)
+            .setDescription("<@" + member.id + "> left the channel <#" + prevChannel?.id + ">")
     } else if(prevChannel === null) { // Joined a voice channel
         let isTypeLogged = await isGuildTypeLogged(guild, LoggingConfigType.VoiceJoin);
         if(!isTypeLogged) return;
+
+        embed.setColor(EmbedColors.add)
+            .setDescription("<@" + member.id + "> joined the channel <#" + newChannel?.id + ">")
     } else { // Switched to a different voice channel
         let isTypeLogged = await isGuildTypeLogged(guild, LoggingConfigType.VoiceSwitch);
         if(!isTypeLogged) return;
-    } 
+
+        embed.setColor(EmbedColors.change)
+            .setDescription("<@" + member.id + "> switched from <#" + prevChannel.id + "> to <#" + newChannel.id + ">")
+    }
+
+    for(let i=0; i<loggingChannels.length; i++) 
+        await loggingChannels[i].send({ embeds: [embed] });
 });

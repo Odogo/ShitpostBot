@@ -52,4 +52,4 @@ Supporting SBP or it's developers in regards to this project by no means will gr
   - ~~Members (Joined, Leaving)~~
   - ~~Server (Channel & Role changes, server updates, emoji changes)~~
   - Member (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
-  - Voice (Join, Move, Leave)
+  - ~~Voice (Join, Move, Leave)~~
