@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, Embed, EmbedBuilder, UserFlags, UserFlagsBitField } from "discord.js";
+import { ApplicationCommandOptionType, Embed, EmbedBuilder, UserFlags, UserFlagsBitField, UserFlagsString } from "discord.js";
 import { KCommand } from "../classes/objects/KCommand";
 
 export default new KCommand({
@@ -63,7 +63,7 @@ export default new KCommand({
                     { name: "Roles", value: guild.roles.cache.size + " roles", inline: true },
                     { name: "Channels", value: guild.channels.cache.size + " channels", inline: true }
                 ]).setThumbnail(guild.iconURL({ extension: 'png', size: 1024 }));
-        } else if(subCommand === "user") {
+        } else if(subCommand === "member") {
             const user = options.getUser("user", true);
             const member = await guild.members.fetch(user);
 
@@ -74,17 +74,32 @@ export default new KCommand({
                 ]).setThumbnail(user.avatarURL({ extension: 'png', size: 1024}));
 
             const roles = Array.from(member.roles.cache.values());
-            const roleIds = roles.map((role) => "<@&" + role.id + ">");
+            const roleIds = roles.filter((role) => guild.roles.everyone.id !== role.id).map((role) => "<@&" + role.id + ">")
             embed.addFields({ name: "Roles", value: (roles.length <= 0 ? "No roles" : roleIds.join(", ")) });
 
             const userFlags = user.flags;
             if(userFlags !== null) {
-                let flags = Object.entries(UserFlagsBitField.Flags).reduce((obj, [perm, value]) => ({ ...obj, [perm]: userFlags.has(value) }), {} as UserFlag);
+                const flags: Array<UserFlagsString>  = [];
+
+                const userFlagSer = userFlags.serialize();
+                for(let key in userFlagSer) {
+                    if(userFlagSer[key] === true)
+                        flags.push(key as UserFlagsString);
+                }
+
+                const stringFlags: string[] = [];
+                for(let i=0; i<flags.length; i++)
+                    stringFlags[i] = parseStringedFlag(flags[i]);
+
+                if(stringFlags.length > 0)
+                    embed.addFields({ name: "Flags", value: stringFlags.join(", ")});
             }
         } else if(subCommand === "role") {
             const role = options.getRole("role", true);
 
-            embed.setTimestamp("Role Information")
+            embed.setTitle("Server Information")
+                .setAuthor({ name: guild.name, iconURL: guild.iconURL({ extension: 'png', size: 1024 }) || undefined })
+                
         } else {
             return await interaction.reply({ content: "Invalid subcommand option, something wrong must've happened as you should not be seeing this! Try again or report this issue!", ephemeral: true });
         }
@@ -93,6 +108,25 @@ export default new KCommand({
     }
 })
 
-type UserFlag = {
-    [K in keyof typeof UserFlags]: boolean
+function parseStringedFlag(value: UserFlagsString): string {
+    switch(value) {
+        case "BugHunterLevel1": return "Bug Hunter (Lv 1)";
+        case "MFASMS": return value + " (?)";
+        case "PremiumPromoDismissed": return value + " (?)";
+        case "HypeSquadOnlineHouse1": return "House Bravery";
+        case "HypeSquadOnlineHouse2": return "House Brilliance";
+        case "HypeSquadOnlineHouse3": return "House Balance";
+        case "PremiumEarlySupporter": return "Early Nitro Supporter";
+        case "TeamPseudoUser": return "Team PseudoUser";
+        case "HasUnreadUrgentMessages": return value + " (?)";
+        case "BugHunterLevel2": return "Bug Hunter (Lv 2)";
+        case "VerifiedBot": return "Verified Bot";
+        case "VerifiedDeveloper": return "Early Varified Bot Developer";
+        case "CertifiedModerator": return "Moderator Alumni";
+        case "BotHTTPInteractions": return "[Bot] Supports Interactions"
+        case "DisablePremium": return "Premium Disabled"
+        case "ActiveDeveloper": return "Active Developer"
+        case "RestrictedCollaborator": return "Restricted Collaborator"
+        default: return value;
+    }
 }
