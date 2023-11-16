@@ -35,7 +35,7 @@ Supporting SBP or it's developers in regards to this project by no means will gr
 - Auto roles (when a new user joins, give them x roles)
 - Reaction roles (reaction or dropdown)
 - Welcome / Leave messages
-- Server/User information
+- ~~Server/User information~~
 - Moderation Commands (requires moderation power)
   - Warn (unwarn)
   - Kick
