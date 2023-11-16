@@ -18,8 +18,8 @@ export default new KEvent(Events.VoiceStateUpdate, async (oldState, newState) =>
 
     const embed = new EmbedBuilder({
         author: {
-            name: member.displayName,
-            iconURL: member.avatarURL({ extension: 'png', size: 1024 }) || undefined
+            name: (member.nickname !== null ? member.nickname : member.displayName),
+            iconURL: member.avatarURL({ extension: 'png', size: 2048 }) || member.displayAvatarURL({ extension: 'png', size: 2048 })
         },
         timestamp: Date.now(),
         footer: {
