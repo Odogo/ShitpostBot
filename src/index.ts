@@ -22,9 +22,14 @@ export const client = new KClient({
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessageTyping,
-        GatewayIntentBits.GuildVoiceStates
+        GatewayIntentBits.GuildVoiceStates,
     ],
-    partials: [Partials.Message, Partials.Channel, Partials.GuildMember],
+    partials: [
+        Partials.Message,
+        Partials.Channel,
+        Partials.GuildMember,
+        Partials.User
+    ],
     token: manifest.token,
     clientId: manifest.clientId,
     paths: {

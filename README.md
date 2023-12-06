@@ -49,8 +49,8 @@ Supporting SBP or it's developers in regards to this project by no means will gr
     - If linked with a punishment token ID, total punishment count, reason, and time will be displayed in the infraction list for each matching punishment token.
 - Extensive Logging
   - Allows logs of ran commands (config setting to show failed commands as well)
-  - Message Events (Deleted, Edited, or Purged)
+  - ~~Message Events (Deleted, Edited, or Purged)~~
   - ~~Members (Joined, Leaving)~~
   - ~~Server (Channel & Role changes, server updates, emoji changes)~~
-  - Member (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
+  - Member (Role, ~~Name, Avatar updates~~; Member bans, timeouts, unban, untimeout)
   - ~~Voice (Join, Move, Leave)~~
