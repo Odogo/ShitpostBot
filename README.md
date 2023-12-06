@@ -41,6 +41,7 @@ Supporting SBP or it's developers in regards to this project by no means will gr
   - Kick
   - Ban (unban)
   - Timeout (untimeout)
+  - Purge
   - Punishment History
     - View
     - Clear

@@ -1,8 +1,9 @@
-import { APIEmbed, AuditLogEvent, Embed, EmbedBuilder, EmbedData, Guild, GuildAuditLogsEntry, GuildAuditLogsResolvable } from "discord.js";
+import { APIEmbed, AuditLogEvent, Embed, EmbedBuilder, EmbedData, Guild, GuildAuditLogsEntry, GuildAuditLogsResolvable, GuildMember, User } from "discord.js";
 import { KObject } from "./KObject";
 import { LoggingConfigCategory } from '../../enums/LoggingConfigCategory';
 import { LoggingConfigType } from "../../enums/LoggingConfigType";
 import { client } from "../..";
+import { exec } from "child_process";
 
 export class KLogging extends KObject {
 
@@ -34,9 +35,13 @@ export class KLogging extends KObject {
      * @returns A base embed that wont work unless given additional data
      */
     public static async baseEmbed(entry: GuildAuditLogsEntry, guild: Guild, data?: EmbedData | APIEmbed | undefined): Promise<EmbedBuilder> {
+        const executor = (entry.executorId !== null ? await guild.members.fetch(entry.executorId) : undefined);
+        return await this.baseEmbedNoEntry(executor, data);
+    }
+
+    public static async baseEmbedNoEntry(executor?: GuildMember | User | undefined, data?: EmbedData | APIEmbed | undefined): Promise<EmbedBuilder> {
         const clientUser = client.user;
-        const executor = (entry.executorId !== null ? await guild.members.fetch(entry.executorId) : null);
-        
+
         const embed = new EmbedBuilder(data);
         embed.setTimestamp();
 
@@ -47,9 +52,9 @@ export class KLogging extends KObject {
             });
         }
 
-        if(executor !== null) {
+        if(executor !== undefined) {
             embed.setAuthor({
-                name: (executor.nickname !== null ? executor.nickname : executor.displayName),
+                name: (executor instanceof GuildMember ? (executor.nickname !== null ? executor.nickname : executor.displayName) : executor.displayName),
                 iconURL: executor.avatarURL({ extension: 'png', size: 2048 }) || executor.displayAvatarURL({ extension: 'png', size: 2048 })
             });
         }

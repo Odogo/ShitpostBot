@@ -15,45 +15,51 @@ export default new KEvent(Events.MessageDelete, async (msg) => {
             guild = await client.guilds.fetch(msg.guildId);
         }
 
-        console.log(guild);
-
         let isTypeLogged = await isGuildTypeLogged(guild, LoggingConfigType.MessageDelete);
         if(!isTypeLogged) return;
-
-        console.log(isTypeLogged);
 
         let loggingChannels = await gatherChannelsForLogging(guild, LoggingConfigCategory.MessageEvents);
         if(loggingChannels.length <= 0) return;
 
-        console.log(loggingChannels);
-
         if(msg.author !== null && msg.author.bot) return;
-
-        console.log(msg.author);
     
         let entries = (await guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete })).entries;
         const entry = entries.first();
-
-        console.log(entry);
         if(entry === undefined) return;
 
         const channel = entry.extra.channel;
         const executor = entry.executor;
 
-        console.log(executor);
         if(executor === null) return;
- 
-        console.log(msg.author);
-        if(msg.author !== null && entry.target.id !== msg.author.id) return;
 
-        let embed = await KLogging.baseEmbed(entry, guild, { 
-            color: EmbedColors.remove,
-            description: (msg.partial ? "**Note:** Some information could not be gathered, I've tried to gather as much as I could.\n" : "") +
-                "A " + (msg.url === null ? "message" : "[message](" + msg.url + ")") + " by " + (msg.author === null ? "<Could not fetch>" : "<@" + msg.author.id + ">") + " was deleted in <#" + channel.id + ">\n",
-            fields: [
-                { name: "Content", value: (msg.content === null ? "Content could not be fetch" : (msg.content.length > 1024 ? msg.content.substring(0, 1024-3) + "..." : msg.content)) }
-            ]
-        });
+        let embed: EmbedBuilder | null = null;
+        if(msg.author !== null && entry.target.id !== msg.author.id) {
+            embed = await KLogging.baseEmbedNoEntry(msg.author, {
+                color: EmbedColors.remove,
+                description: "A [message](" + msg.url + ") by <@" + msg.author + "> was deleted in <#" + msg.channel.id + ">",
+                fields: [
+                    { name: "Content", value: (msg.content === null ? "<Could not fetch>" : (msg.content.length > 1024 ? msg.content.substring(0, 1024-3) + "..." : msg.content)) }
+                ]
+            });
+        } else {
+            embed = await KLogging.baseEmbed(entry, guild, { 
+                color: EmbedColors.remove,
+                description: (msg.partial ? "**Note:** Some information could not be gathered, I've tried to gather as much as I could.\n" : "") +
+                    "A " + (msg.url === null ? "message" : "[message](" + msg.url + ")") + " by " + (msg.author === null ? "<Could not fetch>" : "<@" + msg.author.id + ">") + " was deleted in <#" + channel.id + ">\n",
+                fields: [
+                    { name: "Content", value: (msg.content === null ? "<Could not fetch>" : (msg.content.length > 1024 ? msg.content.substring(0, 1024-3) + "..." : msg.content)) }
+                ]
+            });
+        }
+
+        if(msg.attachments.size > 0) {
+            let attachments = msg.attachments.map((a) => " " + a.url);
+            for(let i = 0; i<attachments.length; i++) {
+                let split = attachments[i].split("?");
+                attachments[i] = split[0];
+            }
+            embed.addFields({ name: "Attachments", value: " " + attachments, inline:  true});
+        }
 
         for(let i=0; i<loggingChannels.length; i++)
             await loggingChannels[i].send({ embeds: [embed] });
