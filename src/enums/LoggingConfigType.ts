@@ -24,9 +24,6 @@ export enum LoggingConfigType {
 
     // Guild Member Events
     MemberRole = "memberRole",
-    MemberName = "memberName",
-    MemberAvatar = "memberAvatar",
-
     MemberBan = "memberBan",
     MemberUnban = "memberUnban",
     MemberTimeout = "memberTimeout",
@@ -59,8 +56,6 @@ export namespace LoggingConfigType {
             case LoggingConfigType.GuildUpdate: return { label: "Guild Updated", value: LoggingConfigType.GuildUpdate, description: "Post a log about any update to the guild settings" }
             case LoggingConfigType.EmojiUpdate: return { label: "Emoji Updated", value: LoggingConfigType.EmojiUpdate, description: "Post a log about any expression update" }
             case LoggingConfigType.MemberRole: return { label: "Member Role", value: LoggingConfigType.MemberRole, description: "Post a log when a member's role(s) are updated" }
-            case LoggingConfigType.MemberName: return { label: "Member Name", value: LoggingConfigType.MemberName, description: "Post a log when a member's name is updated" }
-            case LoggingConfigType.MemberAvatar: return { label: "Member Avatar", value: LoggingConfigType.MemberAvatar, description: "Post a log when a member's avatar is updated" }
             case LoggingConfigType.MemberBan: return { label: "Member Banned", value: LoggingConfigType.MemberBan, description: "Post a log when a member gets banned from the guild" }
             case LoggingConfigType.MemberUnban: return { label: "Member Unbanned", value: LoggingConfigType.MemberUnban, description: "Post a log when a member gets unbanned from the guild" }
             case LoggingConfigType.MemberTimeout: return { label: "Member Timeout", value: LoggingConfigType.MemberTimeout, description: "Post a log when a member gets timed out from the guild" }
@@ -89,8 +84,6 @@ export namespace LoggingConfigType {
             LoggingConfigType.GuildUpdate, 
             LoggingConfigType.EmojiUpdate, 
             LoggingConfigType.MemberRole,
-            LoggingConfigType.MemberName,
-            LoggingConfigType.MemberAvatar,
             LoggingConfigType.MemberBan,
             LoggingConfigType.MemberUnban, 
             LoggingConfigType.MemberTimeout,

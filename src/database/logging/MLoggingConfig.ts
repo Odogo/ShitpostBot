@@ -29,9 +29,6 @@ export class MLoggingConfig extends Model {
 
     // Guild Member Events
     declare memberRole: boolean;
-    declare memberName: boolean;
-    declare memberAvatar: boolean;
-
     declare memberBan: boolean;
     declare memberUnban: boolean;
     declare memberTimeout: boolean;

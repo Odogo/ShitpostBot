@@ -207,8 +207,6 @@ export async function getGuildLoggingTypes(guild: Guild, category?: LoggingConfi
                     case LoggingConfigType.GuildUpdate:      { setData = data.guildUpdate; break; }
                     case LoggingConfigType.EmojiUpdate:      { setData = data.emojiUpdate; break; }
                     case LoggingConfigType.MemberRole:       { setData = data.memberRole; break; }
-                    case LoggingConfigType.MemberName:       { setData = data.memberName; break; }
-                    case LoggingConfigType.MemberAvatar:     { setData = data.memberAvatar; break; }
                     case LoggingConfigType.MemberBan:        { setData = data.memberBan; break; }
                     case LoggingConfigType.MemberUnban:      { setData = data.memberUnban; break; }
                     case LoggingConfigType.MemberTimeout:    { setData = data.memberTimeout; break; }
@@ -265,8 +263,6 @@ export async function setGuildLoggingTypes(guild: Guild, category: LoggingConfig
                     case LoggingConfigType.GuildUpdate:      { data.guildUpdate = active; break; }
                     case LoggingConfigType.EmojiUpdate:      { data.emojiUpdate = active; break; }
                     case LoggingConfigType.MemberRole:       { data.memberRole = active; break; }
-                    case LoggingConfigType.MemberName:       { data.memberName = active; break; }
-                    case LoggingConfigType.MemberAvatar:     { data.memberAvatar = active; break; }
                     case LoggingConfigType.MemberBan:        { data.memberBan = active; break; }
                     case LoggingConfigType.MemberUnban:      { data.memberUnban = active; break; }
                     case LoggingConfigType.MemberTimeout:    { data.memberTimeout = active; break; }
