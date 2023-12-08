@@ -1,7 +1,7 @@
 import { AuditLogEvent, PermissionsBitField, Role } from "discord.js";
 import { KLogging } from "../../../classes/objects/KLogging";
-import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
-import { LoggingConfigType } from "../../../enums/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../enums/logging/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../enums/logging/LoggingConfigType";
 import { EmbedColors } from "../../../modules/Logging";
 import { PermFlags, flagsFindDifference, transEmoji } from "../../../types/PermFlags";
 

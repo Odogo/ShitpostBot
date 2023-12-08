@@ -15,15 +15,15 @@ export default new KEvent(Events.InteractionCreate, async (interaction) => {
     }
 
     logInfo("[CommandManager] Command found for interaction id: " + interaction.id + ", attempting execution!");
-    await findCommand.run(client, interaction as KInteraction, interaction.options as CommandInteractionOptionResolver).then(() => {
+    let success = false;
+    await findCommand.run(client, interaction as KInteraction, interaction.options as CommandInteractionOptionResolver).then(async () => {
         logInfo("[CommandManager] Command successfully executed for interaction id: " + interaction.id);
+        success = true;
     }).catch(async (reason) => {
         logError("[CommandManager] Command execution failed, with given reason: " + reason);
         logError(reason);
 
-        if(!interaction.replied)
-            await interaction.reply("Failed to execute command: " + reason);
-        else   
-            await interaction.followUp("Failed to execute command: " + reason);
+        if(!interaction.replied) await interaction.reply("Failed to execute command: " + reason);
+        else await interaction.followUp("Failed to execute command: " + reason);
     });
 });

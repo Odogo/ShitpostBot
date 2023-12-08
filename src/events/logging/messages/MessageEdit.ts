@@ -2,8 +2,8 @@ import { EmbedBuilder, Events } from "discord.js";
 import { KEvent } from "../../../classes/objects/KEvent";
 import { logWarn } from "../../../system";
 import { EmbedColors, gatherChannelsForLogging, isGuildTypeLogged } from "../../../modules/Logging";
-import { LoggingConfigType } from "../../../enums/LoggingConfigType";
-import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../enums/logging/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../enums/logging/LoggingConfigCategory";
 import { KLogging } from "../../../classes/objects/KLogging";
 
 export default new KEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {

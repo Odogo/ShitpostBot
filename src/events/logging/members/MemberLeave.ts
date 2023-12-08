@@ -1,8 +1,8 @@
 import { Events, EmbedBuilder } from "discord.js";
 import { client } from "../../..";
 import { KEvent } from "../../../classes/objects/KEvent";
-import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
-import { LoggingConfigType } from "../../../enums/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../enums/logging/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../enums/logging/LoggingConfigType";
 import { isGuildTypeLogged, gatherChannelsForLogging, EmbedColors } from "../../../modules/Logging";
 import { logWarn } from "../../../system";
 

@@ -4,8 +4,8 @@ import { client } from "../../..";
 import { KLogging } from "../../../classes/objects/KLogging";
 import { logWarn } from "../../../system";
 import { EmbedColors, gatherChannelsForLogging, isGuildTypeLogged } from "../../../modules/Logging";
-import { LoggingConfigType } from "../../../enums/LoggingConfigType";
-import { LoggingConfigCategory } from "../../../enums/LoggingConfigCategory";
+import { LoggingConfigType } from "../../../enums/logging/LoggingConfigType";
+import { LoggingConfigCategory } from "../../../enums/logging/LoggingConfigCategory";
 
 export default new KEvent(Events.MessageDelete, async (msg) => {
     try {

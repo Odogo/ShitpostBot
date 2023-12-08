@@ -6,9 +6,6 @@ export class MLoggingChannels extends Model {
     // Identifier
     declare channelId: string; // Primary Key
     declare guildId: string;
-
-    // All logging types are strings, if they are filled
-    // they should be a channel Id, otherwise do not log.
     
     // Message Events (Edit, Delete, Purge)
     declare logMessages: boolean;

@@ -1,7 +1,7 @@
 import { APIEmbed, AuditLogEvent, Embed, EmbedBuilder, EmbedData, Guild, GuildAuditLogsEntry, GuildAuditLogsResolvable, GuildMember, User } from "discord.js";
 import { KObject } from "./KObject";
-import { LoggingConfigCategory } from '../../enums/LoggingConfigCategory';
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
+import { LoggingConfigCategory } from '../../enums/logging/LoggingConfigCategory';
+import { LoggingConfigType } from "../../enums/logging/LoggingConfigType";
 import { client } from "../..";
 import { exec } from "child_process";
 

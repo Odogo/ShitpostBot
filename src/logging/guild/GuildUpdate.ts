@@ -1,7 +1,7 @@
 import { AuditLogEvent, SystemChannelFlagsBitField } from "discord.js";
 import { KLogging } from "../../classes/objects/KLogging";
-import { LoggingConfigType } from "../../enums/LoggingConfigType";
-import { LoggingConfigCategory } from "../../enums/LoggingConfigCategory";
+import { LoggingConfigType } from "../../enums/logging/LoggingConfigType";
+import { LoggingConfigCategory } from "../../enums/logging/LoggingConfigCategory";
 import { EmbedColors } from "../../modules/Logging";
 import { Utilities } from "../../classes/Utilities";
 

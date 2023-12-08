@@ -6,6 +6,7 @@ import { KClient } from "./classes/KClient";
 import { join } from "path";
 import { MLoggingChannels } from "./database/logging/MLoggingChannels";
 import { MLoggingConfig } from "./database/logging/MLoggingConfig";
+import { MPunishment } from "./database/moderation/MPunishment";
 
 export const sequelInstance = new Sequelize({
     storage: 'database.sql',
@@ -36,7 +37,8 @@ export const client = new KClient({
         commands: join(__dirname, "./commands"),
         events: join(__dirname, "./events"),
         logging: join(__dirname, "./logging")
-    }
+    },
+    
 });
 
 // Putting everything together
@@ -44,6 +46,7 @@ export const client = new KClient({
     // Logging Database
     await (await MLoggingChannels.initialize()).sync();
     await (await MLoggingConfig.initialize()).sync();
+    await (await MPunishment.initialize()).sync();
 
     await client.login();
 })();
