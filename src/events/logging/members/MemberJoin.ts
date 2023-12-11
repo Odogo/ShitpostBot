@@ -5,6 +5,7 @@ import { LoggingConfigType } from "../../../enums/logging/LoggingConfigType";
 import { LoggingConfigCategory } from "../../../enums/logging/LoggingConfigCategory";
 import { client } from "../../..";
 import { logWarn } from "../../../system";
+import { KLogging } from "../../../classes/objects/KLogging";
 
 export default new KEvent(Events.GuildMemberAdd, async (member) => {
     const guild = member.guild;
@@ -18,22 +19,14 @@ export default new KEvent(Events.GuildMemberAdd, async (member) => {
         let loggingChannels = await gatherChannelsForLogging(guild, LoggingConfigCategory.GuildMembersEvents);
         if(loggingChannels.length <= 0) return;
 
-        const embed = new EmbedBuilder({
+        const embed = await KLogging.baseEmbedNoEntry(member, {
             color: EmbedColors.add,
-            author: {
-                name: guild.name,
-                iconURL: guild.iconURL({ extension: 'png', size: 2048 }) || undefined
-            },
-            footer: {
-                text: clientUser.displayName,
-                iconURL: clientUser.avatarURL({ extension: 'png', size: 2048 }) || undefined
-            },
             description: "<@" + member.id + "> joined the server!\n" + 
                 "**Account age:** <t:" + Math.floor(member.user.createdTimestamp / 1000) + ":R>",
             thumbnail: {
                 url: member.displayAvatarURL({ extension: 'png', size: 1024})
             }
-        }).setTimestamp();
+        });
 
         for(let i=0; i<loggingChannels.length; i++) {
             loggingChannels[i].send({ embeds: [embed] });

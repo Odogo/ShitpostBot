@@ -6,6 +6,7 @@ import { logWarn } from "../../../system";
 import { EmbedColors, gatherChannelsForLogging, isGuildTypeLogged } from "../../../modules/Logging";
 import { LoggingConfigType } from "../../../enums/logging/LoggingConfigType";
 import { LoggingConfigCategory } from "../../../enums/logging/LoggingConfigCategory";
+import { exec } from "child_process";
 
 export default new KEvent(Events.MessageDelete, async (msg) => {
     try {
@@ -21,27 +22,17 @@ export default new KEvent(Events.MessageDelete, async (msg) => {
         let loggingChannels = await gatherChannelsForLogging(guild, LoggingConfigCategory.MessageEvents);
         if(loggingChannels.length <= 0) return;
 
-        if(msg.author !== null && msg.author.bot) return;
+        if(msg.author === null) return;
+        if(msg.author.bot) return;
     
+        let embed: EmbedBuilder | null = null;
+
         let entries = (await guild.fetchAuditLogs({ type: AuditLogEvent.MessageDelete })).entries;
         const entry = entries.first();
-        if(entry === undefined) return;
 
-        const channel = entry.extra.channel;
-        const executor = entry.executor;
-
-        if(executor === null) return;
-
-        let embed: EmbedBuilder | null = null;
-        if(msg.author !== null && entry.target.id !== msg.author.id) {
-            embed = await KLogging.baseEmbedNoEntry(msg.author, {
-                color: EmbedColors.remove,
-                description: "A [message](" + msg.url + ") by <@" + msg.author + "> was deleted in <#" + msg.channel.id + ">",
-                fields: [
-                    { name: "Content", value: (msg.content === null ? "<Could not fetch>" : (msg.content.length > 1024 ? msg.content.substring(0, 1024-3) + "..." : msg.content)) }
-                ]
-            });
-        } else {
+        if (entry && entry.target.id === msg.author?.id && entry.extra.channel.id === msg.channel.id) {
+            const channel = entry.extra.channel;
+        
             embed = await KLogging.baseEmbed(entry, guild, { 
                 color: EmbedColors.remove,
                 description: (msg.partial ? "**Note:** Some information could not be gathered, I've tried to gather as much as I could.\n" : "") +
@@ -50,8 +41,16 @@ export default new KEvent(Events.MessageDelete, async (msg) => {
                     { name: "Content", value: (msg.content === null ? "<Could not fetch>" : (msg.content.length > 1024 ? msg.content.substring(0, 1024-3) + "..." : msg.content)) }
                 ]
             });
+        } else {
+            embed = await KLogging.baseEmbedNoEntry(msg.author, {
+                color: EmbedColors.remove,
+                description: "A [message](" + msg.url + ") by <@" + msg.author + "> was deleted in <#" + msg.channel.id + ">",
+                fields: [
+                    { name: "Content", value: (msg.content === null ? "<Could not fetch>" : (msg.content.length > 1024 ? msg.content.substring(0, 1024-3) + "..." : msg.content)) }
+                ]
+            });
         }
-
+        
         if(msg.attachments.size > 0) {
             let attachments = msg.attachments.map((a) => " " + a.url);
             for(let i = 0; i<attachments.length; i++) {

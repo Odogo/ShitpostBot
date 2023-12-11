@@ -22,7 +22,8 @@ export default new KLogging({
 
         embed.addFields([
             { name: "Channel Type", value: Utilities.channelTypeString(channel.type) },
-            { name: "Channel Name", value: channel.name + "" }
+            { name: "Channel Name", value: channel.name + "" },
+            { name: "Channel ID", value: channel.id + "" }
         ]);
 
         return embed;

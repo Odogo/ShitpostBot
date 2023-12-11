@@ -30,8 +30,8 @@ export namespace LoggingConfigCategory {
                 LoggingConfigType.GuildUpdate, LoggingConfigType.EmojiUpdate];
     
             case LoggingConfigCategory.GuildMemberEvents:
-                return [LoggingConfigType.MemberRole, LoggingConfigType.MemberBan, LoggingConfigType.MemberUnban,
-                    LoggingConfigType.MemberTimeout, LoggingConfigType.MemberUntimeout]
+                return [LoggingConfigType.MemberName, LoggingConfigType.MemberRole, LoggingConfigType.MemberBan, 
+                    LoggingConfigType.MemberUnban, LoggingConfigType.MemberTimeout, LoggingConfigType.MemberUntimeout]
     
             case LoggingConfigCategory.VoiceEvents:
                 return [LoggingConfigType.VoiceJoin, LoggingConfigType.VoiceSwitch, LoggingConfigType.VoiceLeave];

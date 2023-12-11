@@ -71,7 +71,9 @@ export default new KCommand({
             embed.setTitle("User Information")
                 .setAuthor({ name: user.displayName, iconURL: user.avatarURL({ extension: 'png', size: 1024 }) || undefined})
                 .addFields([
-                    { name: "Joined", value: "<t:" + Math.floor(user.createdTimestamp / 1000) + ":R>", inline: true }
+                    { name: "User ID", value: user.id },
+                    { name: "Created", value: "<t:" + Math.floor(user.createdTimestamp / 1000) + ":R>", inline: true },
+                    { name: "Joined", value: (member.joinedTimestamp !== null ? "<t:" + Math.floor(member.joinedTimestamp / 1000) + ":R>" : "<Could not fetch>"), inline: true }
                 ]).setThumbnail(user.avatarURL({ extension: 'png', size: 1024}));
 
             const roles = Array.from(member.roles.cache.values());

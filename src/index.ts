@@ -1,9 +1,9 @@
 import { GatewayIntentBits, Partials } from "discord.js";
 import { Sequelize } from "sequelize";
+import { join } from "path";
 
 import manifest from '../.env/bot_manifesto.json';
 import { KClient } from "./classes/KClient";
-import { join } from "path";
 import { MLoggingChannels } from "./database/logging/MLoggingChannels";
 import { MLoggingConfig } from "./database/logging/MLoggingConfig";
 import { MPunishment } from "./database/moderation/MPunishment";

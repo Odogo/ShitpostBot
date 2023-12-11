@@ -29,7 +29,10 @@ export async function fetchChannelLogCategories(channel: TextChannel): Promise<L
             let data = await MLoggingChannels.findOne({ where: { channelId: channel.id }});
 
             if(data === null || !data) {
-                data = await MLoggingChannels.create({ channelId: channel.id, guildId: channel.guild.id });
+                data = await MLoggingChannels.create({
+                    channelId: channel.id,
+                    guildId: channel.guild.id 
+                });
             }
 
             let categories: LoggingConfigCategory[] = [];
@@ -206,6 +209,7 @@ export async function getGuildLoggingTypes(guild: Guild, category?: LoggingConfi
                     case LoggingConfigType.RoleRemove:       { setData = data.roleRemove; break; }
                     case LoggingConfigType.GuildUpdate:      { setData = data.guildUpdate; break; }
                     case LoggingConfigType.EmojiUpdate:      { setData = data.emojiUpdate; break; }
+                    case LoggingConfigType.MemberName:      { setData = data.memberName; break; }
                     case LoggingConfigType.MemberRole:       { setData = data.memberRole; break; }
                     case LoggingConfigType.MemberBan:        { setData = data.memberBan; break; }
                     case LoggingConfigType.MemberUnban:      { setData = data.memberUnban; break; }
@@ -262,6 +266,7 @@ export async function setGuildLoggingTypes(guild: Guild, category: LoggingConfig
                     case LoggingConfigType.RoleRemove:       { data.roleRemove = active; break; }
                     case LoggingConfigType.GuildUpdate:      { data.guildUpdate = active; break; }
                     case LoggingConfigType.EmojiUpdate:      { data.emojiUpdate = active; break; }
+                    case LoggingConfigType.MemberName:      { data.memberName = active; break; }
                     case LoggingConfigType.MemberRole:       { data.memberRole = active; break; }
                     case LoggingConfigType.MemberBan:        { data.memberBan = active; break; }
                     case LoggingConfigType.MemberUnban:      { data.memberUnban = active; break; }

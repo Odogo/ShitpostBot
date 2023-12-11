@@ -17,7 +17,7 @@ export default new KLogging({
 
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.change,
-            description: "A [channel](" + channel.url + ") was updated\n<#" + channel.id + ">",
+            description: "A [channel](" + channel.url + ") was updated\n<#" + channel.id + "> (ID: " + channel.id + ")",
         });
 
         if(channel.parent !== null) { embed.addFields({ name: "Under category", value: channel.parent.name }); }

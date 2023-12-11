@@ -17,9 +17,10 @@ export default new KLogging({
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.remove,
             description: "An emoji was removed from the emoji pool.\n" + 
-                "**Emoji:** `" + target.name + "`",
+                "**Emoji:** `" + target.name + "`\n"
+                + "**Emoji ID:** `" + target.id + "`",
             image: {
-                url: target.url,
+                url: target.imageURL({ size: 512, extension: 'png' }),
                 height: 512,
                 width: 512
             }

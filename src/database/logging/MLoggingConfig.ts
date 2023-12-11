@@ -1,47 +1,49 @@
-import { DataTypes, Model } from "sequelize";
+import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { sequelInstance } from "../..";
 
-export class MLoggingConfig extends Model {
+export class MLoggingConfig extends Model<InferAttributes<MLoggingConfig>, InferCreationAttributes<MLoggingConfig>> {
 
     // Identifiers
     declare guildId: string; // Primary Key
 
     // Message Events
-    declare msgDelete: boolean;
-    declare msgEdited: boolean;
-    declare msgPurged: boolean;
+    declare msgDelete: CreationOptional<boolean>;
+    declare msgEdited: CreationOptional<boolean>;
+    declare msgPurged: CreationOptional<boolean>;
 
     // Guild Members Events
-    declare memberJoin: boolean;
-    declare memberLeave: boolean;
+    declare memberJoin: CreationOptional<boolean>;
+    declare memberLeave: CreationOptional<boolean>;
 
     // Guild Events
-    declare channelAdd: boolean;
-    declare channelModify: boolean;
-    declare channelRemove: boolean;
+    declare channelAdd: CreationOptional<boolean>;
+    declare channelModify: CreationOptional<boolean>;
+    declare channelRemove: CreationOptional<boolean>;
     
-    declare roleAdd: boolean;
-    declare roleModify: boolean;
-    declare roleRemove: boolean;
+    declare roleAdd: CreationOptional<boolean>;
+    declare roleModify: CreationOptional<boolean>;
+    declare roleRemove: CreationOptional<boolean>;
     
-    declare guildUpdate: boolean;
-    declare emojiUpdate: boolean;
+    declare guildUpdate: CreationOptional<boolean>;
+    declare emojiUpdate: CreationOptional<boolean>;
 
     // Guild Member Events
-    declare memberRole: boolean;
-    declare memberBan: boolean;
-    declare memberUnban: boolean;
-    declare memberTimeout: boolean;
-    declare memberUntimeout: boolean;
+    declare memberName: CreationOptional<boolean>;
+
+    declare memberRole: CreationOptional<boolean>;
+    declare memberBan: CreationOptional<boolean>;
+    declare memberUnban: CreationOptional<boolean>;
+    declare memberTimeout: CreationOptional<boolean>;
+    declare memberUntimeout: CreationOptional<boolean>;
 
     // Voice Events
-    declare voiceJoin: boolean;
-    declare voiceSwitch: boolean;
-    declare voiceLeave: boolean;
+    declare voiceJoin: CreationOptional<boolean>;
+    declare voiceSwitch: CreationOptional<boolean>;
+    declare voiceLeave: CreationOptional<boolean>;
 
     // Application Events
-    declare selfCommands: boolean;
-    declare selfCommandError: boolean;
+    declare selfCommands: CreationOptional<boolean>;
+    declare selfCommandError: CreationOptional<boolean>;
 
     public static async initialize() {
         return MLoggingConfig.init({
@@ -135,19 +137,13 @@ export class MLoggingConfig extends Model {
             },
 
             // Guild Member Events
-            memberRole: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: false
-            },
-
             memberName: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
             },
 
-            memberAvatar: {
+            memberRole: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false

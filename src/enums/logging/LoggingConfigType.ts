@@ -23,6 +23,8 @@ export enum LoggingConfigType {
     EmojiUpdate = "emojiUpdate",
 
     // Guild Member Events
+    MemberName = "memberName",
+
     MemberRole = "memberRole",
     MemberBan = "memberBan",
     MemberUnban = "memberUnban",
@@ -55,6 +57,7 @@ export namespace LoggingConfigType {
             case LoggingConfigType.RoleRemove: return { label: "Role Removed", value: LoggingConfigType.RoleRemove, description: "Post a log about a deleted role" }
             case LoggingConfigType.GuildUpdate: return { label: "Guild Updated", value: LoggingConfigType.GuildUpdate, description: "Post a log about any update to the guild settings" }
             case LoggingConfigType.EmojiUpdate: return { label: "Emoji Updated", value: LoggingConfigType.EmojiUpdate, description: "Post a log about any expression update" }
+            case LoggingConfigType.MemberName: return { label: "Member Name", value: LoggingConfigType.MemberName, description: "Post a log when a member's name (or nickname) is updated"}
             case LoggingConfigType.MemberRole: return { label: "Member Role", value: LoggingConfigType.MemberRole, description: "Post a log when a member's role(s) are updated" }
             case LoggingConfigType.MemberBan: return { label: "Member Banned", value: LoggingConfigType.MemberBan, description: "Post a log when a member gets banned from the guild" }
             case LoggingConfigType.MemberUnban: return { label: "Member Unbanned", value: LoggingConfigType.MemberUnban, description: "Post a log when a member gets unbanned from the guild" }
@@ -83,6 +86,7 @@ export namespace LoggingConfigType {
             LoggingConfigType.RoleRemove,
             LoggingConfigType.GuildUpdate, 
             LoggingConfigType.EmojiUpdate, 
+            LoggingConfigType.MemberName,
             LoggingConfigType.MemberRole,
             LoggingConfigType.MemberBan,
             LoggingConfigType.MemberUnban, 

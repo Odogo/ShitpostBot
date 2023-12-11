@@ -1,8 +1,8 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, InferAttributes, InferCreationAttributes, Model, Optional } from "sequelize";
 import { PunishType, Punishment } from '../../modules/Punishments';
 import { sequelInstance } from "../..";
 
-export class MPunishment extends Model {
+export class MPunishment extends Model<InferAttributes<MPunishment>, InferCreationAttributes<MPunishment>> {
 
     // Identifier
     declare punishId: number;

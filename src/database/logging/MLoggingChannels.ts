@@ -1,30 +1,30 @@
-import { DataTypes, Model } from "sequelize";
+import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { sequelInstance } from "../..";
 
-export class MLoggingChannels extends Model {
+export class MLoggingChannels extends Model<InferAttributes<MLoggingChannels>, InferCreationAttributes<MLoggingChannels>> {
 
     // Identifier
     declare channelId: string; // Primary Key
     declare guildId: string;
     
     // Message Events (Edit, Delete, Purge)
-    declare logMessages: boolean;
+    declare logMessages: CreationOptional<boolean>;
     
     // Server Enterance / Leaving
-    declare logGuildMembers: boolean;
+    declare logGuildMembers: CreationOptional<boolean>;
 
     // Server Events (Channel & Role changes, server updates, emoji changes)
-    declare logGuild: boolean;
+    declare logGuild: CreationOptional<boolean>;
 
     // Member Events (Role, Name, Avatar updates; Member bans, timeouts, unban, untimeout)
-    declare logGuildMember: boolean;
+    declare logGuildMember: CreationOptional<boolean>;
 
     // Voice Events (Join, Move, Leave)
-    declare logVoice: boolean;
+    declare logVoice: CreationOptional<boolean>;
 
     // Shitpost Commands
     // - additional config setting for failed commands, if false only posts successful.
-    declare logCommands: boolean;
+    declare logCommands: CreationOptional<boolean>;
 
     public static async initialize() {
         return MLoggingChannels.init({

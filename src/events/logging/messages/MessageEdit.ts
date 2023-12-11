@@ -53,7 +53,7 @@ export default new KEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {
             embed.addFields({ name: "Current Attachments", value: " " + newAttach, inline: true})
         }
 
-        if(embed === embedCopy) return;
+        if(embed.data === embedCopy.data) return;
 
         for(let i = 0; i < loggingChannels.length; i++) {
             await loggingChannels[i].send({ embeds: [embed] });

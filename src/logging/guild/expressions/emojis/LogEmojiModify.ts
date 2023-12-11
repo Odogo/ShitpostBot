@@ -19,9 +19,10 @@ export default new KLogging({
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.change,
             description: "An emoji's name was modified.\n" + 
-            "**Name:** Changed from `" + nameChange.old + "` to `" + nameChange.new + "`",
+            "**Name:** Changed from `" + nameChange.old + "` to `" + nameChange.new + "`\n"
+            + "**Emoji ID:** `" + target.id + "`",
         image: {
-            url: target.url,
+            url: target.imageURL({ size: 512, extension: 'png' }),
             height: 512,
             width: 512
         }

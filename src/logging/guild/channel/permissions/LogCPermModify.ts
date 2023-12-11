@@ -23,10 +23,10 @@ export default new KLogging({
 				"A [channel's](" +
 				channel.url +
 				") permissions override modified\n" +
-				(extra instanceof Role ? "<@&" + extra.id + ">" : "<@" + extra.id + ">") + "\n" + 
+				(extra instanceof Role ? "<@&" + extra.id + "> (Role ID: " + extra.id + ")" : "<@" + extra.id + "> (ID: " + extra.id + ")") + "\n" + 
 				"with the following changes:\n",
             fields: [
-                { name: "Channel", value: "<#" + channel.id + ">" }
+                { name: "Channel", value: "<#" + channel.id + "> (ID: " + channel.id + ")" }
             ]
 		});
 

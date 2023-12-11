@@ -18,9 +18,10 @@ export default new KLogging({
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.add,
             description: "An emoji was added into the emoji pool.\n"
-                + "**Emoji**: `" + emoji.name + "`",
+                + "**Emoji**: `" + emoji.name + "`\n"
+                + "**Emoji ID:** `" + emoji.id + "`",
             image: {
-                url: emoji.url,
+                url: emoji.imageURL({ size: 512, extension: 'png' }),
                 width: 512,
                 height: 512
             }

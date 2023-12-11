@@ -17,8 +17,9 @@ export default new KLogging({
 
         const embed = await KLogging.baseEmbed(entry, guild, {
             color: EmbedColors.add,
-            description: "A [channel's](" + channel.url + ") permissions override was modified to remove:\n"
-                + (extra instanceof Role ? "<@&" + extra.id + ">" : "<@" + extra.id + ">")
+            description: "A [channel's](" + channel.url + ") permissions override was modified to remove:\n" +
+                "<#" + channel.id + "> (ID: " + channel.id + ")\n" +
+                (extra instanceof Role ? "<@&" + extra.id + "> (Role ID: " + extra.id + ")" : "<@" + extra.id + "> (ID: " + extra.id + ")")
         });
 
         return embed;

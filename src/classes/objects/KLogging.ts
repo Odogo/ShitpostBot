@@ -45,14 +45,12 @@ export class KLogging extends KObject {
         const embed = new EmbedBuilder(data);
         embed.setTimestamp();
 
-        if(clientUser !== null) {
-            embed.setFooter({
-                text: clientUser.displayName,
-                iconURL: clientUser.avatarURL({ extension: 'png', size: 2048 }) || undefined
-            });
-        }
-
         if(executor !== undefined) {
+            embed.setFooter({
+                text: "User ID: " + executor.id,
+                iconURL: clientUser?.avatarURL({ extension: 'png', size: 2048 }) || undefined
+            });
+
             embed.setAuthor({
                 name: (executor instanceof GuildMember ? (executor.nickname !== null ? executor.nickname : executor.displayName) : executor.displayName),
                 iconURL: executor.avatarURL({ extension: 'png', size: 2048 }) || executor.displayAvatarURL({ extension: 'png', size: 2048 })
