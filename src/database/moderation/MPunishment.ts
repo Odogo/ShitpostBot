@@ -1,93 +1,62 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model, Optional } from "sequelize";
+import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { PunishType, Punishment } from '../../modules/Punishments';
 import { sequelInstance } from "../..";
 
 export class MPunishment extends Model<InferAttributes<MPunishment>, InferCreationAttributes<MPunishment>> {
 
-    // Identifier
-    declare punishId: number;
+    declare id: number; // Auto-incrementing primary key
+    declare type: PunishType; // The type of punishment
 
-    // Fields
-    declare userId: string; // who was punished
-    declare guildId: string; // in what guild
+    declare guildId: string; // The guild ID of the punishment
 
-    declare punishType: PunishType; // the punishment type
-    
-    declare punishedBy: string; // the user id of the punisher
-    declare reason: string; // the reason for the punishment
+    declare userId: string; // The user ID of the punishment
+    declare moderatorId: string; // The moderator ID of the punishment
 
-    declare punishedAt: number; // when the punishment was created
-    declare expiresAt: number; // when the punishment will expire
+    declare reason: string; // The reason of the punishment
 
-    public toPunishment(): Punishment {
-        return {
-            punishId: this.punishId,
-            userId: this.userId,
-            guildId: this.guildId,
-            punishType: this.punishType,
-            punishedBy: this.punishedBy,
-            reason: this.reason,
-            punishedAt: this.punishedAt,
-            expiresAt: this.expiresAt
-        };
-    }
+    // The expiration date of the punishment (optional)
+    declare expiresAt: Date | null;
+    declare createdAt: Date; // The creation date of the punishment
 
-    public static async initialize() {
-        return MPunishment.init({
-            punishId: {
-                type: DataTypes.NUMBER,
-                unique: true,
+    public static async initialize(): Promise<typeof MPunishment> {
+        return this.init({
+            id: {
+                type: DataTypes.INTEGER,
                 primaryKey: true,
-                allowNull: false
+                autoIncrement: true
             },
-
-            userId: {
+            type: {
                 type: DataTypes.STRING,
-                unique: false,
                 allowNull: false
             },
-
             guildId: {
                 type: DataTypes.STRING,
-                unique: false,
                 allowNull: false
             },
-
-            punishType: {
+            userId: {
                 type: DataTypes.STRING,
-                unique: false,
-                allowNull: false,
-                values: ["Warning", "Timeout", "Kick", "Ban"]
-            },
-
-            punishedBy: {
-                type: DataTypes.STRING,
-                unique: false,
                 allowNull: false
             },
-
+            moderatorId: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             reason: {
                 type: DataTypes.STRING,
-                unique: false,
-                allowNull: true
-            },
-
-            punishedAt: {
-                type: DataTypes.NUMBER,
-                unique: false,
                 allowNull: false
             },
-
             expiresAt: {
-                type: DataTypes.NUMBER,
-                unique: false,
+                type: DataTypes.DATE,
+                allowNull: true
+            },
+            createdAt: {
+                type: DataTypes.DATE,
                 allowNull: false
             }
         }, {
             sequelize: sequelInstance,
-            tableName: "punishments",
+            modelName: "punishments",
             timestamps: false
-        })
+        });
     }
-
 }
