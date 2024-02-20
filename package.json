@@ -12,7 +12,9 @@
     "dotenv": "^16.4.5",
     "sequelize": "^6.37.1",
     "sequelize-typescript": "^2.1.6",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   },
   "scripts": {
     "start": "ts-node src/index.ts"
@@ -20,7 +22,6 @@
   "author": "Odogo",
   "license": "KCL (Kyomi Collaborative License) [see LICENSE.md]",
   "devDependencies": {
-    "@types/node": "^20.11.19",
-    "tsx": "^4.7.1"
+    "@types/node": "^20.11.19"
   }
 }

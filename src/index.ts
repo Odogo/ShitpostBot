@@ -2,6 +2,8 @@ import { Sequelize } from "sequelize";
 import { ShitClient } from "./structure/ShitClient";
 import { join } from "path";
 import { GatewayIntentBits } from "discord.js";
+import { MLogging } from "./structure/database/MLogging";
+import { logInfo } from "./system";
 
 export const sequelInstance = new Sequelize({
     storage: "database.sql",
@@ -22,6 +24,7 @@ export const client = new ShitClient({
 
 (async () => {
     // Sync databases
+    await (await MLogging.initialize(sequelInstance)).sync();
 
     // Login to discord
     await client.login(process.env.token);
