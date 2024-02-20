@@ -1,0 +1,26 @@
+{
+  "name": "shitpostbot",
+  "version": "4.1.0",
+  "description": "The shitpost everyone is talking about.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Odogo/ShitpostBot"
+  },
+  "main": "dist/index.js",
+  "dependencies": {
+    "discord.js": "^14.12.1",
+    "dotenv": "^16.4.5",
+    "sequelize": "^6.37.1",
+    "sequelize-typescript": "^2.1.6",
+    "sqlite3": "^5.1.7"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "author": "Odogo",
+  "license": "KCL (Kyomi Collaborative License) [see LICENSE.md]",
+  "devDependencies": {
+    "@types/node": "^20.11.19",
+    "tsx": "^4.7.1"
+  }
+}
