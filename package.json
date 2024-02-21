@@ -8,7 +8,7 @@
   },
   "main": "dist/index.js",
   "dependencies": {
-    "discord.js": "^14.12.1",
+    "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
     "sequelize": "^6.37.1",
     "sequelize-typescript": "^2.1.6",
