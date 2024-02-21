@@ -45,24 +45,32 @@ export class MLogging extends Model implements MLoggingAttributes {
                     await instance.save();
                 },
                 afterFind: (instance: MLogging) => {
+                    if(instance == null) return;
                     // Pull the data from the database and parse it into the correct format
                     // In this case, the JSON is a Map<string, string> and we need to convert it to a Map<string, MLoggingChannelAttributes>
-                    const tempMap: Map<string, string> = new Map(JSON.parse(instance.jsonChannels));
-
-                    // Create the Map<string, MLoggingChannelAttributes> for the channels
+                    
+                    // Firstly, default as a new Map. If there is any result in jsonChannels or not, we still need it blank
                     instance.channels = new Map();
+                    if (instance.jsonChannels) {
+                        const tempMap: Map<string, string> = new Map(JSON.parse(instance.jsonChannels));
 
-                    // For each entry in the tempMap
-                    // Set the key as the channel ID
-                    // Parse the value into a Map<string, boolean> (or Map<MLoggingSettingsKeys, boolean> in this case) and set it as the value
-                    //   We are allowed to convert a Map<string, boolean> to a Map<MLoggingSettingsKeys, boolean> because the keys are strings,
-                    //     allowing us to use the MLoggingSettingsKeys enum
-                    tempMap.forEach((value, key) => {
-                        instance.channels.set(key, { settings: new Map(JSON.parse(value)) });
-                    });
+                        // For each entry in the tempMap
+                        // Set the key as the channel ID
+                        // Parse the value into a Map<string, boolean> (or Map<MLoggingSettingsKeys, boolean> in this case) and set it as the value
+                        //   We are allowed to convert a Map<string, boolean> to a Map<MLoggingSettingsKeys, boolean> because the keys are strings,
+                        //     allowing us to use the MLoggingSettingsKeys enum
+                        tempMap.forEach((value, key) => {
+                            instance.channels.set(key, { settings: new Map(JSON.parse(value)) });
+                        });
+                    } 
 
-                    // Parse the config into a Map<MLoggingConfigKeys, boolean>
-                    instance.config = new Map(JSON.parse(instance.jsonConfig));
+                    if(instance.jsonConfig) {
+                        // Parse the config into a Map<MLoggingConfigKeys, boolean>
+                        instance.config = new Map(JSON.parse(instance.jsonConfig));
+                    } else {
+                        // If jsonConfig is null, use the defaults
+                        instance.config = MLoggingConfigKeys.defaults();
+                    }
                 },
                 beforeSave: (instance: MLogging) => { // Just to make sure the data is up to date with the database
                     if (instance.channels) {
@@ -115,6 +123,12 @@ export enum MLoggingSettingsKeys {
     MemberEvents = "memberEvents",
     VoiceEvents = "voiceEvents",
     CommandEvents = "commandEvents",
+}
+
+export namespace MLoggingSettingsKeys {
+    export function all(): Array<MLoggingSettingsKeys> {
+        return Array.from(MLoggingChannelAttributes.defaults().keys());
+    }
 }
 
 /**
@@ -230,5 +244,7 @@ export namespace MLoggingConfigKeys {
             [MLoggingConfigKeys.CommandExecuted, false]
         ])
     }
+
+    export function all(): Array<MLoggingConfigKeys> { return Array.from(defaults().keys()); }
 }
 //#endregion

@@ -143,7 +143,9 @@ export class Logging {
                     return channel.isTextBased() && map.get(channel.id)?.settings.get(key) === true;
                 });
 
-                resolve(Object.values(channels) as Array<GuildTextBasedChannel>);
+                console.log(channels);
+
+                resolve(Array.from(channels.values()) as GuildTextBasedChannel[]);
             }).catch(reject);
         });
     }

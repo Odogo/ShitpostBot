@@ -1,10 +1,12 @@
 import { APIEmbed, AuditLogEvent, ClientUser, EmbedBuilder, EmbedData, Guild, GuildAuditLogsEntry, GuildAuditLogsResolvable, GuildMember, User } from "discord.js";
+import { MLoggingConfigKeys, MLoggingSettingsKeys } from "./database/MLogging";
 
 export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent> {
 
     private _rawOptions: ShitLoggingOptions<EType>;
 
     private _logEvent: EType;
+    private _config: ShitLoggingConfig;
     private _embedCallback: ShitLoggingEmbedCallback<EType>;
 
     constructor(
@@ -13,12 +15,15 @@ export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent>
         this._rawOptions = options;
 
         this._logEvent = options.logEvent;
+        this._config = options.config;
         this._embedCallback = options.embedCallback;
     }
 
     public get rawOptions() { return this._rawOptions; }
 
     public get logEvent() { return this._logEvent; }
+
+    public get config() { return this._config; }
 
     public async generateEmbed(
         entry: GuildAuditLogsEntry<EType>,
@@ -98,6 +103,7 @@ export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent>
 
 export type ShitLoggingOptions<EType extends GuildAuditLogsResolvable = AuditLogEvent> = {
     logEvent: EType;
+    config: ShitLoggingConfig
     embedCallback: ShitLoggingEmbedCallback<EType>;
 }
 
@@ -105,3 +111,8 @@ type ShitLoggingEmbedCallback<EType extends GuildAuditLogsResolvable = AuditLogE
     entry: GuildAuditLogsEntry<EType>,
     guild: Guild
 ) => Promise<EmbedBuilder | null>;
+
+type ShitLoggingConfig = {
+    type: MLoggingConfigKeys;
+    category: MLoggingSettingsKeys
+}
