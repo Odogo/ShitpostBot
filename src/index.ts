@@ -27,4 +27,4 @@ export const client = new ShitClient({
 
     // Login to discord
     await client.login(process.env.token);
-});
+})();
