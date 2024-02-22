@@ -2,7 +2,7 @@ import { Collection, PermissionsBitField } from "discord.js";
 
 export type PermFlags = Partial<Record<keyof typeof PermissionsBitField.Flags, boolean>>;
 
-export function PermFlag_Default(): PermFlags {
+export function defaultPermFlags(): PermFlags {
 	return Object.keys(PermissionsBitField.Flags).reduce((obj, key) => {
 		obj[key as keyof PermFlags] = undefined;
 		return obj;

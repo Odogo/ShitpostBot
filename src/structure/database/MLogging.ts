@@ -113,6 +113,7 @@ export class MLogging extends Model implements MLoggingAttributes {
  * @field guildId the guild's ID
  * @field channels the channel ids and its settings
  * @field config the logging categories and their active status
+ * @author Kyomi
  */
 interface MLoggingAttributes {
     guildId: string;
@@ -125,17 +126,23 @@ interface MLoggingAttributes {
 /**
  * The keys for {@link MLoggingChannelAttributes.settings}
  * This enum is also similar to the previous version of LoggingConfigCategory
+ * @author Kyomi
  */
 export enum MLoggingCategoryKeys {
     MessageEvents = "messageEvents",
     GuildDoorEvents = "guildDoorEvents",
     GuildEvents = "guildEvents",
+    ExpressionEvents = "expressionEvents"
     MemberEvents = "memberEvents",
     VoiceEvents = "voiceEvents",
     CommandEvents = "commandEvents",
 }
 
 export namespace MLoggingCategoryKeys {
+    /**
+     * Gets all values of the enum
+     * @returns an array of every value
+     */
     export function all(): Array<MLoggingCategoryKeys> {
         return Array.from(MLoggingChannelAttributes.defaults().keys());
     }
@@ -145,12 +152,17 @@ export namespace MLoggingCategoryKeys {
  * Each channel can have its own settings, which is why we need to store them in a separate object.
  * This determines what events are logged in each channel.
  * @field settings whether or not the channel logs certain events
+ * @author Kyomi
  */
 export interface MLoggingChannelAttributes {
     settings: Map<MLoggingCategoryKeys, boolean>;
 }
 
 export namespace MLoggingChannelAttributes {
+    /**
+     * Returns the defaults for a newly added channel
+     * @returns defaults for a channel
+     */
     export function defaults(): Map<MLoggingCategoryKeys, boolean> {
         return new Map([
             [MLoggingCategoryKeys.MessageEvents, false],
@@ -168,6 +180,7 @@ export namespace MLoggingChannelAttributes {
 /**
  * The keys for {@link MLoggingAttributes.config}
  * This enum is also similar to the previous version of LoggingConfigType
+ * @author Kyomi
  */
 export enum MLoggingTypeKeys {
     // Message events
@@ -216,6 +229,10 @@ export enum MLoggingTypeKeys {
 }
 
 export namespace MLoggingTypeKeys {
+    /**
+     * Returns the defaults for what is logged in a guild
+     * @returns defaults for a newly created guild
+     */
     export function defaults(): Map<MLoggingTypeKeys, boolean> {
         return new Map<MLoggingTypeKeys, boolean>([
             [MLoggingTypeKeys.MessageDeleted, false],
@@ -255,11 +272,19 @@ export namespace MLoggingTypeKeys {
         ]);
     }
 
+    /**
+     * Gets all values of the enum
+     * @returns an array of every value
+     */
     export function all(): Array<MLoggingTypeKeys> { return Array.from(defaults().keys()); }
 }
 //#endregion
 
 //#region Logging Configuration (new to v4.1)
+/**
+ * A class handling configuration settings for logging
+ * @author Kyomi
+ */
 export class MLoggingConfig {
     public showDisabledPermissions: MLoggingConfigEntry;
 
@@ -268,6 +293,10 @@ export class MLoggingConfig {
     }
 }
 
+/**
+ * An entry for the logging configuration
+ * @author Kyomi
+ */
 class MLoggingConfigEntry {
     private _description;
     private _defaultVal;

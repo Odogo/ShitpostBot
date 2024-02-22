@@ -1,6 +1,10 @@
 import { Guild, GuildTextBasedChannel } from "discord.js";
-import { MLogging, MLoggingChannelAttributes, MLoggingTypeKeys, MLoggingCategoryKeys } from '../database/MLogging';
+import { MLogging, MLoggingChannelAttributes, MLoggingTypeKeys, MLoggingCategoryKeys, MLoggingConfig } from '../database/MLogging';
 
+/**
+ * This class is the middle man for contacting the {@link MLogging MLogging} database model.
+ * 
+ */
 export class Logging {
 
     /**
@@ -18,7 +22,7 @@ export class Logging {
      * @param guild the guild to fetch for
      * @returns a promise that resolves with a Map of channel ids and its settings
      */
-    public static async fetchGuildData(
+    public static async fetchGuildChannelData(
         guild: Guild
     ): Promise<Map<string, MLoggingChannelAttributes>> {
         return new Promise(async (resolve, reject) => {
@@ -40,11 +44,11 @@ export class Logging {
      * @param channel a guild text-based channel
      * @returns a promise that resolves with a Map of MLoggingSettingsKey and their states
      */
-    public static async fetchChannelSettings(
+    public static async fetchChannelCategories(
         channel: GuildTextBasedChannel
     ): Promise<Map<MLoggingCategoryKeys, boolean>> {
         return new Promise(async (resolve, reject) => {
-            await Logging.fetchGuildData(channel.guild).then(async (result) => {
+            await Logging.fetchGuildChannelData(channel.guild).then(async (result) => {
                 const mapObj = result.get(channel.id);
 
                 if(!mapObj || mapObj === undefined) 
@@ -59,11 +63,11 @@ export class Logging {
      * @param channel the channel to fetch for (a guild text-based channel)
      * @returns a promise that resolves with an array of MLoggingSettingsKeys that were 'true' in the channel's settings
      */
-    public static async fetchActiveChannelSettings(
+    public static async fetchChannelActiveCategories(
         channel: GuildTextBasedChannel
     ): Promise<Array<MLoggingCategoryKeys>> {
         return new Promise(async (resolve, reject) => {
-            await Logging.fetchChannelSettings(channel).then((map) => {
+            await Logging.fetchChannelCategories(channel).then((map) => {
                 const keys = Object.keys(map) as MLoggingCategoryKeys[];
                 resolve(keys.filter((v) => map.get(v)) || false);
             }).catch(reject);
@@ -76,12 +80,12 @@ export class Logging {
      * @param key the setting key in question
      * @returns a promise that resolves as true, if this channel is actively logging the category, otherwise false
      */
-    public static async isChannelLoggingType(
+    public static async isChannelLoggingCategory(
         channel: GuildTextBasedChannel,
         key: MLoggingCategoryKeys
     ): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-            await Logging.fetchActiveChannelSettings(channel).then((v) => resolve(v.includes(key))).catch(reject);
+            await Logging.fetchChannelActiveCategories(channel).then((v) => resolve(v.includes(key))).catch(reject);
         });
     }
 
@@ -91,7 +95,7 @@ export class Logging {
      * @param keys a map (of settings keys and if they're active or not) or an array (of active settings keys)
      * @returns a promise that resolves when the database was saved with the updated information
      */
-    public static async setChannelSettings(
+    public static async setChannelCategories(
         channel: GuildTextBasedChannel,
         keys: ChannelSettingsSetOptions
     ): Promise<void> {
@@ -138,7 +142,7 @@ export class Logging {
         key: MLoggingCategoryKeys
     ): Promise<Array<GuildTextBasedChannel>> {
         return new Promise(async (resolve, reject) => {
-            await this.fetchGuildData(guild).then(async (map) => {
+            await this.fetchGuildChannelData(guild).then(async (map) => {
                 const channels = guild.channels.cache.filter((channel) => {
                     return channel.isTextBased() && map.get(channel.id)?.settings.get(key) === true;
                 });
@@ -155,7 +159,7 @@ export class Logging {
      * @param guild the guild to fetch for
      * @returns a promise that resolves with a map of MLoggingConfigKeys and their current state (true being actively logged)
      */
-    public static async fetchGuildConfiguration(
+    public static async fetchGuildLoggingTypes(
         guild: Guild
     ): Promise<Map<MLoggingTypeKeys, boolean>> {
         return new Promise(async (resolve, reject) => {
@@ -178,12 +182,12 @@ export class Logging {
      * @param key the key in question
      * @returns a promise that returns true if the key is being logged, otherwise false (defaults to false if not found)
      */
-    public static async isLoggingType(
+    public static async isGuildLoggingType(
         guild: Guild,
         key: MLoggingTypeKeys
     ): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-            await this.fetchGuildConfiguration(guild).then((v) => resolve(v.get(key) || false)).catch(reject);
+            await this.fetchGuildLoggingTypes(guild).then((v) => resolve(v.get(key) || false)).catch(reject);
         });
     }
 
@@ -196,7 +200,7 @@ export class Logging {
      * @param keys the new/updated keys
      * @returns a promise that resolves when the database was saved with the updated information
      */
-    public static async setGuildConfiguration(
+    public static async setGuildLoggingTypes(
         guild: Guild,
         keys: Map<MLoggingTypeKeys, boolean>
     ): Promise<void> {
@@ -226,14 +230,58 @@ export class Logging {
      * @returns a promise that resolves when the database was saved with the updated information
      * @see {@link Logging.setGuildConfiguration setGuildConfiguration}
      */
-    public static async setGuildConfigKey(
+    public static async setGuildLoggingType(
         guild: Guild,
         key: MLoggingTypeKeys,
         state: boolean
-    ): Promise<void> { return this.setGuildConfiguration(guild, new Map([[key, state]])); }
+    ): Promise<void> { return this.setGuildLoggingTypes(guild, new Map([[key, state]])); }
     //#endregion
 
     //#region MLoggingConfig
+    /**
+     * Fetches the configuration settings for a guild regarding the logging system.
+     * @param guild the guild to fetch from
+     * @returns a promise that resolves with the given guild's logging config
+     */
+    public static async fetchGuildConfig(
+        guild: Guild
+    ): Promise<MLoggingConfig> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let data = await MLogging.findOne({ where: { guildId: guild.id }});
+                if(!data || data === null) {
+                    data = await MLogging.create({ guildId: guild.id });
+                }
+
+                resolve(data.config);
+            } catch(error) { return reject(error); }
+        });
+    }
+
+    /**
+     * Sets configuration settings into a guild for the logging system
+     * @param guild the guild to set for
+     * @param config the new updated config settings
+     * @returns a promise that resolves when the database entry was successfully saved
+     */
+    public static async setGuildConfig(
+        guild: Guild,
+        config: MLoggingConfig
+    ): Promise<void> {
+        return new Promise(async (resolve, reject) => {
+            try {
+                let data = await MLogging.findOne({ where: { guildId: guild.id }});
+                if(!data || data === null) {
+                    data = await MLogging.create({ guildId: guild.id });
+                }
+
+                data.config = config;
+
+                await data.save().then(() => resolve()).catch(reject);
+            } catch(error) { return reject(error); }
+        });
+    }
+    //#endregion
 }
 
 type ChannelSettingsSetOptions = Map<MLoggingCategoryKeys, boolean> | Array<MLoggingCategoryKeys>;
