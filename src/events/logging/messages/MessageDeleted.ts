@@ -2,7 +2,7 @@ import { AuditLogEvent, EmbedBuilder, Events } from "discord.js";
 import { ShitEvent } from "../../../structure/ShitEvent";
 import { client } from "../../..";
 import { Logging } from "../../../structure/modules/Logging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../../structure/database/MLogging";
 import { ShitLogging } from "../../../structure/ShitLogging";
 import { logWarn } from "../../../system";
 
@@ -17,10 +17,10 @@ export default new ShitEvent(Events.MessageDelete, async (msg) => {
             guild = await client.guilds.fetch(msg.guildId);
         }
 
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.MessageDeleted);
+        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MessageDeleted);
         if(!typeLogged) return;
 
-        let channels = await Logging.collectChannelsToLog(guild, MLoggingSettingsKeys.MessageEvents);
+        let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.MessageEvents);
         if(channels.length <= 0) return;
 
         if(msg.author === null) return;

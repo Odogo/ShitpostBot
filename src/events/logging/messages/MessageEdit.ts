@@ -2,7 +2,7 @@ import { EmbedBuilder, Events } from "discord.js";
 import { ShitEvent } from "../../../structure/ShitEvent";
 import { logWarn } from "../../../system";
 import { Logging } from "../../../structure/modules/Logging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../../structure/database/MLogging";
 import { ShitLogging } from "../../../structure/ShitLogging";
 import { client } from "../../..";
 
@@ -17,10 +17,10 @@ export default new ShitEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {
         if(!oldMsg.inGuild() || !newMsg.inGuild()) return;
         const guild = newMsg.guild;
 
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.MessageEdited);
+        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MessageEdited);
         if(!typeLogged) return;
 
-        let channels = await Logging.collectChannelsToLog(guild, MLoggingSettingsKeys.MessageEvents);
+        let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.MessageEvents);
         if(channels.length <= 0) return;
 
         if(oldMsg.author.bot) return;

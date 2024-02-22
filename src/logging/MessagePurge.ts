@@ -1,14 +1,14 @@
 import { AuditLogEvent, GuildTextBasedChannel } from "discord.js";
 import { ShitLogging } from "../structure/ShitLogging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../structure/database/MLogging";
 import { Logging } from "../structure/modules/Logging";
 
 export default new ShitLogging({
     logEvent: AuditLogEvent.MessageBulkDelete,
 
     config: {
-        type: MLoggingConfigKeys.MessagePurged,
-        category: MLoggingSettingsKeys.MessageEvents
+        type: MLoggingTypeKeys.MessagePurged,
+        category: MLoggingCategoryKeys.MessageEvents
     },
 
     embedCallback: async (entry, guild) => {

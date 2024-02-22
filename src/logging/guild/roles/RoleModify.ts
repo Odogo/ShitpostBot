@@ -1,6 +1,6 @@
 import { AuditLogEvent, PermissionsBitField, Role } from "discord.js";
 import { ShitLogging } from "../../../structure/ShitLogging";
-import { MLoggingConfigKeys, MLoggingCategoryKeys } from "../../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../../structure/database/MLogging";
 import { Logging } from "../../../structure/modules/Logging";
 import { getPermFlags, flagsFindDifference, transEmoji, PermFlags } from "../../../structure/types/PermFlags";
 
@@ -8,7 +8,7 @@ export default new ShitLogging({
     logEvent: AuditLogEvent.RoleUpdate,
 
     config: {
-        type: MLoggingConfigKeys.RoleModified,
+        type: MLoggingTypeKeys.RoleModified,
         category: MLoggingCategoryKeys.GuildEvents
     },
 

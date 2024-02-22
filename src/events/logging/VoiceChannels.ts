@@ -4,7 +4,7 @@ import { client } from "../..";
 import { ShitLogging } from "../../structure/ShitLogging";
 import { logWarn } from "../../system";
 import { Logging } from "../../structure/modules/Logging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../structure/database/MLogging";
 
 export default new ShitEvent(Events.VoiceStateUpdate, async (oldState, newState) => {
     try {
@@ -17,27 +17,27 @@ export default new ShitEvent(Events.VoiceStateUpdate, async (oldState, newState)
 
         const prevChannel = oldState.channel, newChannel = newState.channel;
 
-        let channels = await Logging.collectChannelsToLog(guild, MLoggingSettingsKeys.VoiceEvents);
+        let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.VoiceEvents);
         console.log(channels);
         if(channels.length <= 0) return;
 
         const embed = ShitLogging.fetchBaseEmbed(member);
 
         if(newChannel === null) { // Left a voice channel
-            let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.VoiceChannelLeft);
+            let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.VoiceChannelLeft);
             if(!typeLogged) return;
 
             embed.setColor(Logging.EmbedColors.remove)
                 .setDescription("<@" + member.id + "> left the voice channel <#" + prevChannel?.id + ">");
         } else if(prevChannel === null) { // Joined a voice channel
-            let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.VoiceChannelJoined);
+            let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.VoiceChannelJoined);
             if(!typeLogged) return;
 
             embed.setColor(Logging.EmbedColors.add)
                 .setDescription("<@" + member.id + "> joined the voice channel <#" + newChannel?.id + ">");
         } else if(prevChannel !== null && newChannel !== null && prevChannel.id !== newChannel.id) {
             // Switched to a different voice channel
-            let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.VoiceChannelSwitched);
+            let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.VoiceChannelSwitched);
             if(!typeLogged) return;
 
             embed.setColor(Logging.EmbedColors.change)

@@ -1,14 +1,14 @@
 import { APIRole, AuditLogEvent, User } from "discord.js";
 import { ShitLogging } from "../../structure/ShitLogging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../structure/database/MLogging";
 import { Logging } from "../../structure/modules/Logging";
 
 export default new ShitLogging({
     logEvent: AuditLogEvent.MemberRoleUpdate,
 
     config: {
-        type: MLoggingConfigKeys.MemberRoles,
-        category: MLoggingSettingsKeys.MemberEvents
+        type: MLoggingTypeKeys.MemberRoles,
+        category: MLoggingCategoryKeys.MemberEvents
     },
 
     embedCallback: async (entry, guild) => {

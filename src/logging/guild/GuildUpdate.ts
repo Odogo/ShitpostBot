@@ -1,6 +1,6 @@
 import { AuditLogEvent } from "discord.js";
 import { ShitLogging } from "../../structure/ShitLogging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../structure/database/MLogging";
 import { Logging } from "../../structure/modules/Logging";
 import { Utilities } from "../../structure/Utilities";
 
@@ -8,8 +8,8 @@ export default new ShitLogging({
     logEvent: AuditLogEvent.GuildUpdate,
 
     config: {
-        type: MLoggingConfigKeys.GuildUpdated,
-        category: MLoggingSettingsKeys.GuildEvents
+        type: MLoggingTypeKeys.GuildUpdated,
+        category: MLoggingCategoryKeys.GuildEvents
     },
 
     embedCallback: async (entry, guild) => {

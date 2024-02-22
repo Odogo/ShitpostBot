@@ -1,6 +1,5 @@
 import { APIEmbed, AuditLogEvent, ClientUser, EmbedBuilder, EmbedData, Guild, GuildAuditLogsEntry, GuildAuditLogsResolvable, GuildMember, User } from "discord.js";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "./database/MLogging";
-import { client } from "..";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "./database/MLogging";
 
 export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent> {
 
@@ -109,6 +108,6 @@ type ShitLoggingEmbedCallback<EType extends GuildAuditLogsResolvable = AuditLogE
 ) => Promise<EmbedBuilder>;
 
 type ShitLoggingConfig = {
-    type: MLoggingConfigKeys;
-    category: MLoggingSettingsKeys
+    type: MLoggingTypeKeys;
+    category: MLoggingCategoryKeys;
 }

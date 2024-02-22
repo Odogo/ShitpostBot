@@ -2,7 +2,7 @@ import { Events } from "discord.js";
 import { ShitEvent } from "../../../structure/ShitEvent";
 import { client } from "../../..";
 import { Logging } from "../../../structure/modules/Logging";
-import { MLoggingConfigKeys, MLoggingSettingsKeys } from "../../../structure/database/MLogging";
+import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../../structure/database/MLogging";
 import { ShitLogging } from "../../../structure/ShitLogging";
 import { logWarn } from "../../../system";
 
@@ -14,10 +14,10 @@ export default new ShitEvent(Events.GuildMemberRemove, async (member) => {
     const user = member.user;
 
     try {
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.MemberLeft);
+        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MemberLeft);
         if(!typeLogged) return;
 
-        let channels = await Logging.collectChannelsToLog(guild, MLoggingSettingsKeys.GuildDoorEvents);
+        let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.GuildDoorEvents);
         if(channels.length <= 0) return;
 
         const embed = await ShitLogging.fetchBaseEmbed(user, {
