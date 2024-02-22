@@ -1,5 +1,6 @@
 import { APIEmbed, AuditLogEvent, ClientUser, EmbedBuilder, EmbedData, Guild, GuildAuditLogsEntry, GuildAuditLogsResolvable, GuildMember, User } from "discord.js";
 import { MLoggingConfigKeys, MLoggingSettingsKeys } from "./database/MLogging";
+import { client } from "..";
 
 export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent> {
 
@@ -49,16 +50,15 @@ export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent>
      * @see {@link ShitLogging.fetchBaseEmbed fetchBaseEmbed} for the base embed generation
      */
     public static async fetchEntryBaseEmbed(
-        clientUser: ClientUser,
         entry: GuildAuditLogsEntry,
         guild: Guild, 
         data?: EmbedData | APIEmbed | undefined
     ): Promise<EmbedBuilder> {
         return new Promise(async (resolve, reject) => {
-            if(!entry.executorId) { resolve(this.fetchBaseEmbed(clientUser, undefined, data)); return; }
+            if(!entry.executorId) { resolve(this.fetchBaseEmbed(undefined, data)); return; }
 
             await guild.members.fetch(entry.executorId).then(async (executor) => {
-                return resolve(this.fetchBaseEmbed(clientUser, executor, data));
+                return resolve(this.fetchBaseEmbed(executor, data));
             }).catch(reject);
         });
     }
@@ -78,7 +78,6 @@ export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent>
      * @see {@link ShitLogging.fetchEntryBaseEmbed fetchEntryBaseEmbed} for the entry embed generation
      */
     public static fetchBaseEmbed(
-        clientUser: ClientUser,
         executor?: GuildMember | User,
         data?: EmbedData | APIEmbed
     ): EmbedBuilder {
@@ -86,10 +85,7 @@ export class ShitLogging<EType extends GuildAuditLogsResolvable = AuditLogEvent>
         embed.setTimestamp();
 
         if(executor !== undefined) {
-            embed.setFooter({
-                text: `UID: ${executor.id}`,
-                iconURL: clientUser.displayAvatarURL({ extension: 'png', size: 1024 })
-            });
+            embed.setFooter({ text: `UID: ${executor.id}` });
 
             embed.setAuthor({
                 name: (executor instanceof GuildMember ? (executor.nickname !== null ? executor.nickname : executor.displayName) : executor.displayName),
@@ -110,7 +106,7 @@ export type ShitLoggingOptions<EType extends GuildAuditLogsResolvable = AuditLog
 type ShitLoggingEmbedCallback<EType extends GuildAuditLogsResolvable = AuditLogEvent> = (
     entry: GuildAuditLogsEntry<EType>,
     guild: Guild
-) => Promise<EmbedBuilder | null>;
+) => Promise<EmbedBuilder>;
 
 type ShitLoggingConfig = {
     type: MLoggingConfigKeys;

@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import { ShitClient } from "./structure/ShitClient";
 import { join } from "path";
 import { GatewayIntentBits, Partials } from "discord.js";
-import { MLogging, MLoggingConfigKeys, MLoggingSettingsKeys} from "./structure/database/MLogging";
+import { MLogging, MLoggingTypeKeys, MLoggingCategoryKeys, MLoggingConfig} from "./structure/database/MLogging";
 import { Logging } from "./structure/modules/Logging";
 
 export const sequelInstance = new Sequelize({
@@ -39,10 +39,10 @@ export const client = new ShitClient({
     await client.login(process.env.token);
 
     const guild = await client.guilds.fetch("872836751520063600");
-    await Logging.setGuildConfiguration(guild, new Map(MLoggingConfigKeys.all().map(key => [key, true])));
+    await Logging.setGuildConfiguration(guild, new Map(MLoggingTypeKeys.all().map(key => [key, true])));
 
     const channel = await guild.channels.fetch("1171805208586768456");
     if(channel === null || !channel.isTextBased()) return;
 
-    await Logging.setChannelSettings(channel, MLoggingSettingsKeys.all());
+    await Logging.setChannelSettings(channel, MLoggingCategoryKeys.all());
 })();

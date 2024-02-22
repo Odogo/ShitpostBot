@@ -8,38 +8,25 @@ import { client } from "../../..";
 
 export default new ShitEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {
     try {
-        console.log("fired");
         const cUser = client.user;
         if(!cUser || cUser === null) return;
-
-        console.log("test a");
 
         if(oldMsg.partial) { oldMsg = await oldMsg.fetch(true); }
         if(newMsg.partial) { newMsg = await newMsg.fetch(true); }
 
-        console.log("test b");
-
         if(!oldMsg.inGuild() || !newMsg.inGuild()) return;
         const guild = newMsg.guild;
-
-        console.log("test c");
 
         let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.MessageEdited);
         if(!typeLogged) return;
 
-        console.log("test d");
-
         let channels = await Logging.collectChannelsToLog(guild, MLoggingSettingsKeys.MessageEvents);
         if(channels.length <= 0) return;
 
-        console.log("test e");
-
         if(oldMsg.author.bot) return;
 
-        console.log("test f");
-
         const channel = oldMsg.channel;
-        const embed = ShitLogging.fetchBaseEmbed(cUser, await guild.members.fetch(oldMsg.author.id), {
+        const embed = ShitLogging.fetchBaseEmbed(await guild.members.fetch(oldMsg.author.id), {
             color: Logging.EmbedColors.change,
             description: "A [message](" + newMsg.url + ") was edited in <#" + channel.id + ">"
         });
@@ -69,11 +56,7 @@ export default new ShitEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {
             embed.addFields({ name: "Current Attachments", value: " " + newAttach, inline: true})
         }
 
-        console.log(embed.data);
-
         if(embed.data === embedCopy.data) return;
-
-        console.log("test g");
 
         for(let i=0; i < channels.length; i++) 
             await channels[i].send({ embeds: [embed] });

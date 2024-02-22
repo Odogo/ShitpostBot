@@ -9,7 +9,7 @@ import { logWarn } from "../../../system";
 export default new ShitEvent(Events.GuildMemberRemove, async (member) => {
     const guild = member.guild;
     const cUser = client.user;
-    if(cUser === null) return;
+    if(!cUser || cUser === null) return;
 
     const user = member.user;
 
@@ -20,7 +20,7 @@ export default new ShitEvent(Events.GuildMemberRemove, async (member) => {
         let channels = await Logging.collectChannelsToLog(guild, MLoggingSettingsKeys.GuildDoorEvents);
         if(channels.length <= 0) return;
 
-        const embed = await ShitLogging.fetchBaseEmbed(cUser, user, {
+        const embed = await ShitLogging.fetchBaseEmbed(user, {
             color: Logging.EmbedColors.remove,
             description: "<@" + member.id + "> (" + user.displayName + ") left the server!\n" +
                 "**Joined the server:** <t:" + Math.floor((member.joinedTimestamp || -1) / 1000) + ":R>\n" +

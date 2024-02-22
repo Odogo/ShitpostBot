@@ -21,7 +21,7 @@ export default new ShitEvent(Events.VoiceStateUpdate, async (oldState, newState)
         console.log(channels);
         if(channels.length <= 0) return;
 
-        const embed = ShitLogging.fetchBaseEmbed(cUser, member);
+        const embed = ShitLogging.fetchBaseEmbed(member);
 
         if(newChannel === null) { // Left a voice channel
             let typeLogged = await Logging.isLoggingType(guild, MLoggingConfigKeys.VoiceChannelLeft);

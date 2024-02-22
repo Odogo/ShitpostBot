@@ -34,7 +34,7 @@ export default new ShitEvent(Events.MessageDelete, async (msg) => {
         if (entry && entry.target.id === msg.author?.id && entry.extra.channel.id === msg.channel.id) {
             const channel = entry.extra.channel;
         
-            embed = await ShitLogging.fetchEntryBaseEmbed(cUser, entry, guild, { 
+            embed = await ShitLogging.fetchEntryBaseEmbed(entry, guild, { 
                 color: Logging.EmbedColors.remove,
                 description: (msg.partial ? "**Note:** Some information could not be gathered, I've tried to gather as much as I could.\n" : "") +
                     "A " + (msg.url === null ? "message" : "[message](" + msg.url + ")") + " by " + (msg.author === null ? "<Could not fetch>" : "<@" + msg.author.id + ">") + " was deleted in <#" + channel.id + ">\n",
@@ -43,7 +43,7 @@ export default new ShitEvent(Events.MessageDelete, async (msg) => {
                 ]
             });
         } else {
-            embed = ShitLogging.fetchBaseEmbed(cUser, msg.author, {
+            embed = ShitLogging.fetchBaseEmbed(msg.author, {
                 color: Logging.EmbedColors.remove,
                 description: "A [message](" + msg.url + ") by <@" + msg.author + "> was deleted in <#" + msg.channel.id + ">",
                 fields: [

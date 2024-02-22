@@ -8,17 +8,25 @@ import { CreationOptional, DataTypes, Model, Sequelize } from "sequelize";
 export class MLogging extends Model implements MLoggingAttributes {
 
     declare guildId: string;
+
     declare channels: Map<string, MLoggingChannelAttributes>;
-    declare config: Map<MLoggingConfigKeys, boolean>;
+    declare types: Map<MLoggingTypeKeys, boolean>;
+
+    declare config: MLoggingConfig;
 
     private declare jsonChannels: string;
-    private declare jsonConfig: string;
+    private declare jsonTypes: string;
 
     public static async initialize(sequelize: Sequelize): Promise<typeof MLogging> {
         return this.init({
             guildId: {
                 type: DataTypes.STRING,
                 primaryKey: true
+            },
+            config: {
+                type: DataTypes.JSON,
+                allowNull: false,
+                defaultValue: {}
             },
             jsonChannels: {
                 type: DataTypes.JSON,
@@ -37,10 +45,12 @@ export class MLogging extends Model implements MLoggingAttributes {
             hooks: {
                 afterCreate: async (instance: MLogging) => {
                     instance.channels = new Map();
-                    instance.config = MLoggingConfigKeys.defaults();
+                    instance.types = MLoggingTypeKeys.defaults();
+
+                    instance.config = new MLoggingConfig();
 
                     instance.jsonChannels = JSON.stringify(Array.from(instance.channels.entries()));
-                    instance.jsonConfig = JSON.stringify(Array.from(instance.config.entries()));
+                    instance.jsonTypes = JSON.stringify(Array.from(instance.types.entries()));
 
                     await instance.save();
                 },
@@ -64,12 +74,12 @@ export class MLogging extends Model implements MLoggingAttributes {
                         });
                     } 
 
-                    if(instance.jsonConfig) {
+                    if(instance.jsonTypes) {
                         // Parse the config into a Map<MLoggingConfigKeys, boolean>
-                        instance.config = new Map(JSON.parse(instance.jsonConfig));
+                        instance.types = new Map(JSON.parse(instance.jsonTypes));
                     } else {
                         // If jsonConfig is null, use the defaults
-                        instance.config = MLoggingConfigKeys.defaults();
+                        instance.types = MLoggingTypeKeys.defaults();
                     }
                 },
                 beforeSave: (instance: MLogging) => { // Just to make sure the data is up to date with the database
@@ -88,8 +98,8 @@ export class MLogging extends Model implements MLoggingAttributes {
                         instance.jsonChannels = JSON.stringify(Array.from(tempMap.entries()));
                     }
 
-                    if (instance.config) {
-                        instance.jsonConfig = JSON.stringify(Array.from(instance.config.entries()));
+                    if (instance.types) {
+                        instance.jsonTypes = JSON.stringify(Array.from(instance.types.entries()));
                     }
                 }
             }
@@ -107,7 +117,8 @@ export class MLogging extends Model implements MLoggingAttributes {
 interface MLoggingAttributes {
     guildId: string;
     channels?: Map<string, MLoggingChannelAttributes>;
-    config?: Map<MLoggingConfigKeys, boolean>;
+    types?: Map<MLoggingTypeKeys, boolean>;
+    config?: MLoggingConfig;
 }
 
 //#region Replacement for MLoggingChannels.ts from v4.0
@@ -115,8 +126,7 @@ interface MLoggingAttributes {
  * The keys for {@link MLoggingChannelAttributes.settings}
  * This enum is also similar to the previous version of LoggingConfigCategory
  */
-
-export enum MLoggingSettingsKeys {
+export enum MLoggingCategoryKeys {
     MessageEvents = "messageEvents",
     GuildDoorEvents = "guildDoorEvents",
     GuildEvents = "guildEvents",
@@ -125,8 +135,8 @@ export enum MLoggingSettingsKeys {
     CommandEvents = "commandEvents",
 }
 
-export namespace MLoggingSettingsKeys {
-    export function all(): Array<MLoggingSettingsKeys> {
+export namespace MLoggingCategoryKeys {
+    export function all(): Array<MLoggingCategoryKeys> {
         return Array.from(MLoggingChannelAttributes.defaults().keys());
     }
 }
@@ -137,18 +147,18 @@ export namespace MLoggingSettingsKeys {
  * @field settings whether or not the channel logs certain events
  */
 export interface MLoggingChannelAttributes {
-    settings: Map<MLoggingSettingsKeys, boolean>;
+    settings: Map<MLoggingCategoryKeys, boolean>;
 }
 
 export namespace MLoggingChannelAttributes {
-    export function defaults(): Map<MLoggingSettingsKeys, boolean> {
+    export function defaults(): Map<MLoggingCategoryKeys, boolean> {
         return new Map([
-            [MLoggingSettingsKeys.MessageEvents, false],
-            [MLoggingSettingsKeys.GuildDoorEvents, false],
-            [MLoggingSettingsKeys.GuildEvents, false],
-            [MLoggingSettingsKeys.MemberEvents, false],
-            [MLoggingSettingsKeys.VoiceEvents, false],
-            [MLoggingSettingsKeys.CommandEvents, false]
+            [MLoggingCategoryKeys.MessageEvents, false],
+            [MLoggingCategoryKeys.GuildDoorEvents, false],
+            [MLoggingCategoryKeys.GuildEvents, false],
+            [MLoggingCategoryKeys.MemberEvents, false],
+            [MLoggingCategoryKeys.VoiceEvents, false],
+            [MLoggingCategoryKeys.CommandEvents, false]
         ]);
     }
 }
@@ -159,7 +169,7 @@ export namespace MLoggingChannelAttributes {
  * The keys for {@link MLoggingAttributes.config}
  * This enum is also similar to the previous version of LoggingConfigType
  */
-export enum MLoggingConfigKeys {
+export enum MLoggingTypeKeys {
     // Message events
     MessageDeleted = "messageDeleted",
     MessageEdited = "messageEdited",
@@ -205,46 +215,73 @@ export enum MLoggingConfigKeys {
     CommandExecuted = "commandExecuted",
 }
 
-export namespace MLoggingConfigKeys {
-    export function defaults(): Map<MLoggingConfigKeys, boolean> {
-        return new Map<MLoggingConfigKeys, boolean>([
-            [MLoggingConfigKeys.MessageDeleted, false],
-            [MLoggingConfigKeys.MessageEdited, false],
-            [MLoggingConfigKeys.MessagePurged, false],
+export namespace MLoggingTypeKeys {
+    export function defaults(): Map<MLoggingTypeKeys, boolean> {
+        return new Map<MLoggingTypeKeys, boolean>([
+            [MLoggingTypeKeys.MessageDeleted, false],
+            [MLoggingTypeKeys.MessageEdited, false],
+            [MLoggingTypeKeys.MessagePurged, false],
 
-            [MLoggingConfigKeys.MemberJoined, false],
-            [MLoggingConfigKeys.MemberLeft, false],
+            [MLoggingTypeKeys.MemberJoined, false],
+            [MLoggingTypeKeys.MemberLeft, false],
 
-            [MLoggingConfigKeys.ChannelCreated, false],
-            [MLoggingConfigKeys.ChannelModified, false],
-            [MLoggingConfigKeys.ChannelDeleted, false],
+            [MLoggingTypeKeys.ChannelCreated, false],
+            [MLoggingTypeKeys.ChannelModified, false],
+            [MLoggingTypeKeys.ChannelDeleted, false],
 
-            [MLoggingConfigKeys.RoleCreated, false],
-            [MLoggingConfigKeys.RoleModified, false],
-            [MLoggingConfigKeys.RoleDeleted, false],
+            [MLoggingTypeKeys.RoleCreated, false],
+            [MLoggingTypeKeys.RoleModified, false],
+            [MLoggingTypeKeys.RoleDeleted, false],
 
-            [MLoggingConfigKeys.GuildUpdated, false],
+            [MLoggingTypeKeys.GuildUpdated, false],
 
-            [MLoggingConfigKeys.EmojiCreated, false],
-            [MLoggingConfigKeys.EmojiModified, false],
-            [MLoggingConfigKeys.EmojiDeleted, false],
+            [MLoggingTypeKeys.EmojiCreated, false],
+            [MLoggingTypeKeys.EmojiModified, false],
+            [MLoggingTypeKeys.EmojiDeleted, false],
 
-            [MLoggingConfigKeys.MemberNickname, false],
+            [MLoggingTypeKeys.MemberNickname, false],
 
-            [MLoggingConfigKeys.MemberRoles, false],
-            [MLoggingConfigKeys.MemberBanned, false],
-            [MLoggingConfigKeys.MemberUnbanned, false],
-            [MLoggingConfigKeys.MemberTimedout, false],
-            [MLoggingConfigKeys.MemberUntimedout, false],
+            [MLoggingTypeKeys.MemberRoles, false],
+            [MLoggingTypeKeys.MemberBanned, false],
+            [MLoggingTypeKeys.MemberUnbanned, false],
+            [MLoggingTypeKeys.MemberTimedout, false],
+            [MLoggingTypeKeys.MemberUntimedout, false],
 
-            [MLoggingConfigKeys.VoiceChannelJoined, false],
-            [MLoggingConfigKeys.VoiceChannelSwitched, false],
-            [MLoggingConfigKeys.VoiceChannelLeft, false],
+            [MLoggingTypeKeys.VoiceChannelJoined, false],
+            [MLoggingTypeKeys.VoiceChannelSwitched, false],
+            [MLoggingTypeKeys.VoiceChannelLeft, false],
 
-            [MLoggingConfigKeys.CommandExecuted, false]
-        ])
+            [MLoggingTypeKeys.CommandExecuted, false]
+        ]);
     }
 
-    export function all(): Array<MLoggingConfigKeys> { return Array.from(defaults().keys()); }
+    export function all(): Array<MLoggingTypeKeys> { return Array.from(defaults().keys()); }
+}
+//#endregion
+
+//#region Logging Configuration (new to v4.1)
+export class MLoggingConfig {
+    public showDisabledPermissions: MLoggingConfigEntry;
+
+    constructor() {
+        this.showDisabledPermissions = new MLoggingConfigEntry("Shows disabled permissions when 'Administrator' gets disabled", true);
+    }
+}
+
+class MLoggingConfigEntry {
+    private _description;
+    private _defaultVal;
+
+    public value;
+
+    constructor(description: string, defaultVal: boolean) {
+        this._description = description;
+        this._defaultVal = defaultVal;
+
+        this.value = defaultVal;
+    }
+
+    public get description() { return this._description; }
+    public get defaultValue() { return this._defaultVal; }
 }
 //#endregion
