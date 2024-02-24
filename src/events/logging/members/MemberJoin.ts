@@ -12,7 +12,7 @@ export default new ShitEvent(Events.GuildMemberAdd, async (member) => {
     if(!cUser || cUser === null) return;
 
     try {
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MemberJoined);
+        let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.MemberJoined);
         if(!typeLogged) return;
 
         let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.GuildDoorEvents);

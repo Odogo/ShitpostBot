@@ -132,7 +132,7 @@ export enum MLoggingCategoryKeys {
     MessageEvents = "messageEvents",
     GuildDoorEvents = "guildDoorEvents",
     GuildEvents = "guildEvents",
-    ExpressionEvents = "expressionEvents"
+    ExpressionEvents = "expressionEvents",
     MemberEvents = "memberEvents",
     VoiceEvents = "voiceEvents",
     CommandEvents = "commandEvents",

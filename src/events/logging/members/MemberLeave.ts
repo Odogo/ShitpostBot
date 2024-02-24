@@ -14,7 +14,7 @@ export default new ShitEvent(Events.GuildMemberRemove, async (member) => {
     const user = member.user;
 
     try {
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MemberLeft);
+        let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.MemberLeft);
         if(!typeLogged) return;
 
         let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.GuildDoorEvents);

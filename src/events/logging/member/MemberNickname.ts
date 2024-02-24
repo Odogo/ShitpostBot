@@ -13,7 +13,7 @@ export default new ShitEvent(Events.GuildMemberUpdate, async (oldMember, newMemb
 
     if(oldMember.nickname === newMember.nickname) return;
 
-    let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MemberNickname);
+    let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.MemberNickname);
     if(!typeLogged) return;
 
     let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.MemberEvents);
