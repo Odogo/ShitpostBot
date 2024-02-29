@@ -45,7 +45,7 @@ export class MLogging extends Model implements MLoggingAttributes {
             hooks: {
                 afterCreate: async (instance: MLogging) => {
                     instance.channels = new Map();
-                    instance.types = MLoggingTypeKeys.defaults();
+                    instance.types = typeDefaults();
 
                     instance.config = new MLoggingConfig();
 
@@ -79,7 +79,7 @@ export class MLogging extends Model implements MLoggingAttributes {
                         instance.types = new Map(JSON.parse(instance.jsonTypes));
                     } else {
                         // If jsonConfig is null, use the defaults
-                        instance.types = MLoggingTypeKeys.defaults();
+                        instance.types = typeDefaults();
                     }
                 },
                 beforeSave: (instance: MLogging) => { // Just to make sure the data is up to date with the database
@@ -138,14 +138,16 @@ export enum MLoggingCategoryKeys {
     CommandEvents = "commandEvents",
 }
 
-export namespace MLoggingCategoryKeys {
-    /**
-     * Gets all values of the enum
-     * @returns an array of every value
-     */
-    export function all(): Array<MLoggingCategoryKeys> {
-        return Array.from(MLoggingChannelAttributes.defaults().keys());
-    }
+/**
+ * Collects all keys in {@link MLoggingCategoryKeys MLoggingCategoryKeys}
+ * @returns an array of keys from {@link MLoggingCategoryKeys MLoggingCategoryKeys}
+ */
+export function collectKeys(): Array<MLoggingCategoryKeys> {
+    return Object.values(MLoggingCategoryKeys);
+}
+
+export function keyDefaults(): Map<MLoggingCategoryKeys, boolean> {
+    return new Map(collectKeys().map((v) => [v, false]));
 }
 
 /**
@@ -156,23 +158,6 @@ export namespace MLoggingCategoryKeys {
  */
 export interface MLoggingChannelAttributes {
     settings: Map<MLoggingCategoryKeys, boolean>;
-}
-
-export namespace MLoggingChannelAttributes {
-    /**
-     * Returns the defaults for a newly added channel
-     * @returns defaults for a channel
-     */
-    export function defaults(): Map<MLoggingCategoryKeys, boolean> {
-        return new Map([
-            [MLoggingCategoryKeys.MessageEvents, false],
-            [MLoggingCategoryKeys.GuildDoorEvents, false],
-            [MLoggingCategoryKeys.GuildEvents, false],
-            [MLoggingCategoryKeys.MemberEvents, false],
-            [MLoggingCategoryKeys.VoiceEvents, false],
-            [MLoggingCategoryKeys.CommandEvents, false]
-        ]);
-    }
 }
 //#endregion
 
@@ -208,7 +193,9 @@ export enum MLoggingTypeKeys {
     EmojiModified = "emojiModified",
     EmojiDeleted = "emojiDeleted",
 
-    // stickers / soundboards?
+    StickerCreated = "stickerCreated",
+    StickerModified = "stickerModified",
+    StickerDeleted = "stickerDeleted",
 
     // Guild Member events
     MemberNickname = "memberNickname",
@@ -228,56 +215,8 @@ export enum MLoggingTypeKeys {
     CommandExecuted = "commandExecuted",
 }
 
-export namespace MLoggingTypeKeys {
-    /**
-     * Returns the defaults for what is logged in a guild
-     * @returns defaults for a newly created guild
-     */
-    export function defaults(): Map<MLoggingTypeKeys, boolean> {
-        return new Map<MLoggingTypeKeys, boolean>([
-            [MLoggingTypeKeys.MessageDeleted, false],
-            [MLoggingTypeKeys.MessageEdited, false],
-            [MLoggingTypeKeys.MessagePurged, false],
-
-            [MLoggingTypeKeys.MemberJoined, false],
-            [MLoggingTypeKeys.MemberLeft, false],
-
-            [MLoggingTypeKeys.ChannelCreated, false],
-            [MLoggingTypeKeys.ChannelModified, false],
-            [MLoggingTypeKeys.ChannelDeleted, false],
-
-            [MLoggingTypeKeys.RoleCreated, false],
-            [MLoggingTypeKeys.RoleModified, false],
-            [MLoggingTypeKeys.RoleDeleted, false],
-
-            [MLoggingTypeKeys.GuildUpdated, false],
-
-            [MLoggingTypeKeys.EmojiCreated, false],
-            [MLoggingTypeKeys.EmojiModified, false],
-            [MLoggingTypeKeys.EmojiDeleted, false],
-
-            [MLoggingTypeKeys.MemberNickname, false],
-
-            [MLoggingTypeKeys.MemberRoles, false],
-            [MLoggingTypeKeys.MemberBanned, false],
-            [MLoggingTypeKeys.MemberUnbanned, false],
-            [MLoggingTypeKeys.MemberTimedout, false],
-            [MLoggingTypeKeys.MemberUntimedout, false],
-
-            [MLoggingTypeKeys.VoiceChannelJoined, false],
-            [MLoggingTypeKeys.VoiceChannelSwitched, false],
-            [MLoggingTypeKeys.VoiceChannelLeft, false],
-
-            [MLoggingTypeKeys.CommandExecuted, false]
-        ]);
-    }
-
-    /**
-     * Gets all values of the enum
-     * @returns an array of every value
-     */
-    export function all(): Array<MLoggingTypeKeys> { return Array.from(defaults().keys()); }
-}
+export function collectTypes(): Array<MLoggingTypeKeys> { return Object.values(MLoggingTypeKeys); }
+export function typeDefaults(): Map<MLoggingTypeKeys, boolean> { return new Map(collectTypes().map((v) => [v, false])); }
 //#endregion
 
 //#region Logging Configuration (new to v4.1)
