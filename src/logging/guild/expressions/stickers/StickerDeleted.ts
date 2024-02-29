@@ -5,10 +5,10 @@ import { client } from "../../../..";
 import { Logging } from "../../../../structure/modules/Logging";
 
 export default new ShitLogging({
-    logEvent: AuditLogEvent.StickerCreate,
+    logEvent: AuditLogEvent.StickerDelete,
 
     config: {
-        type: MLoggingTypeKeys.StickerCreated,
+        type: MLoggingTypeKeys.StickerDeleted,
         category: MLoggingCategoryKeys.ExpressionEvents
     },
 
@@ -22,7 +22,7 @@ export default new ShitLogging({
 
         return await ShitLogging.fetchEntryBaseEmbed(entry, guild, {
             color: Logging.EmbedColors.add,
-            description: "A sticker was added into the sticker pool.\n" +
+            description: "A sticker was removed from the sticker pool.\n" +
                 "**Name:** " + target.name + "\n" +
                 "**Related Emoji:** "+ (tagEmoji === null ? "`None set`" : (!Number.isInteger(tagEmoji) ? tagEmoji : "`" + (tagEmoji as GuildEmoji).name + "`")) + "\n" +
                 "**Description:** " + (target.description ? target.description : "None set") + "\n" +

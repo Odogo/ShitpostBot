@@ -17,7 +17,7 @@ export default new ShitEvent(Events.MessageUpdate, async (oldMsg, newMsg) => {
         if(!oldMsg.inGuild() || !newMsg.inGuild()) return;
         const guild = newMsg.guild;
 
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MessageEdited);
+        let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.MessageEdited);
         if(!typeLogged) return;
 
         let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.MessageEvents);

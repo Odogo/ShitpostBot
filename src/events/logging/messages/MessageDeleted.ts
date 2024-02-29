@@ -17,7 +17,7 @@ export default new ShitEvent(Events.MessageDelete, async (msg) => {
             guild = await client.guilds.fetch(msg.guildId);
         }
 
-        let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.MessageDeleted);
+        let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.MessageDeleted);
         if(!typeLogged) return;
 
         let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.MessageEvents);

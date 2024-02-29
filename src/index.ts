@@ -2,8 +2,10 @@ import { Sequelize } from "sequelize";
 import { ShitClient } from "./structure/ShitClient";
 import { join } from "path";
 import { GatewayIntentBits, Partials } from "discord.js";
-import { MLogging, MLoggingTypeKeys, MLoggingCategoryKeys } from "./structure/database/MLogging";
+import { MLogging, MLoggingTypeKeys, MLoggingCategoryKeys, collectTypes } from "./structure/database/MLogging";
 import { Logging } from "./structure/modules/Logging";
+import { MPunishments } from "./structure/database/MPunishments";
+import { Punishments } from "./structure/modules/Punishments";
 
 export const sequelInstance = new Sequelize({
     storage: "database.sql",
@@ -34,15 +36,22 @@ export const client = new ShitClient({
 (async () => {
     // Sync databases
     await (await MLogging.initialize(sequelInstance)).sync();
+    await (await MPunishments.initialize(sequelInstance)).sync();
 
     // Login to discord
     await client.login(process.env.token);
 
+    const self = client.user!;
+    const target = await client.users.fetch("217092785700995073");
     const guild = await client.guilds.fetch("872836751520063600");
-    await Logging.setGuildLoggingTypes(guild, new Map(MLoggingTypeKeys.all().map(key => [key, true])));
 
-    const channel = await guild.channels.fetch("1171805208586768456");
-    if(channel === null || !channel.isTextBased()) return;
+    const punishment = await Punishments.createPunishment({
+        type: "warning",
+        guild,
+        target,
+        executer: self,
+        reason: "Testing"
+    });
 
-    await Logging.setChannelCategories(channel, MLoggingCategoryKeys.all());
+    console.log(punishment);
 })();

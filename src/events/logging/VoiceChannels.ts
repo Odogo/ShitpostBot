@@ -24,20 +24,20 @@ export default new ShitEvent(Events.VoiceStateUpdate, async (oldState, newState)
         const embed = ShitLogging.fetchBaseEmbed(member);
 
         if(newChannel === null) { // Left a voice channel
-            let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.VoiceChannelLeft);
+            let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.VoiceChannelLeft);
             if(!typeLogged) return;
 
             embed.setColor(Logging.EmbedColors.remove)
                 .setDescription("<@" + member.id + "> left the voice channel <#" + prevChannel?.id + ">");
         } else if(prevChannel === null) { // Joined a voice channel
-            let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.VoiceChannelJoined);
+            let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.VoiceChannelJoined);
             if(!typeLogged) return;
 
             embed.setColor(Logging.EmbedColors.add)
                 .setDescription("<@" + member.id + "> joined the voice channel <#" + newChannel?.id + ">");
         } else if(prevChannel !== null && newChannel !== null && prevChannel.id !== newChannel.id) {
             // Switched to a different voice channel
-            let typeLogged = await Logging.isLoggingType(guild, MLoggingTypeKeys.VoiceChannelSwitched);
+            let typeLogged = await Logging.isGuildLoggingType(guild, MLoggingTypeKeys.VoiceChannelSwitched);
             if(!typeLogged) return;
 
             embed.setColor(Logging.EmbedColors.change)

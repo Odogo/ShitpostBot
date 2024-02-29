@@ -11,7 +11,7 @@ export default new ShitEvent(Events.GuildAuditLogEntryCreate, async (entry, guil
     if(!logObject) return;
 
     try {
-        let typeLogged = await Logging.isLoggingType(guild, logObject.config.type);
+        let typeLogged = await Logging.isGuildLoggingType(guild, logObject.config.type);
         if(!typeLogged) return;
 
         let channels = await Logging.collectChannelsToLog(guild, logObject.config.category);

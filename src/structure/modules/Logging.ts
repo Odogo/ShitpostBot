@@ -1,5 +1,5 @@
 import { Guild, GuildTextBasedChannel } from "discord.js";
-import { MLogging, MLoggingChannelAttributes, MLoggingTypeKeys, MLoggingCategoryKeys, MLoggingConfig } from '../database/MLogging';
+import { MLogging, MLoggingChannelAttributes, MLoggingTypeKeys, MLoggingCategoryKeys, MLoggingConfig, keyDefaults } from '../database/MLogging';
 
 /**
  * This class is the middle man for contacting the {@link MLogging MLogging} database model.
@@ -52,7 +52,7 @@ export class Logging {
                 const mapObj = result.get(channel.id);
 
                 if(!mapObj || mapObj === undefined) 
-                    return resolve(MLoggingChannelAttributes.defaults());
+                    return resolve(keyDefaults());
                 return resolve(mapObj.settings);
             }).catch(reject);
         });
@@ -110,7 +110,7 @@ export class Logging {
                     for(const key of keys) {
                         const mapObj = data.channels.get(channel.id);
                         if(!mapObj || mapObj === undefined) {
-                            data.channels.set(channel.id, { settings: MLoggingChannelAttributes.defaults() });
+                            data.channels.set(channel.id, { settings: keyDefaults() });
                         }
                         data.channels.get(channel.id)?.settings.set(key, true);
                     }
@@ -118,7 +118,7 @@ export class Logging {
                     for(const [key, value] of keys) {
                         const mapObj = data.channels.get(channel.id);
                         if(!mapObj || mapObj === undefined) {
-                            data.channels.set(channel.id, { settings: MLoggingChannelAttributes.defaults() });
+                            data.channels.set(channel.id, { settings: keyDefaults() });
                         }
                         data.channels.get(channel.id)?.settings.set(key, value);
                     }
