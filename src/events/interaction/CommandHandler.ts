@@ -17,7 +17,8 @@ export default new ShitEvent(Events.InteractionCreate, async (interaction) => {
             logInfo("[Command] Handled command " + interaction.commandName + " from " + interaction.user.username + " in " + interaction.guild?.name);
         }).catch(async (reason) => {
             logWarn("[Command] Failed to handle command " + interaction.commandName + " from " + interaction.user.username + " in " + interaction.guild?.name + ": " + reason);
-            
+            logWarn(reason);
+
             if(!interaction.replied) return await interaction.reply({ content: "An error occurred while processing this command.\n" + reason, ephemeral: true });
             else return await interaction.followUp({ content: "An error occurred while processing this command.\n" + reason, ephemeral: true });
         });

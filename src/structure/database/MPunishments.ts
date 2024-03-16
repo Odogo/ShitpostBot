@@ -13,8 +13,6 @@ export class MPunishments extends Model<PunishmentAttributes> implements Punishm
     declare createdAt: Date;
     declare expiresAt: Date | null;
 
-    declare punishKey: string | null;
-
     public static async initialize(sequelize: Sequelize): Promise<typeof MPunishments> {
         return this.init({
             id: {
@@ -50,16 +48,16 @@ export class MPunishments extends Model<PunishmentAttributes> implements Punishm
             expiresAt: {
                 type: DataTypes.DATE,
                 allowNull: true
-            },
-            punishKey: {
-                type: DataTypes.STRING,
-                allowNull: true
             }
         }, {
             sequelize,
             tableName: 'punishments',
             timestamps: false
         });
+    }
+
+    public getType(): string {
+        return this.type.charAt(0).toUpperCase() + this.type.slice(1);
     }
 
     public async fetchGuild(client: Client): Promise<Guild> { return client.guilds.fetch(this.guildId); }
@@ -70,15 +68,18 @@ export class MPunishments extends Model<PunishmentAttributes> implements Punishm
     public isPermanent(): boolean { return this.expiresAt === null; }
     public timeLeft(): number { return this.expiresAt === null ? 0 : this.expiresAt.getTime() - Date.now(); }
 
-    public timeLeftFormatted(): string {
-        if (this.expiresAt === null) return 'Permanent';
+    public timeLeftFormatted(sayPerm = true): string {
+        if (this.expiresAt === null) return (sayPerm ? "Permanent" : "Never");
         return "<t:" + Math.floor(this.expiresAt.getTime() / 1000) + ":R>";
     }
+
+    public formattedCreatedAt(): string { return "<t:" + Math.floor(this.createdAt.getTime() / 1000) + ":F>"; }
+    public formattedExpiresAt(): string { return this.expiresAt === null ? "Never" : "<t:" + Math.floor(this.expiresAt.getTime() / 1000) + ":F>"; }
 }
 
 export type PunishmentType = 'warning' | 'timeout' | 'kick' | 'ban';
 
-interface PunishmentAttributes {
+export interface PunishmentAttributes {
     id: number;
     type: 'warning' | 'timeout' | 'kick' | 'ban';
     
@@ -89,6 +90,4 @@ interface PunishmentAttributes {
     reason: string;
     createdAt: Date;
     expiresAt: Date | null;
-
-    punishKey: string | null;
 }

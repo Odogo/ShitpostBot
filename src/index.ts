@@ -50,7 +50,8 @@ export const client = new ShitClient({
         guild,
         target,
         executer: self,
-        reason: "Testing"
+        reason: "Testing",
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
     });
 
     console.log(punishment);
