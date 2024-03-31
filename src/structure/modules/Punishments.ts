@@ -1,7 +1,13 @@
-import { Client, Guild, User } from "discord.js";
+import { Guild, User } from "discord.js";
 import { MPunishments, PunishmentAttributes, PunishmentType } from '../database/MPunishments';
 import { Op, WhereOptions } from "sequelize";
+import { Settings } from "./Settings";
+import { MSettingsKeys } from "../types/TSettings";
 
+/**
+ * A module for handling punishments in the database.
+ * @author Kyomi
+ */
 export class Punishments {
 
     /**
@@ -60,7 +66,8 @@ export class Punishments {
             executingUser: data.executer.id,
             reason: data.reason,
             createdAt: new Date(),
-            expiresAt: data.expiresAt
+            expiresAt: data.expiresAt,
+            punishKey: (await Settings.fetchSetting(data.guild, MSettingsKeys.punishmentKey)).value
         });
     }
 

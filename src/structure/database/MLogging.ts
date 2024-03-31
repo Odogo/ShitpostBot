@@ -12,8 +12,6 @@ export class MLogging extends Model implements MLoggingAttributes {
     declare channels: Map<string, MLoggingChannelAttributes>;
     declare types: Map<MLoggingTypeKeys, boolean>;
 
-    declare config: MLoggingConfig;
-
     private declare jsonChannels: string;
     private declare jsonTypes: string;
 
@@ -23,17 +21,12 @@ export class MLogging extends Model implements MLoggingAttributes {
                 type: DataTypes.STRING,
                 primaryKey: true
             },
-            config: {
-                type: DataTypes.JSON,
-                allowNull: false,
-                defaultValue: {}
-            },
             jsonChannels: {
                 type: DataTypes.JSON,
                 allowNull: false,
                 defaultValue: {}   
             },
-            jsonConfig: {
+            jsonTypes: {
                 type: DataTypes.JSON,
                 allowNull: false,
                 defaultValue: {}
@@ -46,8 +39,6 @@ export class MLogging extends Model implements MLoggingAttributes {
                 afterCreate: async (instance: MLogging) => {
                     instance.channels = new Map();
                     instance.types = typeDefaults();
-
-                    instance.config = new MLoggingConfig();
 
                     instance.jsonChannels = JSON.stringify(Array.from(instance.channels.entries()));
                     instance.jsonTypes = JSON.stringify(Array.from(instance.types.entries()));
@@ -119,7 +110,6 @@ interface MLoggingAttributes {
     guildId: string;
     channels?: Map<string, MLoggingChannelAttributes>;
     types?: Map<MLoggingTypeKeys, boolean>;
-    config?: MLoggingConfig;
 }
 
 //#region Replacement for MLoggingChannels.ts from v4.0
@@ -188,7 +178,7 @@ export enum MLoggingTypeKeys {
     
     GuildUpdated = "guildUpdated",
     
-    // - Expressions (emojis, stickers, etc.)
+    // Expressions (emojis, stickers, etc.)
     EmojiCreated = "emojiCreated",
     EmojiModified = "emojiModified",
     EmojiDeleted = "emojiDeleted",
@@ -217,39 +207,4 @@ export enum MLoggingTypeKeys {
 
 export function collectTypes(): Array<MLoggingTypeKeys> { return Object.values(MLoggingTypeKeys); }
 export function typeDefaults(): Map<MLoggingTypeKeys, boolean> { return new Map(collectTypes().map((v) => [v, false])); }
-//#endregion
-
-//#region Logging Configuration (new to v4.1)
-/**
- * A class handling configuration settings for logging
- * @author Kyomi
- */
-export class MLoggingConfig {
-    public showDisabledPermissions: MLoggingConfigEntry;
-
-    constructor() {
-        this.showDisabledPermissions = new MLoggingConfigEntry("Shows disabled permissions when 'Administrator' gets disabled", true);
-    }
-}
-
-/**
- * An entry for the logging configuration
- * @author Kyomi
- */
-class MLoggingConfigEntry {
-    private _description;
-    private _defaultVal;
-
-    public value;
-
-    constructor(description: string, defaultVal: boolean) {
-        this._description = description;
-        this._defaultVal = defaultVal;
-
-        this.value = defaultVal;
-    }
-
-    public get description() { return this._description; }
-    public get defaultValue() { return this._defaultVal; }
-}
 //#endregion

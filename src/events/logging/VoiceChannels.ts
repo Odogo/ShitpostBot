@@ -8,8 +8,6 @@ import { MLoggingCategoryKeys, MLoggingTypeKeys } from "../../structure/database
 
 export default new ShitEvent(Events.VoiceStateUpdate, async (oldState, newState) => {
     try {
-        console.log("VS Update");
-
         const { guild, member} = oldState;
         const cUser = client.user;
 
@@ -18,7 +16,6 @@ export default new ShitEvent(Events.VoiceStateUpdate, async (oldState, newState)
         const prevChannel = oldState.channel, newChannel = newState.channel;
 
         let channels = await Logging.collectChannelsToLog(guild, MLoggingCategoryKeys.VoiceEvents);
-        console.log(channels);
         if(channels.length <= 0) return;
 
         const embed = ShitLogging.fetchBaseEmbed(member);

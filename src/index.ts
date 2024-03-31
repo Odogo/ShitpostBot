@@ -2,10 +2,10 @@ import { Sequelize } from "sequelize";
 import { ShitClient } from "./structure/ShitClient";
 import { join } from "path";
 import { GatewayIntentBits, Partials } from "discord.js";
-import { MLogging, MLoggingTypeKeys, MLoggingCategoryKeys, collectTypes } from "./structure/database/MLogging";
-import { Logging } from "./structure/modules/Logging";
+import { MLogging } from "./structure/database/MLogging";
 import { MPunishments } from "./structure/database/MPunishments";
 import { Punishments } from "./structure/modules/Punishments";
+import { MSettings } from "./structure/database/MSettings";
 
 export const sequelInstance = new Sequelize({
     storage: "database.sql",
@@ -37,10 +37,14 @@ export const client = new ShitClient({
     // Sync databases
     await (await MLogging.initialize(sequelInstance)).sync();
     await (await MPunishments.initialize(sequelInstance)).sync();
+    await (await MSettings.initialize(sequelInstance)).sync();
 
     // Login to discord
     await client.login(process.env.token);
 
+    console.log(client);
+
+    // Testing grounds
     const self = client.user!;
     const target = await client.users.fetch("217092785700995073");
     const guild = await client.guilds.fetch("872836751520063600");

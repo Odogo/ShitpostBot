@@ -1,9 +1,9 @@
 import { Guild, GuildTextBasedChannel } from "discord.js";
-import { MLogging, MLoggingChannelAttributes, MLoggingTypeKeys, MLoggingCategoryKeys, MLoggingConfig, keyDefaults } from '../database/MLogging';
+import { MLogging, MLoggingChannelAttributes, MLoggingTypeKeys, MLoggingCategoryKeys, keyDefaults } from '../database/MLogging';
 
 /**
  * This class is the middle man for contacting the {@link MLogging MLogging} database model.
- * 
+ * @author Kyomi
  */
 export class Logging {
 
@@ -235,52 +235,6 @@ export class Logging {
         key: MLoggingTypeKeys,
         state: boolean
     ): Promise<void> { return this.setGuildLoggingTypes(guild, new Map([[key, state]])); }
-    //#endregion
-
-    //#region MLoggingConfig
-    /**
-     * Fetches the configuration settings for a guild regarding the logging system.
-     * @param guild the guild to fetch from
-     * @returns a promise that resolves with the given guild's logging config
-     */
-    public static async fetchGuildConfig(
-        guild: Guild
-    ): Promise<MLoggingConfig> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let data = await MLogging.findOne({ where: { guildId: guild.id }});
-                if(!data || data === null) {
-                    data = await MLogging.create({ guildId: guild.id });
-                }
-
-                resolve(data.config);
-            } catch(error) { return reject(error); }
-        });
-    }
-
-    /**
-     * Sets configuration settings into a guild for the logging system
-     * @param guild the guild to set for
-     * @param config the new updated config settings
-     * @returns a promise that resolves when the database entry was successfully saved
-     */
-    public static async setGuildConfig(
-        guild: Guild,
-        config: MLoggingConfig
-    ): Promise<void> {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let data = await MLogging.findOne({ where: { guildId: guild.id }});
-                if(!data || data === null) {
-                    data = await MLogging.create({ guildId: guild.id });
-                }
-
-                data.config = config;
-
-                await data.save().then(() => resolve()).catch(reject);
-            } catch(error) { return reject(error); }
-        });
-    }
     //#endregion
 }
 

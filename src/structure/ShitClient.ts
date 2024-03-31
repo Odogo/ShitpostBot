@@ -11,7 +11,7 @@ export class ShitClient extends Client {
     private _paths: ShitClientPaths;
 
     public commands: Collection<string, ShitCommandOptions>;
-    public events: Collection<keyof ClientEvents, ShitEvent<keyof ClientEvents>>;
+    public events: Collection<keyof ClientEvents, Array<ShitEvent<keyof ClientEvents>>>;
     public logging: Collection<AuditLogEvent, ShitLogging>;
 
     constructor(options: ClientOptions, paths: ShitClientPaths) {
@@ -38,7 +38,7 @@ export class ShitClient extends Client {
             logInfo("Modules registered! (took " + (Date.now() - start) + "ms)");
 
             logInfo("Registering event listeners...");
-            this.events?.forEach((v, k) => this.on(k, v.listener));
+            this.events?.forEach((v, k) => v.forEach((event) => this.on(k, event.listener)));
 
             this.once(Events.ClientReady, async () => { 
                 logInfo("Bot is now active & ready!");
@@ -70,7 +70,7 @@ export class ShitClient extends Client {
         await fetchFiles(filePath).then(async (files) => {
             for(const file of files) {
                 const event = (await import(file))?.default as ShitEvent<keyof ClientEvents>;
-                this.events?.set(event.event, event);
+                this.events?.set(event.event, Array.from(this.events.get(event.event) || []).concat(event));
             }
         });
     }

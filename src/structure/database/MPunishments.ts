@@ -13,6 +13,8 @@ export class MPunishments extends Model<PunishmentAttributes> implements Punishm
     declare createdAt: Date;
     declare expiresAt: Date | null;
 
+    declare punishKey: string | null;
+
     public static async initialize(sequelize: Sequelize): Promise<typeof MPunishments> {
         return this.init({
             id: {
@@ -48,6 +50,11 @@ export class MPunishments extends Model<PunishmentAttributes> implements Punishm
             expiresAt: {
                 type: DataTypes.DATE,
                 allowNull: true
+            },
+            punishKey: {
+                type: DataTypes.STRING,
+                allowNull: true,
+                unique: false,
             }
         }, {
             sequelize,
@@ -90,4 +97,6 @@ export interface PunishmentAttributes {
     reason: string;
     createdAt: Date;
     expiresAt: Date | null;
+
+    punishKey: string | null;
 }
