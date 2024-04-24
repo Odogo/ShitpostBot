@@ -88,7 +88,7 @@ export type PunishmentType = 'warning' | 'timeout' | 'kick' | 'ban';
 
 export interface PunishmentAttributes {
     id: number;
-    type: 'warning' | 'timeout' | 'kick' | 'ban';
+    type: PunishmentType;
     
     guildId: string;
     targetUser: string;

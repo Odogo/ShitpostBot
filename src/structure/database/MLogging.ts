@@ -1,4 +1,4 @@
-import { CreationOptional, DataTypes, Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 /**
  * This is the new MLogging model, which is a replacement for the old MLoggingChannels and MLoggingConfig models.
@@ -203,6 +203,7 @@ export enum MLoggingTypeKeys {
 
     // Shitpost events
     CommandExecuted = "commandExecuted",
+    FailedCommandExecuted = "failedCommandExecuted"
 }
 
 export function collectTypes(): Array<MLoggingTypeKeys> { return Object.values(MLoggingTypeKeys); }

@@ -1,4 +1,4 @@
-import { Guild } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, ComponentType, Guild, GuildMember, Interaction, InteractionReplyOptions, Message, MessageCreateOptions, RepliableInteraction, StringSelectMenuBuilder } from 'discord.js';
 import { InternalSettingsAttribute, MSettingsEntry, MSettingsKeys, MSettingsValues, defaultSettings } from '../types/TSettings';
 import { MSettings } from '../database/MSettings';
 
@@ -109,4 +109,56 @@ export class Settings {
             }
         });
     }
+
+    /**
+     * When the /settings command is executed and a boolean setting is requested, this method is called.
+     * This is used to prompt the user for a boolean value to set the setting into.
+     * @returns A promise that resolves with the boolean value the user inputted
+     */
+    public static async promptBoolean(options: PromptOptions): Promise<boolean> {
+        const { interaction, guild, member, key } = options;
+        
+        const row = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(new ButtonBuilder().setCustomId('promptBool_true').setLabel('Enable (true)').setStyle(ButtonStyle.Danger))
+            .addComponents(new ButtonBuilder().setCustomId('promptBool_false').setLabel('Disable (false)').setStyle(ButtonStyle.Danger));
+
+        return new Promise(async (resolve, reject) => {
+            await interaction.channel?.send({ content: 'Please select a value for the selected setting (' + key + ')', components: [row] })
+                .then(async (message) => {
+                    const filter = (i: Interaction) => i.user.id === member.id && i.isButton() && i.customId.startsWith('promptBool_');
+                    await message.awaitMessageComponent({ filter, time: 30000, componentType: ComponentType.Button }).then(async (i) => {
+                        const value = i.customId.endsWith('true') ? true : false;
+                        await message.delete().catch(() => {});
+                        resolve(value);
+                    }).catch(reject);
+            }).catch(reject);
+        });
+    }
+
+    /**
+     * When the /settings command is executed and a string setting is requested, this method is called.
+     * This is used to prompt the user for a string value to set the setting into.
+     * @returns A promise that resolves with the string value the user inputted, or null if the user inputted 'null'
+     */
+    public static async promptString(options: PromptOptions): Promise<string | null> {
+        const { interaction, guild, member, key } = options;
+        return Promise.resolve(null);
+    }
+
+    /**
+     * When the /settings command is executed and a number setting is requested, this method is called.
+     * This is used to prompt the user for a number value to set the setting into.
+     * @returns A promise that resolves with the number value the user inputted
+     */
+    public static async promptNumber(options: PromptOptions): Promise<number> {
+        const { interaction, guild, member, key } = options;
+        return Promise.resolve(0);
+    }
+}
+
+interface PromptOptions {
+    interaction: RepliableInteraction<CacheType>,
+    guild: Guild,
+    member: GuildMember,
+    key: MSettingsKeys
 }

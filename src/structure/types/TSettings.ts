@@ -35,6 +35,9 @@ export enum MSettingsCategories {
  * @see {@link MSettingsKeyCategory} for the categories
  * @author Kyomi
  */
+
+// Cannot be anything else other than boolean, a number, or (string or null)
+// Note: "(string or null)" must be used in a string only. Numbers or booleans should not have nulls.
 export interface MSettingsValues {
     [MSettingsKeys.showDisabledPerms]: boolean;
     [MSettingsKeys.punishmentKey]: string | null;
@@ -110,6 +113,8 @@ export class MSettingsEntry<TKey extends MSettingsKeys> {
     public description: string;
     public category: MSettingsCategories;
 
+    public type: string;
+
     public value: MSettingsValues[TKey];
     public defaultValue: MSettingsValues[TKey];
 
@@ -118,6 +123,8 @@ export class MSettingsEntry<TKey extends MSettingsKeys> {
 
         this.description = MSettingsDescriptions.instance[key];
         this.category = MSettingsKeyCategory.instance[key];
+
+        this.type = typeof MSettingsDefaultValues.instance[key];
 
         this.defaultValue = MSettingsDefaultValues.instance[key];
         this.value = MSettingsDefaultValues.instance[key];
