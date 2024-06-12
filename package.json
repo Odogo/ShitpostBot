@@ -1,0 +1,33 @@
+{
+  "name": "shitpostbot",
+  "version": "5.0.0",
+  "description": "The shitpost everyone is talking about",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Odogo/ShitpostBot.git"
+  },
+  "keywords": [
+    "discord",
+    "bot"
+  ],
+  "author": "Odogo",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/Odogo/ShitpostBot/issues"
+  },
+  "homepage": "https://github.com/Odogo/ShitpostBot#readme",
+  "dependencies": {
+    "@types/node": "^20.13.0",
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.10.0",
+    "sequelize": "^6.37.3",
+    "sequelize-typescript": "^2.1.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
