@@ -25,6 +25,7 @@
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",
     "mysql2": "^3.10.0",
+    "play-dl": "^1.9.7",
     "sequelize": "^6.37.3",
     "sequelize-typescript": "^2.1.6",
     "ts-node": "^10.9.2",

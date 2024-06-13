@@ -4,8 +4,10 @@ import { join } from "path";
 import { Sequelize } from "sequelize";
 import { logDebug, logError, logInfo } from './system';
 import { configDotenv } from "dotenv";
+import playdl from 'play-dl';
 
 configDotenv();
+// playdl.authorization(); -- handle authentication stuff
 
 export const Client = new ShitClient({
     intents: [

@@ -1,5 +1,6 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, Model, CreationOptional } from 'sequelize';
 import { sequelInstance } from '../..';
+import { Client, Guild, NewsChannel, StageChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from 'discord.js';
 
 export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCreationAttributes<MMusicPlayer>> implements MMusicPlayerAttributes {
 
@@ -12,6 +13,52 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
     declare volume: CreationOptional<number>;
 
     declare repeating: CreationOptional<RepeatingType>;
+
+    /**
+     * Fetches the guild associated with this player.
+     * @param client the discord client
+     * @returns a promise that resolves with the guild
+     */
+    public fetchGuild(client: Client): Promise<Guild> {
+        return client.guilds.fetch(this.guildId);
+    }
+
+    /**
+     * Fetches the voice channel associated with this player.
+     * @param client the discord client
+     * @returns a promise that resolves with the voice channel
+     */
+    public async fetchVoiceChannel(client: Client): Promise<VoiceBasedChannel> {
+        return new Promise((resolve, reject) => {
+            this.fetchGuild(client).then((guild) => {
+                guild.channels.fetch(this.voiceChannelId).then(channel => {
+                    if (channel == null) return reject("channel does not exist");
+                    if (!channel.isVoiceBased()) return reject("channel is not of voice type");
+                    
+                    resolve(channel);
+                }).catch(reject);
+            }).catch(reject);
+        });
+    }
+    
+    /**
+     * Fetches the text channel associated with this player.
+     * @param client the discord client
+     * @returns a promise that resolves with the text channel
+     */
+    public async fetchTextChannel(client: Client): Promise<MusicTextBasedChannel> {
+        return new Promise((resolve, reject) => {
+            this.fetchGuild(client).then((guild) => {
+                guild.channels.fetch(this.voiceChannelId).then(channel => {
+                    if (channel == null) return reject("channel does not exist");
+                    if (!channel.isTextBased()) return reject("channel is not of voice type");
+                    if (channel.isThread()) return reject("channel is a thread");
+                    
+                    resolve(channel);
+                }).catch(reject);
+            }).catch(reject);
+        });
+    }
 
     public static async initialize() {
         return MMusicPlayer.init({
@@ -45,7 +92,9 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
                 defaultValue: "NoRepeat"
             }
         }, {
-            sequelize: sequelInstance
+            sequelize: sequelInstance,
+            tableName: "mediaPlayer",
+            timestamps: false
         });
     }
 }
@@ -63,3 +112,5 @@ interface MMusicPlayerAttributes {
 }
 
 export type RepeatingType = "NoRepeat" | "Song" | "Playlist";
+
+export type MusicTextBasedChannel = NewsChannel | StageChannel | TextChannel | VoiceChannel;

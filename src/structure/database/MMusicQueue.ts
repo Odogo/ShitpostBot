@@ -2,6 +2,8 @@ import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, 
 import { sequelInstance } from "../..";
 import { Client, Guild, User } from "discord.js";
 
+import provider from "play-dl";
+
 export class MMusicQueue extends Model<InferAttributes<MMusicQueue>, InferCreationAttributes<MMusicQueue>> implements MMusicQueueAttributes {
 
     declare entryId: CreationOptional<number>;
@@ -17,7 +19,7 @@ export class MMusicQueue extends Model<InferAttributes<MMusicQueue>, InferCreati
      * @param client the discord client
      * @returns a promise that resolves with the guild
      */
-    public async fetchGuild(client: Client): Promise<Guild> {
+    public fetchGuild(client: Client): Promise<Guild> {
         return client.guilds.fetch(this.guildId);
     }
     
@@ -26,8 +28,28 @@ export class MMusicQueue extends Model<InferAttributes<MMusicQueue>, InferCreati
      * @param client the discord client
      * @returns a promise that resolves with the user
      */
-    public async fetchRequestor(client: Client): Promise<User> {
+    public fetchRequestor(client: Client): Promise<User> {
         return client.users.fetch(this.requestorId);
+    }
+
+
+    public async getSongProvider(): Promise<SongProvider> {
+        if (!this.songUrl.startsWith("http://") || !this.songUrl.startsWith("https://")) return SongProvider.INVALID;
+        
+        const [spotifyData, soundcloudData, youtubeData] = await Promise.all([
+            provider.sp_validate(this.songUrl),
+            provider.so_validate(this.songUrl),
+            provider.yt_validate(this.songUrl)
+        ]);
+
+        if (spotifyData && spotifyData !== "search") return SongProvider.SPOTIFY;
+        if (soundcloudData && soundcloudData !== "search") return SongProvider.SOUNDCLOUD;
+        if (youtubeData && youtubeData !== "search") return SongProvider.YOUTUBE;
+        return SongProvider.INVALID;
+    }
+
+    public async isURLValid(): Promise<boolean> {
+        return await this.getSongProvider() !== SongProvider.INVALID;
     }
 
     public static async initialize() {
@@ -73,4 +95,11 @@ interface MMusicQueueAttributes {
 
     songUrl: string;
     requestorId: string;
+}
+
+export enum SongProvider {
+    YOUTUBE = "youtube",
+    SOUNDCLOUD = "soundcloud",
+    SPOTIFY = "spotify",
+    INVALID = "invalid"
 }
