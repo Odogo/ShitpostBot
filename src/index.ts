@@ -1,10 +1,12 @@
 import { GatewayIntentBits } from "discord.js";
 import { ShitClient } from "./structure/ShitClient";
-import { join } from "path";
-import { Sequelize } from "sequelize";
+import path, { join } from "path";
+import { DataType, Sequelize } from "sequelize";
 import { logDebug, logError, logInfo } from './system';
 import { configDotenv } from "dotenv";
-import playdl from 'play-dl';
+import { MediaQueueItem } from "./structure/database/MediaQueueItem";
+import { Media } from "./structure/modules/Media";
+import { writeFile } from "fs";
 
 configDotenv();
 // playdl.authorization(); -- handle authentication stuff
@@ -41,9 +43,57 @@ sequelInstance.authenticate().then(async () => {
     logInfo("Database connection successful!");
 
     // Sync database
+    await MediaQueueItem.initialize();
+    await sequelInstance.sync({ force: true });
 
     await Client.login(process.env.token);
+
+    postInitilization();
 }).catch((reason) => {
     logError("The connection to the database could not be established!");
+    logError(reason);
+});
+
+async function postInitilization() {
+    logInfo("Initialization complete!");
+
+    const guild = await Client.guilds.fetch("872836751520063600");
+    const user = await Client.users.fetch("217092785700995073");
+
+    await Media.createQueueItem(guild, user, "https://music.youtube.com/watch?v=m2irlTSRJU0&si=tHDgcEWKs62QMQkD");
+    await Media.createQueueItem(guild, user, "https://music.youtube.com/playlist?list=PL4EJWCM_RXBF8hJVogEkR4nM6oJux6_GL&si=o4rLjiNjoqwiQVW-");
+
+    console.log(await Media.fetchAllQueueItems());
+
+    const queueItems = await Media.fetchGuildQueueItems(guild);
+    console.log(queueItems);
+
+    const songs = await Media.generateQueueSongs(queueItems);
+    writeFile(path.join(__dirname, "test.json"), JSON.stringify(songs, null, 4), (err) => {
+        if(err) console.error(err);
+    });
+}
+
+// Handle process termination
+process.on("SIGINT", async () => {
+    logInfo("Received SIGINT, shutting down...");
+    
+    logInfo("Destroying client...");
+    await Client.destroy();
+
+    logInfo("Closing database connection...");
+    await sequelInstance.close();
+
+    logInfo("Shutdown complete! Goodbye!");
+    process.exit(0);
+});
+
+process.on("uncaughtException", (err) => {
+    logError("An uncaught exception occurred!");
+    logError(err);
+});
+
+process.on("unhandledRejection", (reason) => {
+    logError("An unhandled promise rejection occurred!");
     logError(reason);
 });

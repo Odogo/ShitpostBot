@@ -97,13 +97,15 @@ export class MediaQueueItem
      * @param song The Spotify track to map
      * @returns The mapped {@link QueueItemSong}
      */
-    private mapSpotifyTrack(song: SpotifyTrack): QueueItemSong {
+    private mapSpotifyTrack(song: SpotifyTrack, playlistIndex = 0): QueueItemSong {
         return {
             title: song.name,
             artist: song.artists.join(", "),
             duration: song.durationInSec,
             source: QueueItemSource.SPOTIFY,
-            url: song.url
+            url: song.url,
+            queueIndex: this.queuePosition,
+            playlistIndex: playlistIndex
         };
     }
 
@@ -121,7 +123,7 @@ export class MediaQueueItem
         const spotifyData = await provider.spotify(url);
         if (spotifyData instanceof SpotifyAlbum || spotifyData instanceof SpotifyPlaylist) {
             const allTracks = await spotifyData.all_tracks();
-            return allTracks.map(this.mapSpotifyTrack);
+            return allTracks.map((value, index) => this.mapSpotifyTrack(value, index));
         } else {
             return this.mapSpotifyTrack(spotifyData);
         }
@@ -134,13 +136,15 @@ export class MediaQueueItem
      * @param song The SoundCloud track to map
      * @returns The mapped {@link QueueItemSong}
      */
-    private mapSoundCloudTrack(song: SoundCloudTrack): QueueItemSong {
+    private mapSoundCloudTrack(song: SoundCloudTrack, playlistIndex = 0): QueueItemSong {
         return {
             title: song.name,
             artist: song.publisher?.name || "Unknown",
             duration: song.durationInSec,
             source: QueueItemSource.SOUNDCLOUD,
-            url: song.url
+            url: song.url,
+            queueIndex: this.queuePosition,
+            playlistIndex: playlistIndex
         };
     }
     
@@ -155,7 +159,7 @@ export class MediaQueueItem
         const soundcloudData = await provider.soundcloud(url);
         if (soundcloudData instanceof SoundCloudPlaylist) {
             const allTracks = await soundcloudData.all_tracks();
-            return allTracks.map(this.mapSoundCloudTrack);
+            return allTracks.map((value, index) => this.mapSoundCloudTrack(value, index));
         } else {
             return this.mapSoundCloudTrack(soundcloudData);
         }
@@ -170,13 +174,15 @@ export class MediaQueueItem
      * @param song The YouTube video to map
      * @returns The mapped {@link QueueItemSong}
      */
-    private mapYouTubeVideo(song: YouTubeVideo): QueueItemSong {
+    private mapYouTubeVideo(song: YouTubeVideo, playlistIndex = 0): QueueItemSong {
         return {
             title: song.title || "Unable to fetch title",
             artist: song.channel?.name || "Unknown",
             duration: song.durationInSec,
             source: QueueItemSource.YOUTUBE,
-            url: song.url
+            url: song.url,
+            queueIndex: this.queuePosition,
+            playlistIndex: playlistIndex
         };
     }
 
@@ -194,7 +200,7 @@ export class MediaQueueItem
             return this.mapYouTubeVideo(ytData);
         } else if (type === QueueItemType.PLAYLIST) {
             let ytPlaylistData = await provider.playlist_info(url);
-            return (await ytPlaylistData.all_videos()).map(this.mapYouTubeVideo);
+            return (await ytPlaylistData.all_videos()).map((value, index) => this.mapYouTubeVideo(value, index));
         } else {
             return QueueItemType.INVALID;
         }
@@ -307,8 +313,9 @@ export class MediaQueueItem
     public static async initialize() {
         return MediaQueueItem.init({
             entryId: {
-                type: DataTypes.NUMBER,
-                primaryKey: true
+                type: DataTypes.BIGINT,
+                primaryKey: true,
+                autoIncrement: true
             },
             guildId: {
                 type: DataTypes.STRING,
@@ -326,12 +333,12 @@ export class MediaQueueItem
                 unique: false
             },
             playlistPosition: {
-                type: DataTypes.NUMBER,
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 0
             },
             queuePosition: {
-                type: DataTypes.NUMBER,
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 unique: false
             },
@@ -363,6 +370,9 @@ export interface QueueItemSong {
     source: QueueItemSource;
 
     url: string;
+
+    queueIndex: number;
+    playlistIndex: number;
 }
 
 export enum QueueItemSource {

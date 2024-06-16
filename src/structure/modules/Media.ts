@@ -1,6 +1,7 @@
 import provider from "play-dl";
 import { MediaQueueItem, QueueItemSong, QueueItemType } from "../database/MediaQueueItem";
-import { Guild } from "discord.js";
+import { Guild, User } from "discord.js";
+import { sequelInstance } from "../..";
 
 /**
  * This class is the manager for handling connections to the database through {@link MMusicPlayer} and {@link MMusicQueue}
@@ -9,40 +10,51 @@ import { Guild } from "discord.js";
 export class Media {
 
     /**
-     * Fetches all queue items from the database.
-     * @returns A promise that resolves with an array of {@link MediaQueueItem}
+     * Fetches all the queue items from the database
+     * @returns The queue items from the database
      */
-    public static async fetchAllQueueItems(): Promise<Array<MediaQueueItem>> { return MediaQueueItem.findAll(); }
+    public static async fetchAllQueueItems(): Promise<MediaQueueItem[]> {
+        return MediaQueueItem.findAll();
+    }
 
-    /**
-     * Fetches all queue items from the database for a specific guild.
-     * @param guild The guild to fetch queue items for
-     * @returns A promise that resolves with an array of {@link MediaQueueItem}
-     */
-    public static async fetchQueueItems(guild: Guild): Promise<Array<MediaQueueItem>> {
+    public static async fetchGuildQueueItems(guild: Guild): Promise<MediaQueueItem[]> {
         return MediaQueueItem.findAll({ where: { guildId: guild.id } });
     }
 
-    /**
-     * Fetches all songs from all queue items for a specific guild.
-     * @param guild The guild to fetch queue items for
-     * @returns A promise that resolves with an array of {@link QueueItemSong}
-     */
-    public static async fetchQueueItemSongs(guild: Guild): Promise<QueueItemSong[]> {
-        // Fetch all queue items for the guild, then fetch all songs from each item
-        // Then flatten the array and filter out invalid songs (if any)
-        return Promise.all
-            (
-                (
-                    await this.fetchQueueItems(guild)
-                ).map(
-                    item => item.getSongs()
-                )
-        ).then(
-            arrays => arrays.flat().filter(
-                song => song !== QueueItemType.INVALID
-            )
-        );
+    public static async generateQueueSongs(queueItems: MediaQueueItem[]): Promise<QueueItemSong[]> {
+        const songs: QueueItemSong[] = [];
+
+        for (const item of queueItems) {
+            console.log("attempting item: " + item);
+
+            const itemSongs = await item.getSongs();
+            if (itemSongs === QueueItemType.INVALID) continue;
+            if (Array.isArray(itemSongs)) {
+                songs.push(...itemSongs);
+            } else {
+                songs.push(itemSongs);
+            }
+        }
+        console.log(songs);
+
+        return songs.sort((a, b) => a.queueIndex - b.queueIndex).sort((a, b) => a.playlistIndex - b.playlistIndex);
     }
-    
+
+    public static async createQueueItem(guild: Guild, requestor: User, mediaUrl: string): Promise<MediaQueueItem> {
+        return sequelInstance.transaction(async (transaction) => {
+            const maxQueuePosition = await MediaQueueItem.max("queuePosition", {
+                where: { guildId: guild.id },
+                transaction
+            }) as number | null;
+
+            const nextQueuePosition = maxQueuePosition === null ? 0 : maxQueuePosition + 1;
+        
+            return await MediaQueueItem.create({
+                guildId: guild.id,
+                requestorId: requestor.id,
+                songUrl: mediaUrl,
+                queuePosition: nextQueuePosition
+            }, { transaction });
+        });
+    }
 }

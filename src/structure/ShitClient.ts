@@ -3,7 +3,7 @@ import { ShitCommandOptions } from "./ShitCommand";
 import { ShitEvent } from "./ShitEvent";
 import { PathLike } from "fs";
 import { readdir } from "fs/promises";
-import { logDebug, logInfo, logWarn } from "../system";
+import { logDebug, logError, logInfo, logWarn } from "../system";
 
 export class ShitClient extends Client {
 
@@ -52,10 +52,13 @@ export class ShitClient extends Client {
         if(filePath === undefined) filePath = this._paths.commands;
 
         await fetchFiles(filePath).then(async (files) => {
-            for(const file of files) {
+            for (const file of files) {
                 const command = (await import(file))?.default as ShitCommandOptions;
                 this.commands?.set(command.name, command);
             }
+        }).catch((reason) => {
+            logError("Failed to gather commands: " + reason);
+            throw reason;
         });
     }
 
@@ -67,6 +70,9 @@ export class ShitClient extends Client {
                 const event = (await import(file))?.default as ShitEvent<keyof ClientEvents>;
                 this.events?.set(event.event, Array.from(this.events.get(event.event) || []).concat(event));
             }
+        }).catch((reason) => {
+            logError("Failed to gather events: " + reason);
+            throw reason;
         });
     }
 
