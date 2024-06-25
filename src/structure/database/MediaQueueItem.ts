@@ -1,11 +1,8 @@
-import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Op } from "sequelize";
 import { Client, Guild, User } from "discord.js";
-import { Readable } from "stream";
+import provider, { SoundCloudTrack, SpotifyTrack, YouTubeVideo } from "play-dl";
 
-import provider, { SoundCloudPlaylist, SoundCloudTrack, SpotifyAlbum, SpotifyPlaylist, SpotifyTrack, YouTubeVideo } from "play-dl";
-
-import { sequelInstance } from "../..";
-import { logError } from "../../system";
+import {sequelInstance as sequelize} from '../..';
 
 export class MediaQueueItem
     extends Model<InferAttributes<MediaQueueItem>, InferCreationAttributes<MediaQueueItem>>
@@ -16,7 +13,6 @@ export class MediaQueueItem
     declare requestorId: string;
 
     declare songUrl: string;
-    declare playlistPosition: CreationOptional<number>;
     declare queuePosition: number;
 
     /**
@@ -36,52 +32,13 @@ export class MediaQueueItem
     public async getRequestor(client: Client): Promise<User> {
         return client.users.fetch(this.requestorId);
     }
-    
-    /**
-     * Fetches the source and type of the queue item
-     * @returns A promise that resolves with the source and type of the queue item
-     */
-    private async getQueueItemData(): Promise<[QueueItemSource, QueueItemType]> {
-        if (!this.songUrl) return [QueueItemSource.INVALID, QueueItemType.INVALID];
-        if (!this.songUrl.startsWith("http://") && !this.songUrl.startsWith("https://")) return [QueueItemSource.INVALID, QueueItemType.INVALID];
-        
-        let [
-            spValidate,
-            scValidate,
-            ytValidate
-        ] = await Promise.all([
-            provider.sp_validate(this.songUrl),
-            provider.so_validate(this.songUrl),
-            provider.yt_validate(this.songUrl)
-        ]);
-        
-        // Prevent all searches from being done, as we've checked that the URL is valid (contains "http://" or "https://" and is not empty)
-        switch (true) {
-            case spValidate && spValidate === "track":
-                return [QueueItemSource.SPOTIFY, QueueItemType.SONG];
-            case spValidate && spValidate === "playlist":
-                return [QueueItemSource.SPOTIFY, QueueItemType.PLAYLIST];
-            case spValidate && spValidate === "album":
-                return [QueueItemSource.SPOTIFY, QueueItemType.ALBUM];
-            case scValidate && scValidate === "track":
-                return [QueueItemSource.SOUNDCLOUD, QueueItemType.SONG];
-            case scValidate && scValidate === "playlist":
-                return [QueueItemSource.SOUNDCLOUD, QueueItemType.PLAYLIST];
-            case ytValidate && ytValidate === "video":
-                return [QueueItemSource.YOUTUBE, QueueItemType.SONG];
-            case ytValidate && ytValidate === "playlist":
-                return [QueueItemSource.YOUTUBE, QueueItemType.PLAYLIST];
-            default:
-                return [QueueItemSource.INVALID, QueueItemType.INVALID];
-        }
-    }
 
     /**
      * Fetches the source of the queue item
      * @returns A promise that resolves with the source of the queue item
      */
     public async getQueueItemSource(): Promise<QueueItemSource> {
-        return (await this.getQueueItemData())[0];
+        return (await MediaQueueItem.verifyURL(this.songUrl))[0];
     }
 
     /**
@@ -89,223 +46,63 @@ export class MediaQueueItem
      * @returns A promise that resolves with the type of the queue item
      */
     public async getQueueItemType(): Promise<QueueItemType> {
-        return (await this.getQueueItemData())[1];
+        return (await MediaQueueItem.verifyURL(this.songUrl))[1];
     }
 
     /**
-     * Maps a Spotify track to a {@link QueueItemSong}
-     * @param song The Spotify track to map
-     * @returns The mapped {@link QueueItemSong}
+     * Fetches the details of the song in the queue item
+     * @returns A promise that resolves with the details of the song in the queue item
      */
-    private mapSpotifyTrack(song: SpotifyTrack, playlistIndex = 0): QueueItemSong {
-        return {
-            title: song.name,
-            artist: song.artists.join(", "),
-            duration: song.durationInSec,
-            source: QueueItemSource.SPOTIFY,
-            url: song.url,
-            queueIndex: this.queuePosition,
-            playlistIndex: playlistIndex
-        };
-    }
+    public async getSongDetails(): Promise<QueueItemSong> {
+        if (this.songUrl === "") throw new MediaParsingError("Song URL is empty");
 
-    /**
-     * Fetches Spotify data for the given URL
-     * 
-     * If the URL is a playlist or album, the promise will resolve with an array of {@link QueueItemSong}s
-     * @param url The URL to fetch Spotify data for
-     * @returns A promise that resolves with the fetched Spotify data
-     */
-    private async fetchSpotifyData(url: string): Promise<Array<QueueItemSong> | QueueItemSong> {
-        // Check if the provider is expired and refresh the token if it is
-        if (provider.is_expired()) await provider.refreshToken();
+        // const type = await this.getQueueItemType();
+        // if (type === QueueItemType.ALBUM || type === QueueItemType.PLAYLIST) throw new MediaParsingError("Invalid URL provided: Expected a song, got a playlist or album instead");
 
-        const spotifyData = await provider.spotify(url);
-        if (spotifyData instanceof SpotifyAlbum || spotifyData instanceof SpotifyPlaylist) {
-            const allTracks = await spotifyData.all_tracks();
-            return allTracks.map((value, index) => this.mapSpotifyTrack(value, index));
-        } else {
-            return this.mapSpotifyTrack(spotifyData);
-        }
-    }
-
-    /**
-     * Maps a SoundCloud track to a {@link QueueItemSong}
-     * 
-     * If the publisher is not available, it will be set to "Unknown"
-     * @param song The SoundCloud track to map
-     * @returns The mapped {@link QueueItemSong}
-     */
-    private mapSoundCloudTrack(song: SoundCloudTrack, playlistIndex = 0): QueueItemSong {
-        return {
-            title: song.name,
-            artist: song.publisher?.name || "Unknown",
-            duration: song.durationInSec,
-            source: QueueItemSource.SOUNDCLOUD,
-            url: song.url,
-            queueIndex: this.queuePosition,
-            playlistIndex: playlistIndex
-        };
-    }
-    
-    /**
-     * Fetches SoundCloud data for the given URL
-     * 
-     * If the URL is a playlist, the promise will resolve with an array of {@link QueueItemSong}s
-     * @param url The URL to fetch SoundCloud data for
-     * @returns A promise that resolves with the fetched SoundCloud data
-     */
-    private async fetchSoundCloudData(url: string): Promise<Array<QueueItemSong> | QueueItemSong> {
-        const soundcloudData = await provider.soundcloud(url);
-        if (soundcloudData instanceof SoundCloudPlaylist) {
-            const allTracks = await soundcloudData.all_tracks();
-            return allTracks.map((value, index) => this.mapSoundCloudTrack(value, index));
-        } else {
-            return this.mapSoundCloudTrack(soundcloudData);
-        }
-    }
-
-    /**
-     * Maps a YouTube video to a {@link QueueItemSong}
-     * 
-     * If the title is not available, it will be set to "Unable to fetch title"
-     * 
-     * If the artist is not available, it will be set to "Unknown"
-     * @param song The YouTube video to map
-     * @returns The mapped {@link QueueItemSong}
-     */
-    private mapYouTubeVideo(song: YouTubeVideo, playlistIndex = 0): QueueItemSong {
-        return {
-            title: song.title || "Unable to fetch title",
-            artist: song.channel?.name || "Unknown",
-            duration: song.durationInSec,
-            source: QueueItemSource.YOUTUBE,
-            url: song.url,
-            queueIndex: this.queuePosition,
-            playlistIndex: playlistIndex
-        };
-    }
-
-    /**
-     * Fetches YouTube data for the given URL
-     * 
-     * If the URL is a playlist, the promise will resolve with an array of {@link QueueItemSong}s
-     * @param url The URL to fetch YouTube data for
-     * @returns A promise that resolves with the fetched YouTube data
-     */
-    private async fetchYouTubeData(url: string): Promise<Array<QueueItemSong> | QueueItemSong | QueueItemType.INVALID> {
-        const type = await this.getQueueItemType();
-        if(type === QueueItemType.SONG) {
-            let ytData = (await provider.video_basic_info(url)).video_details;
-            return this.mapYouTubeVideo(ytData);
-        } else if (type === QueueItemType.PLAYLIST) {
-            let ytPlaylistData = await provider.playlist_info(url);
-            return (await ytPlaylistData.all_videos()).map((value, index) => this.mapYouTubeVideo(value, index));
-        } else {
-            return QueueItemType.INVALID;
-        }
-    }
-
-    /**
-     * The cache for the songs of the queue item, if any.
-     * 
-     * We cache the songs to prevent unnecessary API calls to the provider when the songs are already fetched.
-     * 
-     * If the cache needs to be refreshed, the {@link getSongs} method can be called with the `force` parameter set to `true`.
-     */
-    private songCache: Array<QueueItemSong> | QueueItemSong | QueueItemType.INVALID | null = null;
-
-    /**
-     * Fetches the songs of the queue item and caches them for future use if the cache is null or if the cache needs to be refreshed.
-     * 
-     * If the cache is not null and the `force` parameter is not set to `true`, the cache will be returned.
-     * @param force Whether to force a refresh of the cache
-     * @returns A promise that resolves with the songs of the queue item or {@link QueueItemType.INVALID} if the queue item is invalid
-     */
-    public async getSongs(force?: boolean): Promise<Array<QueueItemSong> | QueueItemSong | QueueItemType.INVALID> {
-        // If the song cache is not null and we're not forcing a refresh, return the cache
-        if (this.songCache && !force) return this.songCache;
-        // If the song cache is null or we're forcing a refresh, fetch the songs
-
-        // Fetch the source and type of the queue item
-        let [source, type] = await this.getQueueItemData();
-
-        // If the type is invalid, return the cache as invalid
-        if (type === QueueItemType.INVALID) return this.songCache = QueueItemType.INVALID;
-
-        // Fetch the songs based on the source of the queue item and set the cache
-        try {
-            switch (source) {
-                case QueueItemSource.SPOTIFY:
-                    return this.songCache = await this.fetchSpotifyData(this.songUrl);
-                case QueueItemSource.SOUNDCLOUD:
-                    return this.songCache = await this.fetchSoundCloudData(this.songUrl);
-                case QueueItemSource.YOUTUBE:
-                    return this.songCache = await this.fetchYouTubeData(this.songUrl);
-                default:
-                    return this.songCache = QueueItemType.INVALID;
-            }
-        } catch (e) {
-            logError("An error occurred while fetching song data for queue item " + this.entryId + "!");
-            logError(e);
-            return this.songCache = QueueItemType.INVALID;
-        }
-    }
-
-    /**
-     * Fetches the number of songs in the queue item
-     * @returns A promise that resolves with the number of songs in the queue item
-     * - If the queue item is a playlist or album, the promise will resolve with the number of songs in the playlist or album
-     * - If the queue item is a song, the promise will resolve with 1
-     * - If the queue item is invalid, the promise will resolve with -1
-     */
-    public async getSongCount(): Promise<number> {
-        const songs = await this.getSongs();
-        return Array.isArray(songs) ? songs.length : songs === QueueItemType.INVALID ? -1 : 1;
-    }
-
-    private readonly streamOptions = { discordPlayerCompatibility: true }
-
-    /**
-     * Streams the queue item at the given playlist index
-     * @param playlistIndex The index of the playlist to stream
-     * @returns A promise that resolves with the stream of the queue item or null if the queue item is invalid
-     */
-    public async stream(playlistIndex = this.playlistPosition): Promise<Readable | null> {
-        const songs = await this.getSongs();
-        if (songs === QueueItemType.INVALID) return null;
-
-        if(playlistIndex < 0 || playlistIndex >= (await this.getSongCount())) return null;
-
-        if (Array.isArray(songs)) {
-            return this.handleStream(songs[playlistIndex]);
-        } else {
-            return this.handleStream(songs);
-        }
-    }
-
-    /**
-     * Handles the streaming of the queue item based on the source
-     * 
-     * If the source is Spotify, the song will be searched for and streamed
-     * @param song The song to stream
-     * @returns
-     */
-    private async handleStream(song: QueueItemSong): Promise<Readable | null> {
-        switch (song.source) {
-            case QueueItemSource.YOUTUBE || QueueItemSource.SOUNDCLOUD: {
-                return (await provider.stream(song.url, this.streamOptions)).stream;
-            }
-                
-            // Since Spotify is cringe, we have to handle it differently.
+        const source = await this.getQueueItemSource();
+        switch (source) {
             case QueueItemSource.SPOTIFY: {
-                return (await provider.stream(provider.search(song.title + " " + song.artist, { limit: 1 })[0].url, this.streamOptions)).stream;
+                if (provider.is_expired()) await provider.refreshToken(); // Refresh the token if it's expired
+                const song = await provider.spotify(this.songUrl) as SpotifyTrack;
+                return MediaQueueItem.mapSong(song, this.queuePosition);
             }
-                
-            default: return null;
+            case QueueItemSource.SOUNDCLOUD: {
+                const song = await provider.soundcloud(this.songUrl) as SoundCloudTrack;
+                return MediaQueueItem.mapSong(song, this.queuePosition);
+            }
+            case QueueItemSource.YOUTUBE: {
+                const song = await provider.video_info(this.songUrl);
+                return MediaQueueItem.mapSong(song.video_details, this.queuePosition);
+            }
+            default: throw new MediaParsingError("Invalid source provided");
         }
     }
 
+    /**
+     * Generates a stream for the song in the queue item to be played
+     * @returns A promise that resolves with a stream for the song in the queue item
+     */
+    public async generateStream() {
+        if (this.songUrl === "") throw new MediaParsingError("Song URL is empty");
+
+        const source = await this.getQueueItemSource();
+        switch (source) {
+            case QueueItemSource.SPOTIFY: {
+                if (provider.is_expired()) await provider.refreshToken(); // Refresh the token if it's expired
+                const song = await provider.spotify(this.songUrl) as SpotifyTrack;
+
+                const search = await provider.search(song.name + " " + song.artists.map(artist => artist.name).join(" "), { limit: 1 });
+                const stream = await provider.stream(search[0].url, { discordPlayerCompatibility: true, quality: 2 });
+                return stream.stream;
+            }
+            case QueueItemSource.SOUNDCLOUD:
+            case QueueItemSource.YOUTUBE: {
+                return (await provider.stream(this.songUrl, { discordPlayerCompatibility: true, quality: 2 })).stream;
+            }
+            default: throw new MediaParsingError("Invalid source provided");
+        }
+    }
+ 
     /**
      * Initializes the database table for {@link MediaQueueItem}
      * @returns A promise that resolves when the database table has been initialized
@@ -332,22 +129,128 @@ export class MediaQueueItem
                 allowNull: false,
                 unique: false
             },
-            playlistPosition: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                defaultValue: 0
-            },
             queuePosition: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 unique: false
             },
         }, {
-            sequelize: sequelInstance,
+            sequelize: sequelize,
             timestamps: true,
             createdAt: "requestedAt",
-            tableName: "mediaQueue"
+            tableName: "mediaQueue",
+            hooks: {
+                // Prevent invalid URLs from being added to the database
+                beforeCreate: async (instance, options) => {
+                    let [source, type] = await MediaQueueItem.verifyURL(instance.songUrl);
+                    if (source === QueueItemSource.INVALID || type === QueueItemType.INVALID) {
+                        throw new Error("Invalid URL provided");
+                    }
+                },
+
+                // After a destory, we need to shift the queue positions of all items after the deleted item
+                afterDestroy: async (instance, options) => {
+                    const queueItems = await MediaQueueItem.findAll({
+                        where: {
+                            guildId: instance.guildId,
+                            queuePosition: {
+                                [Op.gt]: instance.queuePosition
+                            }
+                        },
+                        transaction: options.transaction
+                    });
+
+                    await Promise.all(queueItems.map(async (queueItem) => {
+                        queueItem.queuePosition -= 1;
+                        await queueItem.save({ transaction: options.transaction });
+                    }));
+                }
+            }
         });
+    }
+
+    /**
+     * Verifies the URL provided is a valid media source and type
+     * @param url The URL to verify
+     * @returns A promise that resolves with the source and type of the URL
+     */
+    public static async verifyURL(url: string): Promise<[QueueItemSource, QueueItemType]> {
+        if (!url) return [QueueItemSource.INVALID, QueueItemType.INVALID];
+        if (!url.startsWith("https://") && !url.startsWith("http://")) return [QueueItemSource.INVALID, QueueItemType.INVALID];
+
+        let [
+            spValidate,
+            soValidate,
+            ytValidate
+        ] = await Promise.all([
+            provider.sp_validate(url),
+            provider.so_validate(url),
+            provider.yt_validate(url)
+        ]).then(([sp, so, yt]) => [sp, so, yt])
+                .catch((reason) => {
+                    throw new MediaParsingError("Failed to validate URL: " + reason.message || "Unknown error")
+                });
+
+        switch (true) {
+            case spValidate && spValidate === "track":
+                return [QueueItemSource.SPOTIFY, QueueItemType.SONG];
+            case spValidate && spValidate === "playlist":
+                return [QueueItemSource.SPOTIFY, QueueItemType.PLAYLIST];
+            case spValidate && spValidate === "album":
+                return [QueueItemSource.SPOTIFY, QueueItemType.ALBUM];
+            case soValidate && soValidate === "track":
+                return [QueueItemSource.SOUNDCLOUD, QueueItemType.SONG];
+            case soValidate && soValidate === "playlist":
+                return [QueueItemSource.SOUNDCLOUD, QueueItemType.PLAYLIST];
+            case ytValidate && ytValidate === "video":
+                return [QueueItemSource.YOUTUBE, QueueItemType.SONG];
+            case ytValidate && ytValidate === "playlist":
+                return [QueueItemSource.YOUTUBE, QueueItemType.PLAYLIST];
+            default:
+                return [QueueItemSource.INVALID, QueueItemType.INVALID];
+        }
+    }
+
+    /**
+     * Maps a song to a {@link QueueItemSong}
+     * @param song The song to map
+     * @param queueIndex The index of the song in the queue
+     * @returns The song mapped to a {@link QueueItemSong}
+     */
+    public static mapSong(song: SpotifyTrack | SoundCloudTrack | YouTubeVideo, queueIndex: number): QueueItemSong {
+        switch (true) {
+            case song instanceof SpotifyTrack: {
+                return {
+                    title: song.name,
+                    artist: song.artists.map(artist => artist.name).join(", ") || "Unknown",
+                    duration: song.durationInMs / 1000,
+                    source: QueueItemSource.SPOTIFY,
+                    url: song.url,
+                    queueIndex: queueIndex
+                };
+            }
+            case song instanceof SoundCloudTrack: {
+                return {
+                    title: song.name,
+                    artist: song.publisher?.name || song.publisher?.artist || "Unknown",
+                    duration: song.durationInMs / 1000,
+                    source: QueueItemSource.SOUNDCLOUD,
+                    url: song.url,
+                    queueIndex: queueIndex
+                };
+            }
+            case song instanceof YouTubeVideo: {
+                return {
+                    title: song.title || "Unable to fetch title",
+                    artist: song.channel?.name || "Unknown",
+                    duration: song.durationInSec,
+                    source: QueueItemSource.YOUTUBE,
+                    url: song.url,
+                    queueIndex: queueIndex
+                };
+            }
+            default: throw new MediaParsingError("[Unreachable] Invalid song type")
+        }
     }
 }
 
@@ -358,7 +261,6 @@ interface MediaQueueItemAttributes {
     requestorId: string;
 
     songUrl: string;
-    playlistPosition: number;
     queuePosition: number;
 }
 
@@ -368,11 +270,9 @@ export interface QueueItemSong {
     duration: number;
 
     source: QueueItemSource;
-
     url: string;
 
     queueIndex: number;
-    playlistIndex: number;
 }
 
 export enum QueueItemSource {
@@ -387,4 +287,11 @@ export enum QueueItemType {
     PLAYLIST = "playlist",
     ALBUM = "album",
     INVALID = "invalid"
+}
+
+export class MediaParsingError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "MediaParsingError";
+    }
 }

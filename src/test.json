@@ -5,26 +5,23 @@
         "duration": 206,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=m2irlTSRJU0",
-        "queueIndex": 0,
-        "playlistIndex": 0
+        "queueIndex": 0
     },
     {
         "title": "'Sentinel' [Cinematic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 204,
+        "duration": 203,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=tmoH725d1U4",
-        "queueIndex": 1,
-        "playlistIndex": 0
+        "queueIndex": 1
     },
     {
         "title": "'The Great Sea' [Cinematic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 283,
+        "duration": 282,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=hzb9DsLguJo",
-        "queueIndex": 1,
-        "playlistIndex": 1
+        "queueIndex": 2
     },
     {
         "title": "'Ignis' [Epic Cinematic CC-BY] - Scott Buckley",
@@ -32,17 +29,15 @@
         "duration": 192,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=jdgiQeHnHbY",
-        "queueIndex": 1,
-        "playlistIndex": 2
+        "queueIndex": 3
     },
     {
         "title": "'Rites Of Passage' [Epic Cinematic CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 337,
+        "duration": 336,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=OqUCW-Wgk-s",
-        "queueIndex": 1,
-        "playlistIndex": 3
+        "queueIndex": 4
     },
     {
         "title": "'Rise Above' [Cinematic Orchestral CC-BY] - Scott Buckley",
@@ -50,8 +45,7 @@
         "duration": 268,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=SWzeMMfe6pM",
-        "queueIndex": 1,
-        "playlistIndex": 4
+        "queueIndex": 5
     },
     {
         "title": "'Vanguard' [Epic Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -59,17 +53,15 @@
         "duration": 232,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=qRGMUx1e2Cc",
-        "queueIndex": 1,
-        "playlistIndex": 5
+        "queueIndex": 6
     },
     {
         "title": "'Balefire' [Dark Folk Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 341,
+        "duration": 340,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=uvOMVgXbRMI",
-        "queueIndex": 1,
-        "playlistIndex": 6
+        "queueIndex": 7
     },
     {
         "title": "'Victor Lux' [Inspirational Orchestral CC-BY] - Scott Buckley",
@@ -77,8 +69,7 @@
         "duration": 203,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=01PUw8l9fi4",
-        "queueIndex": 1,
-        "playlistIndex": 7
+        "queueIndex": 8
     },
     {
         "title": "'Escape Velocity' [Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -86,8 +77,7 @@
         "duration": 271,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=poh1TbCM5eo",
-        "queueIndex": 1,
-        "playlistIndex": 8
+        "queueIndex": 9
     },
     {
         "title": "'Three Sheets To The Wind' [Orchestral Adventure CC-BY] - Scott Buckley",
@@ -95,8 +85,7 @@
         "duration": 201,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=5yOxafLjA_Q",
-        "queueIndex": 1,
-        "playlistIndex": 9
+        "queueIndex": 10
     },
     {
         "title": "'A Dragon's Lullaby' [Dark Harp & Orchestra CC-BY] - Scott Buckley",
@@ -104,8 +93,7 @@
         "duration": 168,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=V-TJ1bQ846s",
-        "queueIndex": 1,
-        "playlistIndex": 10
+        "queueIndex": 11
     },
     {
         "title": "'Call To Adventure' [Cinematic Orchestra CC-BY] - Scott Buckley",
@@ -113,8 +101,7 @@
         "duration": 260,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=XXEy5qe7O6I",
-        "queueIndex": 1,
-        "playlistIndex": 11
+        "queueIndex": 12
     },
     {
         "title": "'Legacy' [Epic Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -122,17 +109,15 @@
         "duration": 390,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=rghAuURaFCk",
-        "queueIndex": 1,
-        "playlistIndex": 12
+        "queueIndex": 13
     },
     {
         "title": "'Path Through The Mountains' [Mysterious Orchestral Fantasy CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 322,
+        "duration": 321,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=kEVdXOJCn94",
-        "queueIndex": 1,
-        "playlistIndex": 13
+        "queueIndex": 14
     },
     {
         "title": "'Artemis' [Inspirational Epic Orchestra CC-BY] - Scott Buckley",
@@ -140,17 +125,15 @@
         "duration": 372,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=vqb0XsZ04Og",
-        "queueIndex": 1,
-        "playlistIndex": 14
+        "queueIndex": 15
     },
     {
         "title": "'Juggernaut' [Epic War March CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 223,
+        "duration": 222,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=zbqlVuHaLTA",
-        "queueIndex": 1,
-        "playlistIndex": 15
+        "queueIndex": 16
     },
     {
         "title": "'Into The Unknown' [Epic Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -158,8 +141,7 @@
         "duration": 262,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=6ypSAilccyQ",
-        "queueIndex": 1,
-        "playlistIndex": 16
+        "queueIndex": 17
     },
     {
         "title": "'Race The Sun' [Epic Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -167,26 +149,23 @@
         "duration": 292,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=3G3hXindvBc",
-        "queueIndex": 1,
-        "playlistIndex": 17
+        "queueIndex": 18
     },
     {
         "title": "'Legionnaire' (2022 Remaster) [Epic Cinematic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 188,
+        "duration": 187,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=zpiR4hlOat4",
-        "queueIndex": 1,
-        "playlistIndex": 18
+        "queueIndex": 19
     },
     {
         "title": "'Age of Wonder' [Cinematic Epic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 352,
+        "duration": 351,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=dBrnOLPaDUs",
-        "queueIndex": 1,
-        "playlistIndex": 19
+        "queueIndex": 20
     },
     {
         "title": "'Passage of Time' [Cinematic Orchestral CC-BY] - Scott Buckley",
@@ -194,17 +173,15 @@
         "duration": 272,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=55DFaKhVwvc",
-        "queueIndex": 1,
-        "playlistIndex": 20
+        "queueIndex": 21
     },
     {
         "title": "'Bring Me The Sky' [Cinematic Uplifting Orchestra CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 233,
+        "duration": 232,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Hwz2b12fqKM",
-        "queueIndex": 1,
-        "playlistIndex": 21
+        "queueIndex": 22
     },
     {
         "title": "'Frankincense and Myrrh' 🎄 [Orchestral Christmas CC-BY] - Scott Buckley",
@@ -212,17 +189,15 @@
         "duration": 192,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=DW2ht2blYqc",
-        "queueIndex": 1,
-        "playlistIndex": 22
+        "queueIndex": 23
     },
     {
         "title": "'Wayfarer' [Inspirational Epic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 223,
+        "duration": 222,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=z2oypo-riEc",
-        "queueIndex": 1,
-        "playlistIndex": 23
+        "queueIndex": 24
     },
     {
         "title": "'Goliath' [Epic Orchestral CC-BY] - Scott Buckley",
@@ -230,8 +205,7 @@
         "duration": 382,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=qYTJ8hDj_Hc",
-        "queueIndex": 1,
-        "playlistIndex": 24
+        "queueIndex": 25
     },
     {
         "title": "'Terminus' [Epic Cinematic Orchestral CC-BY] - Scott Buckley",
@@ -239,17 +213,15 @@
         "duration": 264,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=L-OUq4DeAZ4",
-        "queueIndex": 1,
-        "playlistIndex": 25
+        "queueIndex": 26
     },
     {
         "title": "'Pathfinder' [Epic Adventure Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 205,
+        "duration": 204,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=lKfePuM-WdA",
-        "queueIndex": 1,
-        "playlistIndex": 26
+        "queueIndex": 27
     },
     {
         "title": "'Where Stars Fall' [Inspirational Cinematic Orchestral CC-BY] - Scott Buckley",
@@ -257,17 +229,15 @@
         "duration": 271,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=TeGpuqZinFk",
-        "queueIndex": 1,
-        "playlistIndex": 27
+        "queueIndex": 28
     },
     {
         "title": "'The Climb' [Inspirational Hybrid Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 348,
+        "duration": 347,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=vFWCWEEaUjs",
-        "queueIndex": 1,
-        "playlistIndex": 28
+        "queueIndex": 29
     },
     {
         "title": "'Precipice' [Sweeping Cinematic Orchestra CC-BY] - Scott Buckley",
@@ -275,8 +245,7 @@
         "duration": 119,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=x9BlqhIQcdw",
-        "queueIndex": 1,
-        "playlistIndex": 29
+        "queueIndex": 30
     },
     {
         "title": "'In Dreams' [Uplifting Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -284,8 +253,7 @@
         "duration": 249,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=grL0IeXLJlY",
-        "queueIndex": 1,
-        "playlistIndex": 30
+        "queueIndex": 31
     },
     {
         "title": "'The Summoning' [Gothic Orchestral 🎃 CC-BY] - Scott Buckley",
@@ -293,8 +261,7 @@
         "duration": 206,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=eh_QD-yt6dY",
-        "queueIndex": 1,
-        "playlistIndex": 31
+        "queueIndex": 32
     },
     {
         "title": "'Clarion' [Uplifting Orchestral CC-BY] - Scott Buckley",
@@ -302,8 +269,7 @@
         "duration": 196,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Ebq2YORRB5k",
-        "queueIndex": 1,
-        "playlistIndex": 32
+        "queueIndex": 33
     },
     {
         "title": "'The Miracle of Flight' [Uplifting Orchestral CC-BY] - Scott Buckley",
@@ -311,8 +277,7 @@
         "duration": 212,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=tKBAjqtPjGY",
-        "queueIndex": 1,
-        "playlistIndex": 33
+        "queueIndex": 34
     },
     {
         "title": "'Inflection' [Fantasy Orchestral CC-BY] - Scott Buckley",
@@ -320,71 +285,63 @@
         "duration": 230,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=oomlKNdsatQ",
-        "queueIndex": 1,
-        "playlistIndex": 34
+        "queueIndex": 35
     },
     {
         "title": "'Catalyst' [Epic Hybrid Orchestra CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 277,
+        "duration": 276,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=KZb3m43QyjE",
-        "queueIndex": 1,
-        "playlistIndex": 35
+        "queueIndex": 36
     },
     {
         "title": "'Helios' [Cinematic Orchestra CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 359,
+        "duration": 358,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=BKjJH7ikCcM",
-        "queueIndex": 1,
-        "playlistIndex": 36
+        "queueIndex": 37
     },
     {
         "title": "'Fate and Fortune' [Epic Classical Choir CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 84,
+        "duration": 83,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=xBe_b9P5Zsc",
-        "queueIndex": 1,
-        "playlistIndex": 37
+        "queueIndex": 38
     },
     {
         "title": "'Discovery' [Epic Cinematic CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 234,
+        "duration": 233,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=V1S1IfoX8Yg",
-        "queueIndex": 1,
-        "playlistIndex": 38
+        "queueIndex": 39
     },
     {
         "title": "'Soar' [Inspirational Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 193,
+        "duration": 192,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=XSoVmuGYvKA",
-        "queueIndex": 1,
-        "playlistIndex": 39
+        "queueIndex": 40
     },
     {
         "title": "'Emergent' [Epic Cinematic CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 232,
+        "duration": 231,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Z-a55GrVdS8",
-        "queueIndex": 1,
-        "playlistIndex": 40
+        "queueIndex": 41
     },
     {
         "title": "'Inbound' [Inspirational Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 245,
+        "duration": 244,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=xPSQyoZzUO8",
-        "queueIndex": 1,
-        "playlistIndex": 41
+        "queueIndex": 42
     },
     {
         "title": "'March of Midnight' [Spooky Orchestral CC-BY] - Scott Buckley",
@@ -392,17 +349,15 @@
         "duration": 165,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=wYycAV-ZXWQ",
-        "queueIndex": 1,
-        "playlistIndex": 42
+        "queueIndex": 43
     },
     {
         "title": "'Omega' [Emotional Hybrid Orchestra CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 246,
+        "duration": 245,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=nvz0avKwSsM",
-        "queueIndex": 1,
-        "playlistIndex": 43
+        "queueIndex": 44
     },
     {
         "title": "'Pomp and Celebration' [Classical Orchestral CC-BY] - Scott Buckley",
@@ -410,17 +365,15 @@
         "duration": 56,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=xrWO_FEZGGc",
-        "queueIndex": 1,
-        "playlistIndex": 44
+        "queueIndex": 45
     },
     {
         "title": "'The Illusionist' [Cinematic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 216,
+        "duration": 215,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=d3m65h8TpTw",
-        "queueIndex": 1,
-        "playlistIndex": 45
+        "queueIndex": 46
     },
     {
         "title": "'The Rise' (from 'Monomyth') [Epic Orchestral CC-BY] - Scott Buckley",
@@ -428,8 +381,7 @@
         "duration": 170,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=c9JB1lmYjfk",
-        "queueIndex": 1,
-        "playlistIndex": 46
+        "queueIndex": 47
     },
     {
         "title": "'The Fury' (from 'Monomyth') [Epic Orchestral CC-BY] - Scott Buckley",
@@ -437,17 +389,15 @@
         "duration": 426,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=ZdhQNtA0mDk",
-        "queueIndex": 1,
-        "playlistIndex": 47
+        "queueIndex": 48
     },
     {
         "title": "'The Endurance' (from 'Monomyth') [Epic Hybrid Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 254,
+        "duration": 253,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=ylkdt8mTbOQ",
-        "queueIndex": 1,
-        "playlistIndex": 48
+        "queueIndex": 49
     },
     {
         "title": "'The Encounter' (from 'Monomyth') [Epic Hybrid Orchestral CC-BY] - Scott Buckley",
@@ -455,8 +405,7 @@
         "duration": 307,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=GzkXK1GG2Pc",
-        "queueIndex": 1,
-        "playlistIndex": 49
+        "queueIndex": 50
     },
     {
         "title": "'The Exodus' (from 'Monomyth') [Uplifting Epic Orchestral CC-BY] - Scott Buckley",
@@ -464,17 +413,15 @@
         "duration": 230,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=vIxo9HfA-24",
-        "queueIndex": 1,
-        "playlistIndex": 50
+        "queueIndex": 51
     },
     {
         "title": "'Icarus' [Uplifting Epic Orchestral CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 210,
+        "duration": 209,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=WjvmwxPL37I",
-        "queueIndex": 1,
-        "playlistIndex": 51
+        "queueIndex": 52
     },
     {
         "title": "Scott Buckley - 'Light in Dark Places' [Epic Orchestral CC-BY]",
@@ -482,8 +429,7 @@
         "duration": 136,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=7Y2C-A-aUwI",
-        "queueIndex": 1,
-        "playlistIndex": 52
+        "queueIndex": 53
     },
     {
         "title": "Scott Buckley - 'Freedom' [Uplifting Epic Orchestral CC-BY]",
@@ -491,17 +437,15 @@
         "duration": 244,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=8wQd6G1ONTg",
-        "queueIndex": 1,
-        "playlistIndex": 53
+        "queueIndex": 54
     },
     {
         "title": "Scott Buckley - 'Ascension' [Emotional Hybrid Orchestral CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 372,
+        "duration": 371,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=fMx5roxJ7Uk",
-        "queueIndex": 1,
-        "playlistIndex": 54
+        "queueIndex": 55
     },
     {
         "title": "Scott Buckley - 'O Come All Ye Faithful' [Christmas Orchestral CC-BY]",
@@ -509,8 +453,7 @@
         "duration": 146,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Or0AdFdwICA",
-        "queueIndex": 1,
-        "playlistIndex": 55
+        "queueIndex": 56
     },
     {
         "title": "Scott Buckley - 'The Black Waltz' [Dark Comedic Orchestral CC-BY]",
@@ -518,17 +461,15 @@
         "duration": 177,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=_5O9eUI8NAI",
-        "queueIndex": 1,
-        "playlistIndex": 56
+        "queueIndex": 57
     },
     {
         "title": "'Red' [Epic Dark Orchestral Hybrid CC-BY] - Scott Buckley",
         "artist": "Scott Buckley",
-        "duration": 214,
+        "duration": 213,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=1skC53i8FBc",
-        "queueIndex": 1,
-        "playlistIndex": 57
+        "queueIndex": 58
     },
     {
         "title": "Scott Buckley - 'Titan' [Uplifting Epic Orchestral CC-BY]",
@@ -536,17 +477,15 @@
         "duration": 175,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=vtu8f2dKriY",
-        "queueIndex": 1,
-        "playlistIndex": 58
+        "queueIndex": 59
     },
     {
         "title": "Scott Buckley - 'Chronicle' [Cinematic Orchestral CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 256,
+        "duration": 255,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=FZOOANc6fzI",
-        "queueIndex": 1,
-        "playlistIndex": 59
+        "queueIndex": 60
     },
     {
         "title": "Scott Buckley - 'Phoenix' [Emotional Orchestral CC-BY]",
@@ -554,8 +493,7 @@
         "duration": 413,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=XgxsJSUT-z8",
-        "queueIndex": 1,
-        "playlistIndex": 60
+        "queueIndex": 61
     },
     {
         "title": "Scott Buckley - 'Legionnaire' [Epic Orchestral CC-BY]",
@@ -563,17 +501,15 @@
         "duration": 183,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=7uIYYEM45b4",
-        "queueIndex": 1,
-        "playlistIndex": 61
+        "queueIndex": 62
     },
     {
         "title": "Scott Buckley - 'Cassini' [Inspiring Orchestral Americana CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 291,
+        "duration": 290,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=m3lgZk5WC14",
-        "queueIndex": 1,
-        "playlistIndex": 62
+        "queueIndex": 63
     },
     {
         "title": "Scott Buckley - 'Tears of a Distant Sun' [Epic Cinematic Cue CC-BY]",
@@ -581,8 +517,7 @@
         "duration": 216,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=GGLayVgISLk",
-        "queueIndex": 1,
-        "playlistIndex": 63
+        "queueIndex": 64
     },
     {
         "title": "Scott Buckley - 'Soldier of Fortune' [Epic Action/Adventure Cue CC-BY]",
@@ -590,8 +525,7 @@
         "duration": 164,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=sCjXmTOMPMU",
-        "queueIndex": 1,
-        "playlistIndex": 64
+        "queueIndex": 65
     },
     {
         "title": "Scott Buckley - 'Ambush' [Epic Orchestral CC-BY]",
@@ -599,17 +533,15 @@
         "duration": 427,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=oPY9yJKcISw",
-        "queueIndex": 1,
-        "playlistIndex": 65
+        "queueIndex": 66
     },
     {
         "title": "Scott Buckley - 'Hunted' [Driving, Dramatic Orchestral CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 108,
+        "duration": 107,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=W_Q9x60xLEg",
-        "queueIndex": 1,
-        "playlistIndex": 66
+        "queueIndex": 67
     },
     {
         "title": "Scott Buckley - 'World of Magic' [Mysterious, Adventurous Orchestral CC-BY]",
@@ -617,8 +549,7 @@
         "duration": 98,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=iGyuouyR_Qk",
-        "queueIndex": 1,
-        "playlistIndex": 67
+        "queueIndex": 68
     },
     {
         "title": "Scott Buckley - 'Pursuit' [Epic Orchestral Electronica Hybrid CC-BY]",
@@ -626,8 +557,7 @@
         "duration": 165,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Ra1mufO9VR4",
-        "queueIndex": 1,
-        "playlistIndex": 68
+        "queueIndex": 69
     },
     {
         "title": "Scott Buckley - 'Edge of Remorse' [Epic, Emotional Orchestral CC-BY]",
@@ -635,17 +565,15 @@
         "duration": 461,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=otVQJPxYrmA",
-        "queueIndex": 1,
-        "playlistIndex": 69
+        "queueIndex": 70
     },
     {
         "title": "Scott Buckley - 'The Legend of Kvothe' [Unofficial theme of The Kingkiller Chronicle CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 340,
+        "duration": 339,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=x8bXwfV7p_Y",
-        "queueIndex": 1,
-        "playlistIndex": 70
+        "queueIndex": 71
     },
     {
         "title": "Scott Buckley - 'Sanctum' [Uplifting, Emotional Orchestral CC-BY]",
@@ -653,8 +581,7 @@
         "duration": 254,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=BGYhc2zZj6g",
-        "queueIndex": 1,
-        "playlistIndex": 71
+        "queueIndex": 72
     },
     {
         "title": "Scott Buckley - 'Primal Carnage' [Adventurous, Tribal Orchestral Cue CC-BY]",
@@ -662,17 +589,15 @@
         "duration": 158,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=OsLnuLoSWE8",
-        "queueIndex": 1,
-        "playlistIndex": 72
+        "queueIndex": 73
     },
     {
         "title": "Scott Buckley - 'Jade' [Sweeping, Adventurous Orchestral Cue CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 126,
+        "duration": 125,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=HJjmpxlrsyg",
-        "queueIndex": 1,
-        "playlistIndex": 73
+        "queueIndex": 74
     },
     {
         "title": "Scott Buckley - 'Stars In Her Skies' [Pensive Uplifting Orchestral Cue CC BY 4.0]",
@@ -680,17 +605,15 @@
         "duration": 276,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Yk0ST5tLizw",
-        "queueIndex": 1,
-        "playlistIndex": 74
+        "queueIndex": 75
     },
     {
         "title": "Scott Buckley - 'Patagonia' [Epic Uplifting Orchestral Cue CC-BY 4.0]",
         "artist": "Scott Buckley",
-        "duration": 151,
+        "duration": 150,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=5oQzK7RBpTA",
-        "queueIndex": 1,
-        "playlistIndex": 75
+        "queueIndex": 76
     },
     {
         "title": "Scott Buckley - 'Oblivion Overture' [Epic Orchestral Cue CC-BY]",
@@ -698,8 +621,7 @@
         "duration": 118,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=fIQMKpx4f98",
-        "queueIndex": 1,
-        "playlistIndex": 76
+        "queueIndex": 77
     },
     {
         "title": "Scott Buckley - 'Crusader' [Epic Action Cue CC-BY]",
@@ -707,17 +629,15 @@
         "duration": 77,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=phVBsnRp3Qo",
-        "queueIndex": 1,
-        "playlistIndex": 77
+        "queueIndex": 78
     },
     {
         "title": "Scott Buckley - 'Love Conquers' [Uplifting Orchestral Cue CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 186,
+        "duration": 185,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=cVLlm--v7EQ",
-        "queueIndex": 1,
-        "playlistIndex": 78
+        "queueIndex": 79
     },
     {
         "title": "Scott Buckley - 'Eclipse' [Cinematic Groove CC-BY]",
@@ -725,8 +645,7 @@
         "duration": 251,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=jRuLR_bHV7U",
-        "queueIndex": 1,
-        "playlistIndex": 79
+        "queueIndex": 80
     },
     {
         "title": "Scott Buckley - 'Jubilee' [Epic Adventure Cue CC-BY]",
@@ -734,16 +653,198 @@
         "duration": 132,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=Eu7IWOkxbGw",
-        "queueIndex": 1,
-        "playlistIndex": 80
+        "queueIndex": 81
     },
     {
         "title": "Scott Buckley - 'Machinery of the Stars' [Uplifting Orchestral CC-BY]",
         "artist": "Scott Buckley",
-        "duration": 268,
+        "duration": 267,
         "source": "youtube",
         "url": "https://www.youtube.com/watch?v=WkNkFLgydiY",
-        "queueIndex": 1,
-        "playlistIndex": 81
+        "queueIndex": 82
+    },
+    {
+        "title": "Bohemian Rhapsody - Remastered 2011",
+        "artist": "Queen",
+        "duration": 354,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/4u7EnebtmKWzUH433cf5Qv",
+        "queueIndex": 83
+    },
+    {
+        "title": "icantbelieveiletyougetaway",
+        "artist": "aldn",
+        "duration": 136,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/0QbNbtwJvvqxRxNUYUoMRM",
+        "queueIndex": 84
+    },
+    {
+        "title": "Undefeatable",
+        "artist": "SEGA SOUND TEAM, Tomoya Ohtani, Kellin Quinn",
+        "duration": 265,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/6EO56btPzDF3LUrfwlXi2j",
+        "queueIndex": 85
+    },
+    {
+        "title": "A Stranger I Remain - Maniac Agenda Mix",
+        "artist": "Free Dominguez",
+        "duration": 146,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/29eKlSdk4dmwBgqtwASiFW",
+        "queueIndex": 86
+    },
+    {
+        "title": "The Stains of Time - Maniac Agenda Mix",
+        "artist": "Kit Walters",
+        "duration": 130,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/5LLhdR6qdQvAfSm2C0EYj4",
+        "queueIndex": 87
+    },
+    {
+        "title": "It Has To Be This Way - Platinum Mix",
+        "artist": "Jimmy Gnecco",
+        "duration": 176,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/65yNr1EO2TOBEYCz45tuOf",
+        "queueIndex": 88
+    },
+    {
+        "title": "Collective Consciousness - Maniac Agenda Mix",
+        "artist": "Jimmy Gnecco",
+        "duration": 159,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/3qSm2aAJAf7vHNStDhXBFs",
+        "queueIndex": 89
+    },
+    {
+        "title": "Bury the Light",
+        "artist": "Casey Edwards, Victor Borba",
+        "duration": 582,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/6tUcFEXos6TGhESFlkAyCm",
+        "queueIndex": 90
+    },
+    {
+        "title": "At Doom's Gate",
+        "artist": "Mick Gordon",
+        "duration": 71,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/2UKgx2oba7CltHLACr3xdT",
+        "queueIndex": 91
+    },
+    {
+        "title": "Find Your Flame",
+        "artist": "SEGA SOUND TEAM, Tomoya Ohtani, Kellin Quinn, Tyler Smyth",
+        "duration": 249,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/1O80Lhuq0lKHIiF1HnMgQT",
+        "queueIndex": 92
+    },
+    {
+        "title": "Subhuman - Game Edit",
+        "artist": "Cody Matthew Johnson",
+        "duration": 422,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/12jp0cx1jrI0LiJUkrjWy2",
+        "queueIndex": 93
+    },
+    {
+        "title": "Devil Trigger - Game Edit",
+        "artist": "Casey Edwards",
+        "duration": 381,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/4JQm77wgjurB26nHyDnmbq",
+        "queueIndex": 94
+    },
+    {
+        "title": "Roar of the Jungle Dragon",
+        "artist": "DM DOKURO",
+        "duration": 504,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/6CXjEbFafOA0XHB2pM5APZ",
+        "queueIndex": 95
+    },
+    {
+        "title": "Tenebre Rosso Sangue (ULTRAKILL Original Game Soundtrack)",
+        "artist": "Keygen Church",
+        "duration": 234,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/6BWwOL0DEK1aLaDjyipjZj",
+        "queueIndex": 96
+    },
+    {
+        "title": "Altars of Apostasy",
+        "artist": "Heaven Pierce Her",
+        "duration": 341,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/3TcArgDnTVihS8I1FHF0ns",
+        "queueIndex": 97
+    },
+    {
+        "title": "The Death of God's Will",
+        "artist": "Heaven Pierce Her",
+        "duration": 311,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/2cYAz9n44mojy3RtQXwwkz",
+        "queueIndex": 98
+    },
+    {
+        "title": "The Cyber Grind",
+        "artist": "meganeko",
+        "duration": 286,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/595jOLUyjwglKXc4NetU8V",
+        "queueIndex": 99
+    },
+    {
+        "title": "115",
+        "artist": "Elena Siegman, Kevin Sherwood",
+        "duration": 228,
+        "source": "spotify",
+        "url": "https://open.spotify.com/track/725NSbIej5lP3GfhLC7So3",
+        "queueIndex": 100
+    },
+    {
+        "title": "Nitro Fun - New Game",
+        "artist": "Monstercat",
+        "duration": 259,
+        "source": "soundcloud",
+        "url": "https://api.soundcloud.com/tracks/133621063",
+        "queueIndex": 101
+    },
+    {
+        "title": "Ace Aura - Abyss",
+        "artist": "Eric Joshua Seall",
+        "duration": 238,
+        "source": "soundcloud",
+        "url": "https://api.soundcloud.com/tracks/1825651356",
+        "queueIndex": 102
+    },
+    {
+        "title": "Ace Aura & NIRE - Sapphire",
+        "artist": "Eric Joshua Seall, Sebastián Ignacio Severin Salas",
+        "duration": 247,
+        "source": "soundcloud",
+        "url": "https://api.soundcloud.com/tracks/1825651278",
+        "queueIndex": 103
+    },
+    {
+        "title": "Ace Aura - Doorman",
+        "artist": "Monstercat",
+        "duration": 218,
+        "source": "soundcloud",
+        "url": "https://api.soundcloud.com/tracks/1779241647",
+        "queueIndex": 104
+    },
+    {
+        "title": "Ace Aura & Whales - Hypnosis",
+        "artist": "Monstercat, Create Songs Publishing",
+        "duration": 198,
+        "source": "soundcloud",
+        "url": "https://api.soundcloud.com/tracks/1725703137",
+        "queueIndex": 105
     }
 ]

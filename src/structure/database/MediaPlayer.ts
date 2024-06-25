@@ -2,7 +2,9 @@ import { DataTypes, InferAttributes, InferCreationAttributes, Model, CreationOpt
 import { sequelInstance } from '../..';
 import { Client, Guild, NewsChannel, StageChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from 'discord.js';
 
-export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCreationAttributes<MMusicPlayer>> implements MMusicPlayerAttributes {
+export class MediaPlayer
+    extends Model<InferAttributes<MediaPlayer>, InferCreationAttributes<MediaPlayer>>
+    implements MediaPlayerAttributes {
 
     declare guildId: string;
 
@@ -10,8 +12,9 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
     declare textChannelId: string;
 
     declare playing: CreationOptional<boolean>;
-    declare volume: CreationOptional<number>;
+    declare playingIndex: CreationOptional<number>;
 
+    declare volume: CreationOptional<number>;
     declare repeating: CreationOptional<RepeatingType>;
 
     /**
@@ -49,7 +52,7 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
     public async fetchTextChannel(client: Client): Promise<MusicTextBasedChannel> {
         return new Promise((resolve, reject) => {
             this.fetchGuild(client).then((guild) => {
-                guild.channels.fetch(this.voiceChannelId).then(channel => {
+                guild.channels.fetch(this.textChannelId).then(channel => {
                     if (channel == null) return reject("channel does not exist");
                     if (!channel.isTextBased()) return reject("channel is not of voice type");
                     if (channel.isThread()) return reject("channel is a thread");
@@ -61,7 +64,7 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
     }
 
     public static async initialize() {
-        return MMusicPlayer.init({
+        return MediaPlayer.init({
             guildId: {
                 type: DataTypes.STRING,
                 primaryKey: true
@@ -81,8 +84,13 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
                 allowNull: false,
                 defaultValue: false
             },
+            playingIndex: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: -1
+            },
             volume: {
-                type: DataTypes.NUMBER,
+                type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 1
             },
@@ -99,18 +107,24 @@ export class MMusicPlayer extends Model<InferAttributes<MMusicPlayer>, InferCrea
     }
 }
 
-interface MMusicPlayerAttributes {
+interface MediaPlayerAttributes {
     guildId: string; // primary key
 
     voiceChannelId: string;
     textChannelId: string;
 
     playing: boolean;
-    volume: number;
+    playingIndex: number;
 
+    volume: number;
     repeating: RepeatingType;
 }
 
-export type RepeatingType = "NoRepeat" | "Song" | "Playlist";
+export enum RepeatingType {
+    NoRepeat = "NoRepeat",
+    Song = "Song",
+    Playlist = "Playlist"
+
+}
 
 export type MusicTextBasedChannel = NewsChannel | StageChannel | TextChannel | VoiceChannel;

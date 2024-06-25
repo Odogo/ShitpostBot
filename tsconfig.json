@@ -17,6 +17,6 @@
         "strictNullChecks": true
     },
 
-    "include": ["src"],
+    "include": ["src", "src/structure/database/MChannelFlex.ts"],
     "exclude": ["node_modules", "**/*.spec.ts"]
 }
