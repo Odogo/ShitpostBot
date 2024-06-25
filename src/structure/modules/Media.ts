@@ -895,7 +895,6 @@ export class Media {
                 const player = connState.subscription.player;
                 const playerState = player.state;
                 if (playerState.status === AudioPlayerStatus.Idle) throw new Error("Player is not playing anything.");
-                
 
                 const playbackSeek = (playerState.status === AudioPlayerStatus.Buffering) ? 0 : Math.ceil(playerState.playbackDuration / 1000);
                 const playbackDuration = details.duration;

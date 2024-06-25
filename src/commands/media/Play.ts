@@ -43,7 +43,8 @@ export default new ShitCommand({
 
         if (!playing || !connection) {
             try {
-                await Media.createQueueItem(guild, member.user, song);
+                const addResult = await Media.createQueueItem(guild, member.user, song);
+                if (addResult === null) return interaction.followUp({ content: "An error occurred while adding the song to the queue. Please try again later.\n*(This commonly means that the video is hidden and not available [or the playlist has videos that meet such condition.])*", ephemeral: true });
 
                 const result = await Media.startPlayingQueue(client, guild, voiceState.channel, executingChannel);
                 switch (result) {
