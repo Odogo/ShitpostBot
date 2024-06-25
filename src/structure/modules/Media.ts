@@ -607,13 +607,13 @@ export class Media {
         connection.subscribe(player);
 
         // Send a message to the text channel and log the event
-        logInfo("[Media] Queue processing has started! The first song playing is " + songs[playingIndex].title + " (by: " + songs[playingIndex].artist + ") in " + guild.name + " (ID: " + guild.id + ") .");
+        logInfo("[Media] Queue processing has started! The first song playing is " + songs[playingIndex].title + " (by: " + songs[playingIndex].artist + ") in " + guild.name + " (ID: " + guild.id + ")");
         await textChannel.send({ embeds: [await this.generateSongEmbed(client, queueItems[playingIndex], "NowPlaying")] });
 
         // Handle the player events
         // If an error occurs, disconnect the connection
         player.on('error', async (error) => {
-            logWarn("[Media] An error occured while playing a song in " + guild.name + " (ID: " + guild.id + ") : " + error);
+            logWarn("[Media] An error occured while playing a song in " + guild.name + " (ID: " + guild.id + "): " + error);
             logWarn(error);
 
             textChannel.send({ content: "An error occured while playing the song: " + error });
@@ -685,7 +685,7 @@ export class Media {
                 }
 
                 // If the repeating status is set to "NoRepeat", begin the idle timeout
-                logInfo("[Media] End of queue reached in " + guild.name + " (ID: " + guild.id + ") .");
+                logInfo("[Media] End of queue reached in " + guild.name + " (ID: " + guild.id + ")");
                 setTimeout(async () => {
                     // Fetch the current playing index
                     const checkIndex = await this.fetchPlayingIndex(guild);
@@ -701,7 +701,7 @@ export class Media {
                     }
                 }, 1000 * 60 * 5);
             } else { // Otherwise, play the next song in the queue
-                logInfo("[Media] Playing next song " + songs[index].title + " (by: " + songs[index].artist + ") in " + guild.name + " (ID: " + guild.id + ").");
+                logInfo("[Media] Playing next song " + songs[index].title + " (by: " + songs[index].artist + ") in " + guild.name + " (ID: " + guild.id + ")");
 
                 // Create the stream and resource and play the resource
                 const stream = await queueItems[index].generateStream();
@@ -894,9 +894,10 @@ export class Media {
 
                 const player = connState.subscription.player;
                 const playerState = player.state;
-                if (playerState.status !== AudioPlayerStatus.Playing) throw new Error("Player is not playing anything.");
+                if (playerState.status === AudioPlayerStatus.Idle) throw new Error("Player is not playing anything.");
+                
 
-                const playbackSeek = Math.ceil(playerState.playbackDuration / 1000);
+                const playbackSeek = (playerState.status === AudioPlayerStatus.Buffering) ? 0 : Math.ceil(playerState.playbackDuration / 1000);
                 const playbackDuration = details.duration;
 
                 return new EmbedBuilder({
