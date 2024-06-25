@@ -20,7 +20,7 @@ export default new ShitEvent(Events.InteractionCreate, async (interaction) => {
             logError("[Commander] Command " + interaction.commandName + " failed for " + interaction.user.username + " (" + interaction.user.id + "): " + error);
             logError(error);
 
-            if (!interaction.replied)
+            if (!interaction.replied || !interaction.deferred)
                 return interaction.reply({ content: "An error occurred while executing this command. " + error, ephemeral: true });
             else 
                 return interaction.followUp({ content: "An error occurred while executing this command." + error, ephemeral: true });
