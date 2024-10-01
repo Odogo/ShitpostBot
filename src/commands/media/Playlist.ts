@@ -95,7 +95,7 @@ export default new ShitCommand({
             const data = await FileEncryption.encrypt(JSON.stringify(songs, null, 4));
 
             const storagePath = local ? `${rootPath}/playlists/local_storage` : `${rootPath}/playlists/${guild.id}`;
-            const filePath = `${storagePath}/${fileName}`;
+            const filePath = `${storagePath}/${fileName}.sppl`;
             
             await fs.mkdir(storagePath, { recursive: true });
             await fs.writeFile(filePath, data, 'utf8');
@@ -103,7 +103,7 @@ export default new ShitCommand({
             if (local) {
                 await interaction.editReply({
                     content: "Playlist created successfully!",
-                    files: [{ attachment: filePath, name: fileName }]
+                    files: [{ attachment: filePath, name: fileName + ".sppl" }]
                 });
                 await fs.rm(filePath);
             } else {
