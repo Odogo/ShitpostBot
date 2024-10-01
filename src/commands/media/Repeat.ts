@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType } from "discord.js";
 import { getVoiceConnection } from "@discordjs/voice";
 
 import { ShitCommand } from "../../structure/ShitCommand";
-import { RepeatingType } from '../../structure/database/MediaPlayer';
+import { RepeatingType } from '../../structure/database/media/MediaPlayer';
 import { Media } from "../../structure/modules/Media";
 
 export default new ShitCommand({

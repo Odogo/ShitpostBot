@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { ShitCommand } from "../../structure/ShitCommand";
 import { Media, PlayingQueueStatus } from "../../structure/modules/Media";
-import { MediaQueueItem, QueueItemSource, QueueItemType } from "../../structure/database/MediaQueueItem";
+import { MediaQueueItem, QueueItemSource, QueueItemType } from "../../structure/database/media/MediaQueueItem";
 import { getVoiceConnection } from "@discordjs/voice";
 import { logWarn } from "../../system";
 

@@ -1,4 +1,4 @@
-import { getVoiceConnection, joinVoiceChannel } from "@discordjs/voice";
+import { DiscordGatewayAdapterCreator, getVoiceConnection, joinVoiceChannel } from "@discordjs/voice";
 import { ShitCommand } from "../../structure/ShitCommand";
 import { Media } from "../../structure/modules/Media";
 
@@ -24,7 +24,7 @@ export default new ShitCommand({
             joinVoiceChannel({
                 guildId: guild.id,
                 channelId: channel.id,
-                adapterCreator: guild.voiceAdapterCreator,
+                adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
                 selfMute: false,
                 selfDeaf: true
             });

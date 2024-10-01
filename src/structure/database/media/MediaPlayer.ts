@@ -1,5 +1,5 @@
 import { DataTypes, InferAttributes, InferCreationAttributes, Model, CreationOptional } from 'sequelize';
-import { sequelInstance } from '../..';
+import { sequelInstance } from '../../..';
 import { Client, Guild, NewsChannel, StageChannel, TextChannel, VoiceBasedChannel, VoiceChannel } from 'discord.js';
 
 export class MediaPlayer
@@ -37,13 +37,13 @@ export class MediaPlayer
                 guild.channels.fetch(this.voiceChannelId).then(channel => {
                     if (channel == null) return reject("channel does not exist");
                     if (!channel.isVoiceBased()) return reject("channel is not of voice type");
-                    
+
                     resolve(channel);
                 }).catch(reject);
             }).catch(reject);
         });
     }
-    
+
     /**
      * Fetches the text channel associated with this player.
      * @param client the discord client
@@ -56,7 +56,7 @@ export class MediaPlayer
                     if (channel == null) return reject("channel does not exist");
                     if (!channel.isTextBased()) return reject("channel is not of voice type");
                     if (channel.isThread()) return reject("channel is a thread");
-                    
+
                     resolve(channel);
                 }).catch(reject);
             }).catch(reject);
