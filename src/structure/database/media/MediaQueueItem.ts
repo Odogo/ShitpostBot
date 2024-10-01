@@ -2,7 +2,7 @@ import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, 
 import { Client, Guild, User } from "discord.js";
 import provider, { SoundCloudTrack, SpotifyTrack, YouTubeVideo } from "play-dl";
 
-import {sequelInstance as sequelize} from '../..';
+import { sequelInstance as sequelize } from '../../..';
 
 export class MediaQueueItem
     extends Model<InferAttributes<MediaQueueItem>, InferCreationAttributes<MediaQueueItem>>
@@ -102,7 +102,7 @@ export class MediaQueueItem
             default: throw new MediaParsingError("Invalid source provided");
         }
     }
- 
+
     /**
      * Initializes the database table for {@link MediaQueueItem}
      * @returns A promise that resolves when the database table has been initialized
@@ -187,9 +187,9 @@ export class MediaQueueItem
             provider.so_validate(url),
             provider.yt_validate(url)
         ]).then(([sp, so, yt]) => [sp, so, yt])
-                .catch((reason) => {
-                    throw new MediaParsingError("Failed to validate URL: " + reason.message || "Unknown error")
-                });
+            .catch((reason) => {
+                throw new MediaParsingError("Failed to validate URL: " + reason.message || "Unknown error")
+            });
 
         switch (true) {
             case spValidate && spValidate === "track":

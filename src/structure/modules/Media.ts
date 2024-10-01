@@ -1,9 +1,9 @@
 import { Client, EmbedBuilder, Guild, User, VoiceBasedChannel } from "discord.js";
-import { AudioPlayerStatus, createAudioPlayer, createAudioResource, entersState, getVoiceConnection, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
+import { AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
 import provider, { SoundCloudPlaylist, SpotifyAlbum, SpotifyPlaylist } from 'play-dl';
 
-import { MediaParsingError, MediaQueueItem, QueueItemSong, QueueItemSource, QueueItemType } from "../database/MediaQueueItem";
-import { MediaPlayer, MusicTextBasedChannel, RepeatingType } from '../database/MediaPlayer';
+import { MediaParsingError, MediaQueueItem, QueueItemSong, QueueItemSource, QueueItemType } from "../database/media/MediaQueueItem";
+import { MediaPlayer, MusicTextBasedChannel, RepeatingType } from '../database/media/MediaPlayer';
 import { sequelInstance } from "../..";
 import { logInfo, logWarn } from "../../system";
 
@@ -336,7 +336,7 @@ export class Media {
      */
     public static async updateMediaPlayerOptions(player: MediaPlayer, options?: MPUpdateOptions): Promise<MediaPlayer> {
         if (options == null) return player;
-
+        
         if (options.voiceChannel != null) player.voiceChannelId = options.voiceChannel.id;
         if (options.textChannel != null) player.textChannelId = options.textChannel.id;
 
@@ -344,7 +344,7 @@ export class Media {
         if (options.playingIndex != null) player.playingIndex = options.playingIndex;
 
         if (options.volume != null) player.volume = options.volume;
-        if (options.repeating != null) player.repeating = options.repeating;
+        if (options.repeating != null) player.repeating = options.repeating
 
         return player.save();
     }
@@ -515,7 +515,7 @@ export class Media {
         const connection = joinVoiceChannel({
             guildId: guild.id,
             channelId: channel.id,
-            adapterCreator: guild.voiceAdapterCreator,
+            adapterCreator: guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
             selfMute: false,
             selfDeaf: true
         });
@@ -596,8 +596,9 @@ export class Media {
             console.log("oldstate", oldstate.status, "newstate", newstate.status);
         });
 
+
         // Update the media player with the new options
-        await this.updateMediaPlayerOptions(mediaPlayer, {
+        mediaPlayer = await this.updateMediaPlayerOptions(mediaPlayer, {
             playing: true,
             playingIndex,
         });
@@ -657,7 +658,7 @@ export class Media {
             }
 
             // Increment the playing index by 1
-            await this.updateGPlaying(guild, false);
+            mediaPlayer = await this.updateGPlaying(guild, false);
             let index = await this.fetchPlayingIndex(guild);
 
             if (songs.length <= 0) return connection.disconnect();
@@ -678,7 +679,7 @@ export class Media {
                     player.play(resource);
 
                     // Update the media player with the new options
-                    await this.updateMediaPlayerOptions(mediaPlayer, { playing: true, playingIndex: index });
+                    mediaPlayer = await this.updateMediaPlayerOptions(mediaPlayer!, { playing: true, playingIndex: index });
 
                     // Send a message to the text channel
                     return await textChannel.send({ content: "**:white_check_mark: Repeating playlist...**", embeds: [await this.generateSongEmbed(client, queueItems[index], "NowPlaying")] });
@@ -709,7 +710,7 @@ export class Media {
                 player.play(resource);
 
                 // Update the media player with the new options
-                await this.updateMediaPlayerOptions(mediaPlayer, { playing: true, playingIndex: index });
+                mediaPlayer = await this.updateMediaPlayerOptions(mediaPlayer!, { playing: true, playingIndex: index });
 
                 // Send a message to the text channel
                 await textChannel.send({ embeds: [await this.generateSongEmbed(client, queueItems[index], "NowPlaying")] });
@@ -986,10 +987,7 @@ export class Media {
                 const voiceChannel = await player.fetchVoiceChannel(client);
                 const textChannel = await player.fetchTextChannel(client);
 
-                await this.updateGPlayingIndex(guild, player.playingIndex - 1); 
-
-                console.log("voiceChannel", voiceChannel);
-                console.log("textChannel", textChannel);
+                await this.updateGPlayingIndex(guild, player.playingIndex - 1);
 
                 const result = await this.startPlayingQueue(client, guild, voiceChannel, textChannel);
                 switch (result) {

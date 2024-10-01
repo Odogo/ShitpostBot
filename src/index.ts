@@ -1,17 +1,19 @@
 import { GatewayIntentBits } from "discord.js";
-import { join } from "path";
+import { join, resolve } from "path";
 import { Sequelize } from "sequelize";
 import { configDotenv } from "dotenv";
 import provider from "play-dl";
 
 import { ShitClient } from "./structure/ShitClient";
 import { logDebug, logError, logInfo } from './system';
-import { MediaQueueItem } from "./structure/database/MediaQueueItem";
+import { MediaQueueItem } from "./structure/database/media/MediaQueueItem";
 import { Media } from "./structure/modules/Media";
 import { MChannelFlex } from "./structure/database/MChannelFlex";
-import { MediaPlayer } from "./structure/database/MediaPlayer";
+import { MediaPlayer } from "./structure/database/media/MediaPlayer";
 
 configDotenv();
+
+export const rootPath = join(__dirname, "..");
 
 export const Client = new ShitClient({
     intents: [
@@ -31,7 +33,7 @@ export const sequelInstance = new Sequelize(databaseUri, {
         min: 1,
         max: 4,
         acquire: 20000,
-        idle: 5*60*1000
+        idle: 5 * 60 * 1000
     },
     logging: (sql, timing) => {
         logDebug("[SQL] " + sql + " (timing: " + timing?.toString() + ")");
@@ -76,7 +78,7 @@ async function postInitilization() {
 // Handle process termination
 process.on("SIGINT", async () => {
     logInfo("Received SIGINT, shutting down...");
-    
+
     logInfo("Shutting down modules..");
     await Media.onShutdown(Client);
 
