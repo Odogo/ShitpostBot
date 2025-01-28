@@ -7,6 +7,9 @@ export default new ShitCommand({
     description: "Skips the current song and plays the next one in the queue",
 
     run: async (client, interaction, options) => {
+        if (Media.isDisabled())
+            return interaction.reply({ content: "The media module is disabled. Please visit https://github.com/Odogo/ShitpostBot/issues/55 for more information." });
+
         if (!interaction.inGuild()) return interaction.reply({ content: "This command can only be used in a server!", ephemeral: true });
         const guild = await client.guilds.fetch(interaction.guildId);
         const member = await guild.members.fetch(interaction.user.id);
@@ -19,7 +22,7 @@ export default new ShitCommand({
         if (voiceState.channel.id !== connection.joinConfig.channelId) return interaction.reply({ content: "You must be in the same voice channel as I am to use this command!", ephemeral: true });
 
         await Media.skipMediaPlayer(guild).then(async (result) => {
-            if(result === true) {
+            if (result === true) {
                 interaction.reply({ content: "The current song has been skipped!", ephemeral: true });
             } else {
                 interaction.reply({ content: "There are no songs in the queue to skip! Try adding some with `/play`", ephemeral: true });
