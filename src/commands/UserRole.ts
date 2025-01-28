@@ -142,16 +142,68 @@ export default new ShitCommand({
                 const role = await guild.roles.fetch(options.getRole("role", true).id);
                 if (role == null) return interaction.reply({ content: "The role could not be found.", ephemeral: true });
 
-                if ((await guild.members.fetch()).filter(member => member.roles.cache.has(role.id)).size > 1) {
-                    return interaction.reply({ content: "You cannot import a role that is not unique to you.", ephemeral: true });
-                }
-
-                if(role.managed) {
+                if (role.managed) {
                     return interaction.reply({ content: "You cannot import a role that is managed by an integration.", ephemeral: true });
                 }
 
-                if(await MUserRoles.findOne({ where: { roleId: role.id } })) {
+                if (await MUserRoles.findOne({ where: { roleId: role.id } })) {
                     return interaction.reply({ content: "This role is already being used as a user role.", ephemeral: true });
+                }
+
+                let members = (await guild.members.fetch()).filter(member => member.roles.cache.has(role.id));
+                if (members.size > 1) {
+                    if (members.size == 2) {
+                        const otherMember = members.filter(member => member.id !== interaction.user.id).first();
+                        if(otherMember == null) return interaction.reply({ content: "You cannot import a role that is not unique to you.", ephemeral: true });
+
+                        const actionRow = new ActionRowBuilder<ButtonBuilder>({
+                            components: [
+                                new ButtonBuilder({
+                                    customId: "confirm_userrole_alternative_account",
+                                    label: "Confirm",
+                                    style: ButtonStyle.Success,
+                                    emoji: "✅"
+                                }),
+                                new ButtonBuilder({
+                                    customId: "cancel_userrole_alternative_account",
+                                    label: "Cancel",
+                                    style: ButtonStyle.Danger,
+                                    emoji: "❌"
+                                })
+                            ]
+                        });
+
+                        const response = await interaction.reply({
+                            content: "## :warning: Hold Up!\n" +
+                                "There is another user with this role<@" + otherMember.id + " > who is potentially an alternative account to yours.\n" +
+                                "If this is correct, please hit the ** Confirm ** button, otherwise cancel this action!"
+                            , components: [actionRow]
+                        });
+                        const collector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60_000, filter: (interaction) => interaction.user.id === member.id });
+
+                        collector.on("collect", async (bInteraction) => {
+                            if (bInteraction.customId === "confirm_userrole_alternative_account") {
+                                await UserRoles.importUserRole(member, role);
+                                await interaction.reply({
+                                    content: "Successfully imported user role!",
+                                    embeds: [
+                                        new EmbedBuilder()
+                                            .setTitle((member.nickname || member.displayName) + "'s User Role")
+                                            .setDescription("<@&" + role.id + ">\n\n**Name:** " + role.name + "\n**Color:** " + role.hexColor)
+                                            .setColor(role.hexColor)
+                                    ]
+                                });
+                                return;
+                            } else if (bInteraction.customId === "cancel_userrole_alternative_account") {
+                                await bInteraction.update({ content: "Cancelled, no action was performed on your user role!", components: [] });
+                            }
+
+                            collector.stop();
+                            return;
+                        });
+                        return;
+                    }
+                    return interaction.reply({ content: "You cannot import a role that is not unique to you.", ephemeral: true });
                 }
 
                 await UserRoles.importUserRole(member, role);
