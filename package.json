@@ -1,6 +1,6 @@
 {
   "name": "shitpostbot",
-  "version": "5.1.1",
+  "version": "5.1.2",
   "description": "The shitpost everyone is talking about",
   "main": "index.js",
   "scripts": {

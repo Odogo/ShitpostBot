@@ -50,13 +50,13 @@ export default new ShitCommand({
     ],
 
     run: async (client, interaction, options) => {
-        if(!interaction.inGuild()) return interaction.reply({ content: "This command can only be used in a server.", ephemeral: true });
-        
+        if (!interaction.inGuild()) return interaction.reply({ content: "This command can only be used in a server.", ephemeral: true });
+
         const guild = await client.guilds.fetch(interaction.guildId);
         const member = await guild.members.fetch(interaction.user.id);
-        
+
         const subcommand = options.getSubcommand(true);
-        
+
         switch (subcommand) {
             case "set": {
                 const name = options.getString("name", false);
@@ -104,10 +104,10 @@ export default new ShitCommand({
                         })
                     ]
                 });
-                
+
                 const response = await interaction.reply({ content: "## :warning: Hold Up!\n Are you sure you want to delete your user role? **This action cannot be undone!**", components: [actionRow] });
                 const collector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60_000, filter: (interaction) => interaction.user.id === member.id });
-                
+
                 collector.on("collect", async (bInteraction) => {
                     if (bInteraction.customId === "confirm_userrole_delete") {
                         await UserRoles.deleteUserRole(member);
@@ -116,7 +116,7 @@ export default new ShitCommand({
                     } else if (bInteraction.customId === "cancel_userrole_delete") {
                         await bInteraction.update({ content: "Cancelled, no action was performed on your user role!", components: [] });
                     }
-                
+
                     collector.stop();
                 });
                 break;
@@ -124,7 +124,7 @@ export default new ShitCommand({
             case "info": {
                 const userRole = await UserRoles.getUserRole(member);
                 if (userRole == null) return interaction.reply({ content: "You do not have a user role set.", ephemeral: true });
-                
+
                 const role = await userRole.getRole(client);
                 if (role == null) return interaction.reply({ content: "Your user role was not found in the server.", ephemeral: true });
 
@@ -154,7 +154,7 @@ export default new ShitCommand({
                 if (members.size > 1) {
                     if (members.size == 2) {
                         const otherMember = members.filter(member => member.id !== interaction.user.id).first();
-                        if(otherMember == null) return interaction.reply({ content: "You cannot import a role that is not unique to you.", ephemeral: true });
+                        if (otherMember == null) return interaction.reply({ content: "You cannot import a role that is not unique to you.", ephemeral: true });
 
                         const actionRow = new ActionRowBuilder<ButtonBuilder>({
                             components: [
@@ -175,7 +175,7 @@ export default new ShitCommand({
 
                         const response = await interaction.reply({
                             content: "## :warning: Hold Up!\n" +
-                                "There is another user with this role<@" + otherMember.id + " > who is potentially an alternative account to yours.\n" +
+                                "There is another user with this role <@" + otherMember.id + "> who is potentially an alternative account to yours.\n" +
                                 "If this is correct, please hit the ** Confirm ** button, otherwise cancel this action!"
                             , components: [actionRow]
                         });
@@ -184,7 +184,7 @@ export default new ShitCommand({
                         collector.on("collect", async (bInteraction) => {
                             if (bInteraction.customId === "confirm_userrole_alternative_account") {
                                 await UserRoles.importUserRole(member, role);
-                                await interaction.reply({
+                                await bInteraction.reply({
                                     content: "Successfully imported user role!",
                                     embeds: [
                                         new EmbedBuilder()

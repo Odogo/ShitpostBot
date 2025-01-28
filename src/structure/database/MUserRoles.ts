@@ -5,6 +5,7 @@ import { sequelInstance } from "../..";
 export class MUserRoles
     extends Model<InferAttributes<MUserRoles>, InferCreationAttributes<MUserRoles>> {
 
+    declare id: CreationOptional<number>
     declare guildId: string;
     declare userId: string;
 
@@ -29,15 +30,18 @@ export class MUserRoles
 
     public static async initialize() {
         return MUserRoles.init({
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true
+            },
             guildId: {
                 type: DataTypes.STRING,
-                primaryKey: true,
-                unique: true
+                allowNull: false
             },
             userId: {
                 type: DataTypes.STRING,
-                primaryKey: true,
-                unique: true
+                allowNull: false
             },
             roleId: {
                 type: DataTypes.STRING,
