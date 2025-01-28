@@ -1,6 +1,6 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Op } from "sequelize";
 import { Client, Guild, User } from "discord.js";
-import provider, { SoundCloudTrack, SpotifyTrack, YouTubeVideo } from "play-dl";
+import provider, { SoundCloudTrack, SpotifyTrack, YouTubeVideo } from "@recordbot/play-dl";
 
 import { sequelInstance as sequelize } from '../../..';
 
