@@ -7,6 +7,9 @@ export default new ShitCommand({
     description: "Joins the voice channel of the user who issued the command",
 
     run: async (client, interaction, options) => {
+        if (Media.isDisabled())
+            return interaction.reply({ content: "The media module is disabled. Please visit https://github.com/Odogo/ShitpostBot/issues/55 for more information." });
+
         const guild = interaction.guild;
         if (!guild) return interaction.reply({ content: "This command can only be used in a server!", ephemeral: true });
         

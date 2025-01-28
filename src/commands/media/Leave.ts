@@ -1,11 +1,15 @@
 import { getVoiceConnection } from "@discordjs/voice";
 import { ShitCommand } from "../../structure/ShitCommand";
+import { Media } from "../../structure/modules/Media";
 
 export default new ShitCommand({
     name: "leave",
     description: "Leaves the voice channel",
 
     run: async (client, interaction, options) => {
+        if (Media.isDisabled())
+            return interaction.reply({ content: "The media module is disabled. Please visit https://github.com/Odogo/ShitpostBot/issues/55 for more information." });
+
         const guild = interaction.guild;
         if (!guild) return interaction.reply({ content: "This command can only be used in a server!", ephemeral: true });
 
