@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, Guild, User, VoiceBasedChannel } from "discord.js";
 import { AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
-import provider, { SoundCloudPlaylist, SpotifyAlbum, SpotifyPlaylist } from 'play-dl';
+import provider, { SoundCloudPlaylist, SpotifyAlbum, SpotifyPlaylist } from '@recordbot/play-dl';
 
 import { MediaParsingError, MediaQueueItem, QueueItemSong, QueueItemSource, QueueItemType } from "../database/media/MediaQueueItem";
 import { MediaPlayer, MusicTextBasedChannel, RepeatingType } from '../database/media/MediaPlayer';
@@ -14,6 +14,16 @@ export enum PlayingQueueStatus { NoSongsInQueue, EndOfQueue, Success }
  * @author Kyomi
  */
 export class Media {
+
+    private static disabled: boolean = true;
+
+    /**
+     * Returns whether or not the media manager is disabled
+     * @returns Whether or not the media manager is disabled
+     */
+    public static isDisabled(): boolean {
+        return this.disabled;
+    }
 
     //#region MediaQueueItem
     /**
@@ -336,7 +346,7 @@ export class Media {
      */
     public static async updateMediaPlayerOptions(player: MediaPlayer, options?: MPUpdateOptions): Promise<MediaPlayer> {
         if (options == null) return player;
-        
+
         if (options.voiceChannel != null) player.voiceChannelId = options.voiceChannel.id;
         if (options.textChannel != null) player.textChannelId = options.textChannel.id;
 
