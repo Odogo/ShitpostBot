@@ -1,3 +1,3 @@
-import provider from "play-dl";
+import provider from "@recordbot/play-dl";
 
 provider.authorization();

@@ -2,7 +2,7 @@ import { GatewayIntentBits } from "discord.js";
 import { join, resolve } from "path";
 import { Sequelize } from "sequelize";
 import { configDotenv } from "dotenv";
-import provider from "play-dl";
+import provider from "@recordbot/play-dl";
 
 import { ShitClient } from "./structure/ShitClient";
 import { logDebug, logError, logInfo } from './system';
