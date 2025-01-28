@@ -10,6 +10,7 @@ import { MediaQueueItem } from "./structure/database/media/MediaQueueItem";
 import { Media } from "./structure/modules/Media";
 import { MChannelFlex } from "./structure/database/MChannelFlex";
 import { MediaPlayer } from "./structure/database/media/MediaPlayer";
+import { MUserRoles } from "./structure/database/MUserRoles";
 
 configDotenv();
 
@@ -53,6 +54,7 @@ try {
         await MediaPlayer.initialize();
         await MediaQueueItem.initialize();
         await MChannelFlex.initialize();
+        await MUserRoles.initialize();
         await sequelInstance.sync();
 
         // Fetch Soundcloud API token
