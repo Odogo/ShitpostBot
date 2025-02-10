@@ -1,8 +1,13 @@
 import { CreationOptional, DataTypes, InferAttributes, InferCreationAttributes, Model, Op } from "sequelize";
 import { Client, Guild, User } from "discord.js";
-import provider, { SoundCloudTrack, SpotifyTrack, YouTubeVideo } from "@recordbot/play-dl";
+
+import provider, { SoundCloudTrack, SpotifyTrack } from "@recordbot/play-dl";
+import ytdl, { MoreVideoDetails } from '@distube/ytdl-core';
+import https from 'https';
 
 import { sequelInstance as sequelize } from '../../..';
+import { Media } from "../../modules/Media";
+import { PassThrough, pipeline, Transform, TransformCallback } from "stream";
 
 export class MediaQueueItem
     extends Model<InferAttributes<MediaQueueItem>, InferCreationAttributes<MediaQueueItem>>
@@ -71,8 +76,8 @@ export class MediaQueueItem
                 return MediaQueueItem.mapSong(song, this.queuePosition);
             }
             case QueueItemSource.YOUTUBE: {
-                const song = await provider.video_info(this.songUrl);
-                return MediaQueueItem.mapSong(song.video_details, this.queuePosition);
+                const song = (await ytdl.getBasicInfo(this.songUrl)).videoDetails;
+                return MediaQueueItem.mapSong(song, this.queuePosition);
             }
             default: throw new MediaParsingError("Invalid source provided");
         }
@@ -92,15 +97,38 @@ export class MediaQueueItem
                 const song = await provider.spotify(this.songUrl) as SpotifyTrack;
 
                 const search = await provider.search(song.name + " " + song.artists.map(artist => artist.name).join(" "), { limit: 1 });
-                const stream = await provider.stream(search[0].url, { discordPlayerCompatibility: true, quality: 2 });
-                return stream.stream;
+                return this.generateYouTubeStream(search[0].url);
             }
             case QueueItemSource.SOUNDCLOUD:
             case QueueItemSource.YOUTUBE: {
-                return (await provider.stream(this.songUrl, { discordPlayerCompatibility: true, quality: 2 })).stream;
+                return this.generateYouTubeStream(this.songUrl);
             }
             default: throw new MediaParsingError("Invalid source provided");
         }
+    }
+
+    private async generateYouTubeStream(url: string) {
+        const info = await ytdl.getInfo(this.songUrl);
+        const format = info.formats
+            .filter(f => f.hasAudio && (!f.isHLS))
+            .sort((a, b) => Number(b.audioBitrate) - Number(a.audioBitrate) || Number(a.bitrate) - Number(b.bitrate))[0];
+        if (!format) throw new MediaParsingError("Failed to find a suitable format for the song");
+        return this.getWebmStream(format.url);
+    }
+
+    private async getWebmStream(webmUrl: string): Promise<PassThrough> {
+        return new Promise((resolve, reject) => {
+            https.get(webmUrl, (response) => {
+                if (response.statusCode !== 200) {
+                    reject(new MediaParsingError("Failed to fetch the song stream " + response.statusCode + " with " + response.statusMessage));
+                    return;
+                }
+
+                const passThrough = new PassThrough();
+                response.pipe(new PrebufferedStream()).pipe(passThrough);
+                resolve(passThrough);
+            }).on('error', reject);
+        });
     }
 
     /**
@@ -217,7 +245,7 @@ export class MediaQueueItem
      * @param queueIndex The index of the song in the queue
      * @returns The song mapped to a {@link QueueItemSong}
      */
-    public static mapSong(song: SpotifyTrack | SoundCloudTrack | YouTubeVideo, queueIndex: number): QueueItemSong {
+    public static mapSong(song: SpotifyTrack | SoundCloudTrack | MoreVideoDetails, queueIndex: number): QueueItemSong {
         switch (true) {
             case song instanceof SpotifyTrack: {
                 return {
@@ -239,13 +267,13 @@ export class MediaQueueItem
                     queueIndex: queueIndex
                 };
             }
-            case song instanceof YouTubeVideo: {
+            case (song as MoreVideoDetails).videoId !== undefined: {
                 return {
                     title: song.title || "Unable to fetch title",
-                    artist: song.channel?.name || "Unknown",
-                    duration: song.durationInSec,
+                    artist: song.author.name || "Unknown",
+                    duration: Number.parseInt(song.lengthSeconds),
                     source: QueueItemSource.YOUTUBE,
-                    url: song.url,
+                    url: song.video_url,
                     queueIndex: queueIndex
                 };
             }
@@ -293,5 +321,39 @@ export class MediaParsingError extends Error {
     constructor(message: string) {
         super(message);
         this.name = "MediaParsingError";
+    }
+}
+
+class PrebufferedStream extends Transform {
+
+    private buffer: Buffer = Buffer.alloc(0);
+    private started = false;
+
+    constructor(private bufferSize: number = 1024 * 128) {
+        super();
+    }
+
+    _transform(chunk: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
+        if (!this.started) {
+            this.buffer = Buffer.concat([this.buffer, chunk]);
+
+            if (this.buffer.length >= this.bufferSize) {
+                this.started = true;
+                this.push(this.buffer);
+                this.buffer = Buffer.alloc(0);
+            }
+
+            callback();
+        } else {
+            this.push(chunk);
+            callback();
+        }
+    }
+
+    _flush(callback: TransformCallback): void {
+        if (this.buffer.length > 0) {
+            this.push(this.buffer);
+        }
+        callback();
     }
 }

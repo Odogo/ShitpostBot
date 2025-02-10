@@ -33,9 +33,6 @@ export default new ShitCommand({
     ],
 
     run: async (client, interaction, options) => {
-        if (Media.isDisabled())
-            return interaction.reply({ content: "The media module is disabled. Please visit https://github.com/Odogo/ShitpostBot/issues/55 for more information." });
-        
         if (!interaction.inGuild()) return interaction.reply({ content: "This command can only be used in a server!", ephemeral: true });
         const guild = await client.guilds.fetch(interaction.guildId);
         const member = await guild.members.fetch(interaction.user.id);

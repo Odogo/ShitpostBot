@@ -17,9 +17,6 @@ export default new ShitCommand({
     ],
 
     run: async (client, interaction, options) => {
-        if (Media.isDisabled())
-            return interaction.reply({ content: "The media module is disabled. Please visit https://github.com/Odogo/ShitpostBot/issues/55 for more information." });
-
         const query = options.getString("query", true);
 
         const search = await provider.search(query, { limit: 10 });

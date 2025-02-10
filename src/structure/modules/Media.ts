@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder, Guild, User, VoiceBasedChannel } from "discord.js";
-import { AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, NoSubscriberBehavior, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
+import { AudioPlayerStatus, createAudioPlayer, createAudioResource, DiscordGatewayAdapterCreator, entersState, getVoiceConnection, joinVoiceChannel, NoSubscriberBehavior, StreamType, VoiceConnection, VoiceConnectionStatus } from "@discordjs/voice";
 import provider, { SoundCloudPlaylist, SpotifyAlbum, SpotifyPlaylist } from '@recordbot/play-dl';
 
 import { MediaParsingError, MediaQueueItem, QueueItemSong, QueueItemSource, QueueItemType } from "../database/media/MediaQueueItem";
@@ -596,16 +596,10 @@ export class Media {
 
         // We're ready! Create the stream and resource
         let stream = await queueItems[playingIndex].generateStream();
-        let resource = createAudioResource(stream, { inlineVolume: true });
+        let resource = createAudioResource(stream, { inlineVolume: true, inputType: StreamType.Arbitrary });
 
         // oh and dont forget the player
         const player = createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Pause } });
-
-        // Debugging purposes :P
-        player.on('stateChange', async (oldstate, newstate) => {
-            console.log("oldstate", oldstate.status, "newstate", newstate.status);
-        });
-
 
         // Update the media player with the new options
         mediaPlayer = await this.updateMediaPlayerOptions(mediaPlayer, {

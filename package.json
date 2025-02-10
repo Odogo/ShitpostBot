@@ -24,6 +24,7 @@
   "dependencies": {
     "@discordjs/opus": "github:discordjs/opus",
     "@discordjs/voice": "^0.17.x",
+    "@distube/ytdl-core": "^4.16.3",
     "@recordbot/play-dl": "^1.9.8",
     "@types/node": "^20.13.0",
     "discord.js": "^14.x.x",

@@ -1,5 +1,5 @@
 import { GatewayIntentBits } from "discord.js";
-import { join, resolve } from "path";
+import { join } from "path";
 import { Sequelize } from "sequelize";
 import { configDotenv } from "dotenv";
 import provider from "@recordbot/play-dl";
@@ -84,7 +84,7 @@ process.on("SIGINT", async () => {
     logInfo("Shutting down modules..");
     await Media.onShutdown(Client);
 
-    logInfo("Destroying client...");
+    logInfo("Destroying client...");    
     await Client.destroy();
 
     logInfo("Closing database connection...");
