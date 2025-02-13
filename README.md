@@ -1,7 +1,7 @@
 # Shitpost Bot
-> Version: v5.0.0
+> Version: v5.2.0
 >
-> Updated: 25/06/2024
+> Updated: 12/02/2025
 
 ## About
 The Shitpost Bot Project (SBP) is a Discord Bot project that's sole objective to be an all-in-one solution. These features are provided to you at **zero cost**, which is impressive when every bot has some sort of premium feature. This project will contain no such "premium feature(s)", and it's license prohibits any commerical use of this bot. The only money that this project will *ever* generate is anyone who considers to support this project or developers by donation, which is by no means neccessary (see **Supporting** below).
@@ -19,19 +19,28 @@ ShitpostBot may only be accessed through invitation or application process. The 
 ### Supporting
 Supporting SBP or it's developers in regards to this project by no means will grant you "additional features" to the bot itself, however, you may receive an opportunity to pick which feature gets added next into the project. Additionally, you may receive access to a PTB (Private Test Beta) version of the bot codenamed "TestpostBot". Besides these, you will not receive any special treatment or additional features.
 
-## Planned Features
-- Music playback and functions [DONE]
-  - Join & Leave [DONE]
-  - Play & Search [DONE]
-  - Skip & Back [DONE]
-  - Pause & Resume [DONE]
-  - Currently Playing & Queue [DONE]
-  - Clear & Remove [DONE]
-  - Repeat & Shuffle [DONE]
-  - Jump [DONE]
-  - Volume [To be Added Later]
-  - Playlist [To be Added Later]
+## Completed Features
+These are features that are completed within the bot and are actively available.
+
+- Music playback and functions
+  - Join & Leave
+  - Play & Search
+  - Skip & Back
+  - Pause & Resume
+  - Currently Playing & Queue
+  - Clear & Remove
+  - Repeat & Shuffle
+  - Jump
+  - Playlist
   - ~~seek~~ (unable, library reason)
+- User Roles (individual users may have their own role within each server)
+- Voice Channel Modifications (Channel Region and Limits can be publicly edited after an server admin allows it)
+  - /voicechange to modify the channel (user side)
+  - /voicesettings to allow the channel to be modified (admin side)
+
+## Planned Features
+These are features that have yet to be implemented, but are planned or in progress.
+
 - Auto roles (when a new user joins, give them x roles)
 - Reaction roles (reaction or dropdown)
 - Welcome / Leave messages
